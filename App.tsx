@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import LoginScreen from './src/screens/login_screen';
-import HomeScreen from './src/screens/home_screen';
 import SignupScreen from './src/screens/signup_screen';
+import { HomeTabNavigator } from './src/navigation/navigation';
 
 type Screen = 'login' | 'home' | 'signup';
 
@@ -20,7 +20,7 @@ export default function App() {
         );
       case 'home':
         return (
-          <HomeScreen onLogout={() => setCurrentScreen('login')} />
+          <HomeTabNavigator onLogout={() => setCurrentScreen('login')} />
         );
       case 'signup':
         return (
