@@ -38,18 +38,53 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#999',
     },
-    homeButton: {
+    form: {
+        width: '100%',
+        paddingHorizontal: 24,
+        paddingTop: 16,
+        paddingBottom: 40,
+    },
+    label: {
+        fontSize: 14,
+        color: '#444',
+        marginBottom: 8,
+        marginTop: 16,
+        fontWeight: '600',
+    },
+    input: {
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        fontSize: 16,
+        color: '#333',
+    },
+    errorText: {
+        color: '#d32f2f',
+        fontSize: 14,
+        marginTop: 12,
+        textAlign: 'center',
+    },
+    submitButton: {
         backgroundColor: '#2196F3',
         borderRadius: 12,
         paddingVertical: 16,
-        marginHorizontal: 24,
-        marginBottom: 40,
+        marginTop: 24,
         alignItems: 'center',
     },
-    homeButtonText: {
+    submitButtonText: {
         color: '#fff',
         fontSize: 16,
         fontWeight: '700',
+    },
+    flex: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
+        justifyContent: 'flex-start',
     },
 });
 
