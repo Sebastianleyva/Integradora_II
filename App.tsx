@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import LoginScreen from './src/screens/login_screen';
-import SignupScreen from './src/screens/signup_screen';
-import { HomeTabNavigator } from './src/navigation/navigation';
+import LoginScreen from './frontend/src/screens/login_screen';
+import SignupScreen from './frontend/src/screens/signup_screen';
+import { HomeTabNavigator } from './frontend/src/navigation/navigation';
 
 type Screen = 'login' | 'home' | 'signup';
 
