@@ -26,16 +26,16 @@ export function HomeTabNavigator({ onLogout }: HomeTabNavigatorProps) {
 
                         if (route.name === 'Home') {
                             iconName = '🏠';
-                            label = 'Home';
+                            label = '';
                         } else if (route.name === 'History') {
                             iconName = '📋';
-                            label = 'Historial';
+                            label = '';
                         } else if (route.name === 'Analysis') {
                             iconName = '📊';
-                            label = 'Análisis';
+                            label = '';
                         } else if (route.name === 'Profile') {
                             iconName = '👤';
-                            label = 'Perfil';
+                            label = '';
                         } else {
                             iconName = '?';
                             label = route.name;
