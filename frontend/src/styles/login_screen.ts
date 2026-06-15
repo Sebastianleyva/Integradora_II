@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     scrollContent: {
         flexGrow: 1,
         justifyContent: 'space-between',
-        paddingBottom: 20,
+        paddingVertical: 30,
     },
     header: {
         alignItems: 'center',
@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 24,
+        paddingBottom: 24,
     },
     signupText: {
         color: '#666',
