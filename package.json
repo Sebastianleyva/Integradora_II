@@ -6,20 +6,22 @@
   "dependencies": {
     "@react-navigation/bottom-tabs": "^7.17.2",
     "@react-navigation/native": "^7.3.0",
+    "bcrypt": "^6.0.0",
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "expo": "~55.0.0",
     "expo-status-bar": "~55.0.6",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
     "pg": "^8.21.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-native": "0.83.6",
     "react-native-safe-area-context": "~5.6.2",
     "react-native-screens": "~4.23.0",
-    "uuid": "^14.0.0",
-    "react-native-web": "^0.21.0"
+    "react-native-web": "^0.21.0",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
@@ -30,7 +32,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "server": "node backend/database/index.js"
+    "server": "node backend/model/info.js"
   },
   "private": true
 }

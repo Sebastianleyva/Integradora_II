@@ -5,8 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c2269309-53b1-4cc9-a8db-34c277fab056" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/database/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/database/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/schema.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles/analysis_screen.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/analysis_screen.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles/history_screen.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/history_screen.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles/login_screen.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/login_screen.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles/profile_screen.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/profile_screen.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles/signup_screen.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/signup_screen.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,28 +28,29 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 4
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="3F8yoHY2s3V67jelnChSU9251gK" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/migue/Downloads/Integradora_II"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/migue/Downloads/Integradora_II&quot;
   }
-}]]></component>
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="c2269309-53b1-4cc9-a8db-34c277fab056" name="Changes" comment="" />

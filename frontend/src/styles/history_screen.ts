@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     },
     header: {
         alignItems: 'center',
-        paddingVertical: 20,
+        paddingVertical: 30,
         paddingHorizontal: 16,
     },
     title: {

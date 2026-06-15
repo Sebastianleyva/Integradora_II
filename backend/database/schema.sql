@@ -33,7 +33,7 @@ CREATE TABLE public.alumnos (
     nombre character varying(20),
     apellidos character varying(40),
     correo character varying(50),
-    "contraseña" character varying(255),
+    contrasena character varying(255),
     fecha date
 );
 
@@ -238,7 +238,7 @@ ALTER TABLE ONLY public.registro_diario ALTER COLUMN id_registro SET DEFAULT nex
 -- Data for Name: alumnos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.alumnos (id_alumno, nombre, apellidos, correo, "contraseña", fecha) FROM stdin;
+COPY public.alumnos (id_alumno, nombre, apellidos, correo, contrasena, fecha) FROM stdin;
 \.
 
 
