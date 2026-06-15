@@ -26,12 +26,10 @@ export default function SignupScreen({
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [school, setSchool] = useState('');
-    const [major, setMajor] = useState('');
     const [error, setError] = useState('');
 
     const handleRegister = () => {
-        if (!firstName.trim() || !lastName.trim() || !email.trim() || !password || !confirmPassword || !school.trim() || !major.trim()) {
+        if (!firstName.trim() || !lastName.trim() || !email.trim() || !password || !confirmPassword) {
             setError('Todos los campos son obligatorios.');
             return;
         }
@@ -107,24 +105,6 @@ export default function SignupScreen({
                             onChangeText={setConfirmPassword}
                             secureTextEntry
                             autoCapitalize="none"
-                        />
-
-                        <Text style={styles.label}>Escuela</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Escuela en la que estudias"
-                            value={school}
-                            onChangeText={setSchool}
-                            autoCapitalize="words"
-                        />
-
-                        <Text style={styles.label}>Carrera</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Carrera"
-                            value={major}
-                            onChangeText={setMajor}
-                            autoCapitalize="words"
                         />
 
                         {error ? <Text style={styles.errorText}>{error}</Text> : null}
