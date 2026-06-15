@@ -2,8 +2,6 @@
 -- PostgreSQL database dump
 --
 
-\restrict fRUu6fpRF0tR2riSsgBwE62fUtKejd1cyHUL8jMVNGu9gVpJD7ttB8jnYUfAgWq
-
 -- Dumped from database version 18.3
 -- Dumped by pg_dump version 18.3
 
@@ -35,7 +33,7 @@ CREATE TABLE public.alumnos (
     nombre character varying(20),
     apellidos character varying(40),
     correo character varying(50),
-    "contrsae¤a" character varying(255),
+    "contraseña" character varying(255),
     fecha date
 );
 
@@ -240,7 +238,7 @@ ALTER TABLE ONLY public.registro_diario ALTER COLUMN id_registro SET DEFAULT nex
 -- Data for Name: alumnos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.alumnos (id_alumno, nombre, apellidos, correo, "contrsae¤a", fecha) FROM stdin;
+COPY public.alumnos (id_alumno, nombre, apellidos, correo, "contraseña", fecha) FROM stdin;
 \.
 
 
@@ -378,6 +376,4 @@ ALTER TABLE ONLY public.registro_diario
 --
 -- PostgreSQL database dump complete
 --
-
-\unrestrict fRUu6fpRF0tR2riSsgBwE62fUtKejd1cyHUL8jMVNGu9gVpJD7ttB8jnYUfAgWq
 
