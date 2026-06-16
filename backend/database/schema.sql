@@ -1,3 +1,7 @@
+-- A ver sebas, la base de datos tiene un problema con respecto
+-- a la contraseña dado a que cambia el simbolo "ñ" a "¤", si
+-- tienes algo en contra intenta poner el simbolo "¤" sin copiar
+
 --
 -- PostgreSQL database dump
 --
@@ -35,7 +39,7 @@ CREATE TABLE public.alumnos (
     nombre character varying(20) NOT NULL,
     apellidos character varying(40) NOT NULL,
     correo character varying(50) NOT NULL,
-    "contrsae¤a" character varying(255) NOT NULL,
+    contrsaena character varying(255) NOT NULL,
     fecha date NOT NULL
 );
 
@@ -240,7 +244,7 @@ ALTER TABLE ONLY public.registro_diario ALTER COLUMN id_registro SET DEFAULT nex
 -- Data for Name: alumnos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.alumnos (id_alumno, nombre, apellidos, correo, "contrsae¤a", fecha) FROM stdin;
+COPY public.alumnos (id_alumno, nombre, apellidos, correo, contrsaena, fecha) FROM stdin;
 \.
 
 
