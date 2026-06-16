@@ -2,9 +2,9 @@ import React from 'react';
 import {
     View,
     Text,
-    SafeAreaView,
     ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/analysis_screen';
 
 export default function AnalysisScreen() {

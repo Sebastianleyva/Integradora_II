@@ -3,13 +3,13 @@ import {
     View,
     Text,
     TouchableOpacity,
-    SafeAreaView,
     TextInput,
     Alert,
     ScrollView,
     KeyboardAvoidingView,
     Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/signup_screen';
 
 interface SignupScreenProps {
@@ -52,8 +52,16 @@ export default function SignupScreen({
             >
                 <ScrollView contentContainerStyle={styles.scrollContent}>
                     <View style={styles.header}>
-                        <TouchableOpacity onPress={onNavigateToLogin} style={styles.backButton}>
-                            <Text style={styles.backButtonText}>← Atrás</Text>
+                        <TouchableOpacity
+                            onPress={() => {
+                                console.log('Botón atrás presionado');
+                                onNavigateToLogin();
+                            }}
+                            style={styles.backButton}
+                            activeOpacity={0.6}
+                            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                        >
+                            <Text style={styles.backButtonText}>Atrás</Text>
                         </TouchableOpacity>
                         <Text style={styles.title}>Registro</Text>
                     </View>
