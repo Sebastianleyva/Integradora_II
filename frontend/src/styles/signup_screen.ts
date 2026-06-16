@@ -11,6 +11,9 @@ const styles = StyleSheet.create({
     },
     backButton: {
         marginBottom: 20,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        alignSelf: 'flex-start',
     },
     backButtonText: {
         color: '#2196F3',

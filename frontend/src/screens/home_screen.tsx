@@ -3,8 +3,8 @@ import {
     View,
     Text,
     TouchableOpacity,
-    SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/home_screen';
 
 interface HomeScreenProps {

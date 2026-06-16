@@ -2,10 +2,12 @@
 -- PostgreSQL database dump
 --
 
+\restrict 63TtUX1oqIshSkmyoyvKnFWBfyNGUk7c8BLYdoJjhRpRdWmWoL1uXowIPN7vonY
+
 -- Dumped from database version 18.3
 -- Dumped by pg_dump version 18.3
 
--- Started on 2026-06-14 12:22:07
+-- Started on 2026-06-15 18:34:06
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -30,11 +32,11 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.alumnos (
     id_alumno integer NOT NULL,
-    nombre character varying(20),
-    apellidos character varying(40),
-    correo character varying(50),
-    contrasena character varying(255),
-    fecha date
+    nombre character varying(20) NOT NULL,
+    apellidos character varying(40) NOT NULL,
+    correo character varying(50) NOT NULL,
+    "contrsae¤a" character varying(255) NOT NULL,
+    fecha date NOT NULL
 );
 
 
@@ -238,7 +240,7 @@ ALTER TABLE ONLY public.registro_diario ALTER COLUMN id_registro SET DEFAULT nex
 -- Data for Name: alumnos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.alumnos (id_alumno, nombre, apellidos, correo, contrasena, fecha) FROM stdin;
+COPY public.alumnos (id_alumno, nombre, apellidos, correo, "contrsae¤a", fecha) FROM stdin;
 \.
 
 
@@ -371,9 +373,11 @@ ALTER TABLE ONLY public.registro_diario
     ADD CONSTRAINT registro_diario_id_alumno_fkey FOREIGN KEY (id_alumno) REFERENCES public.alumnos(id_alumno);
 
 
--- Completed on 2026-06-14 12:22:08
+-- Completed on 2026-06-15 18:34:06
 
 --
 -- PostgreSQL database dump complete
 --
+
+\unrestrict 63TtUX1oqIshSkmyoyvKnFWBfyNGUk7c8BLYdoJjhRpRdWmWoL1uXowIPN7vonY
 

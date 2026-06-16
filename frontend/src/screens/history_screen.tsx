@@ -2,10 +2,10 @@ import React from 'react';
 import {
     View,
     Text,
-    SafeAreaView,
     ScrollView,
     FlatList,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/history_screen';
 
 export default function HistoryScreen() {
