@@ -30,11 +30,14 @@ app.post("/account/register", async (req, res) => {
     try {
         const {nombre, apellidos, correo, contra} = req.body;
         const fecha = new Date();
-        const ide = uuid();
+        //const ide = uuid();
         const contraHash = await bcrypt.hash(contra, 10);
-        console.log("Datos de registro: ", ide, nombre, apellidos, correo, contraHash, fecha);
-        const sql = "INSERT INTO alumnos (id_alumno, nombre, apellidos, correo, contrasena, fecha) VALUES (?, ?, ?, ?, ?, ?);";
-        const result = await pool.query(sql, [ide, nombre, apellidos, correo, contraHash, fecha]);
+        //console.log("Datos de registro: ", ide, nombre, apellidos, correo, contraHash, fecha);
+        console.log("Datos de registro: ", nombre, apellidos, correo, contraHash, fecha);
+        //const sql = "INSERT INTO alumnos (id_alumno, nombre, apellidos, correo, contrasena, fecha) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;";
+        //const result = await pool.query(sql, [ide, nombre, apellidos, correo, contraHash, fecha]);
+        const sql = "INSERT INTO alumnos (nombre, apellidos, correo, contrasena, fecha) VALUES ($1, $2, $3, $4, $5) RETURNING *;";
+        const result = await pool.query(sql, [nombre, apellidos, correo, contraHash, fecha]);
         console.log(result);
         return res.status(201).send(result.rows || result);
     } catch (err) {
@@ -46,7 +49,7 @@ app.post("/account/register", async (req, res) => {
 //Login
 app.post("/account/login", async (req, res) => {
     const {correo, contra} = req.body;
-    const sql = "SELECT * FROM alumnos WHERE correo = ?;";
+    const sql = "SELECT * FROM alumnos WHERE correo = $1;";
     try {
         const result = await pool.query(sql, [correo]);
         if (result.rows.length === 0) {
@@ -92,22 +95,22 @@ app.get("/account/logout", (req, res) => {
 app.put("/account/update-password/:id", async (req, res) => {
     try {
         const {id} = req.params;
-        const {password, newpassword} = req.body;
-        if (password.trim() && newpassword.trim()) {
-            const sql = "SELECT * FROM alumnos WHERE id_alumno = ?;";
+        const {contra, newcontra} = req.body;
+        if (contra.trim() && newcontra.trim()) {
+            const sql = "SELECT * FROM alumnos WHERE id_alumno = $1;";
             const result = await pool.query(sql, [id]);
             if (result.rows.length == 0) {
                 console.error("Usuario no encontrado");
                 return res.status(404).send("Alumno no existe");
             } else {
                 const alumno = result.rows[0];
-                const ver = await bcrypt.compare(password, alumno.contrasena);
+                const ver = await bcrypt.compare(contra, alumno.contrasena);
                 if (!ver) {
                     console.error("Contraseña incorrecta");
                     return res.status(400).send("La contraseña es incorrecta");
                 } else {
-                    const contraHash = await bcrypt.hash(newpassword, 10);
-                    const sql = "UPDATE alumnos SET contrasena = ? WHERE id_alumno = ?";
+                    const contraHash = await bcrypt.hash(newcontra, 10);
+                    const sql = "UPDATE alumnos SET contrasena = $1 WHERE id_alumno = $2";
                     const updateRes = await pool.query(sql, [contraHash, id]);
                     console.info({ updateRes });
                     return res.status(201).send("Contraseña cambiada con éxito");
@@ -123,7 +126,7 @@ app.put("/account/update-password/:id", async (req, res) => {
 //Borrar cuenta
 app.delete("/account/delete/:id", async (req, res) => {
     const {id} = req.params;
-    const sql = "DELETE FROM alumnos WHERE id_alumno = ?;";
+    const sql = "DELETE FROM alumnos WHERE id_alumno = $1;";
     try {
         await pool.query(sql, [id]);
         return res.send("Cuenta borrada");
@@ -156,12 +159,16 @@ app.post("/general/:id", async (req, res) => {
         const {id} = req.params;
         const {edad, sexo, carrera, instituto, n_insc, burnout, actividad, psiquia, psico} = req.body;
         const fecha = new Date(); //Una pregunta, ¿Para qué ocupamos este date?
+        // const ide = uuid();
         if (!Number.isFinite(edad) || !sexo.trim() || !carrera.trim() || !instituto.trim() || !Number.isFinite(n_insc) || !String(burnout) || !String(actividad) || !String(psiquia) || !String(psico)) {
+            // console.log(ide, edad, sexo, carrera, instituto, n_insc, burnout, actividad, psiquia, psico);
             console.log(edad, sexo, carrera, instituto, n_insc, burnout, actividad, psiquia, psico);
             return res.status(400).send({error: "No se han insertado los datos correspondientes, inténtelo de nuevo"});
         } else {
-            const sql = "INSERT INTO encuesta_general (edad, sexo, carrera, institucion, fecha, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-            const [result] = await pool.query(sql, [edad, sexo, carrera, instituto, fecha, n_insc, burnout, actividad, psiquia, psico, id]);
+            // const sql = "INSERT INTO encuesta_general (id_general edad, sexo, carrera, institucion, fecha, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
+            // const result = await pool.query(sql, [ide, edad, sexo, carrera, instituto, fecha, n_insc, burnout, actividad, psiquia, psico, id]);
+            const sql = "INSERT INTO encuesta_general (edad, sexo, carrera, institucion, fecha, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
+            const result = await pool.query(sql, [edad, sexo, carrera, instituto, fecha, n_insc, burnout, actividad, psiquia, psico, id]);
             return res.status(201).send ({result})
         }
     } catch (err) {
@@ -176,12 +183,16 @@ app.post("/registros/:id", async (req, res) => {
         const {id} = req.params;
         const {h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo} = req.body;
         const fecha = new Date();
-        if (!Number.isFinite(h_sueno) || !Number.isFinite(cal_sueno) || !Number.isFinite(n_comidas) || !hor_comidas.trim() || !Number.isFinite(cal_consumo) || !Number.isFinite(h_osio) || !Number.isFinite(cal_consumo_tec) || !String(uso_ia) || !aplicacion.trim() || Number.isFinite(pregunta_objetivo) || !id) {
+        // const ide = uuid();
+        if (!Number.isFinite(h_sueno) || !Number.isFinite(cal_sueno) || !Number.isFinite(n_comidas) || !hor_comidas.trim() || !Number.isFinite(cal_consumo) || !Number.isFinite(h_osio) || !Number.isFinite(cal_consumo_tec) || !String(uso_ia) || !aplicacion.trim() || !Number.isFinite(pregunta_objetivo)) {
+            // console.log(id, ide, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo);
             console.log(id, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo);
             return res.status(400).send({error: "No se han insertado los datos correspondientes"});
         } else {
-            const sql = "INSERT INTO registro_diario (fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
-            const [result] = await pool.query(sql, [fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id]);
+            // const sql = "INSERT INTO registro_diario (id_registro, fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);"
+            // const result = await pool.query(sql, [ide, fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id])
+            const sql = "INSERT INTO registro_diario (fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
+            const result = await pool.query(sql, [fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id]);
             return res.status(201).send({ result });
         }
     } catch (err) {
@@ -194,7 +205,7 @@ app.post("/registros/:id", async (req, res) => {
 app.get("/registros/:id", async (req, res) => {
     try{ 
         const {id} = req.params;
-        const sql = "SELECT * FROM registro_diario WHERE id_alumno = ?;"
+        const sql = "SELECT * FROM registro_diario WHERE id_alumno = $1;";
         const {rows} = await pool.query(sql, [id]);
         return res.status(200).send({ result:rows });
     } catch (err) {

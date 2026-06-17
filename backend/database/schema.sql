@@ -35,11 +35,12 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.alumnos (
+    -- id_alumno UUID NOT NULL,
     id_alumno integer NOT NULL,
     nombre character varying(20) NOT NULL,
     apellidos character varying(40) NOT NULL,
     correo character varying(50) NOT NULL,
-    contrsaena character varying(255) NOT NULL,
+    contrasena character varying(255) NOT NULL,
     fecha date NOT NULL
 );
 
@@ -77,6 +78,7 @@ ALTER SEQUENCE public.alumnos_id_alumno_seq OWNED BY public.alumnos.id_alumno;
 --
 
 CREATE TABLE public.encuesta_general (
+    -- id_general UUID NOT NULL,
     id_general integer NOT NULL,
     edad integer NOT NULL,
     sexo character(1) NOT NULL,
@@ -125,6 +127,7 @@ ALTER SEQUENCE public.encuesta_general_id_general_seq OWNED BY public.encuesta_g
 --
 
 CREATE TABLE public.predicciones (
+    -- id_prediccion UUID NOT NULL,
     id_prediccion integer NOT NULL,
     id_alumno integer
 );
@@ -163,6 +166,7 @@ ALTER SEQUENCE public.predicciones_id_prediccion_seq OWNED BY public.prediccione
 --
 
 CREATE TABLE public.registro_diario (
+    -- id_registro UUID NOT NULL,
     id_registro integer NOT NULL,
     fecha date NOT NULL,
     h_sueno real NOT NULL,
@@ -244,7 +248,7 @@ ALTER TABLE ONLY public.registro_diario ALTER COLUMN id_registro SET DEFAULT nex
 -- Data for Name: alumnos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.alumnos (id_alumno, nombre, apellidos, correo, contrsaena, fecha) FROM stdin;
+COPY public.alumnos (id_alumno, nombre, apellidos, correo, contrasena, fecha) FROM stdin;
 \.
 
 
