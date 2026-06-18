@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict bmFoDL4V5PTjNY8teustDfPyV6kZLu1Ou8NsPlxK0R2ewZDC4PLqJgDpSVoVXxC
+\restrict ccvPzFvopJjG98wokjus7pzoohWJ2wELt1ni3vlGKqsLVmeHQpKLxWyr4cTrp0A
 
 -- Dumped from database version 18.3
 -- Dumped by pg_dump version 18.3
 
--- Started on 2026-06-17 19:45:09
+-- Started on 2026-06-17 20:02:01
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -59,7 +59,7 @@ CREATE SEQUENCE public.alumnos_id_alumno_seq
 ALTER SEQUENCE public.alumnos_id_alumno_seq OWNER TO postgres;
 
 --
--- TOC entry 4999 (class 0 OID 0)
+-- TOC entry 5001 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: alumnos_id_alumno_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -107,7 +107,7 @@ CREATE SEQUENCE public.encuesta_general_id_general_seq
 ALTER SEQUENCE public.encuesta_general_id_general_seq OWNER TO postgres;
 
 --
--- TOC entry 5000 (class 0 OID 0)
+-- TOC entry 5002 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: encuesta_general_id_general_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -145,7 +145,7 @@ CREATE SEQUENCE public.predicciones_id_prediccion_seq
 ALTER SEQUENCE public.predicciones_id_prediccion_seq OWNER TO postgres;
 
 --
--- TOC entry 5001 (class 0 OID 0)
+-- TOC entry 5003 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: predicciones_id_prediccion_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -194,7 +194,7 @@ CREATE SEQUENCE public.registro_diario_id_registro_seq
 ALTER SEQUENCE public.registro_diario_id_registro_seq OWNER TO postgres;
 
 --
--- TOC entry 5002 (class 0 OID 0)
+-- TOC entry 5004 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: registro_diario_id_registro_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -235,7 +235,7 @@ ALTER TABLE ONLY public.registro_diario ALTER COLUMN id_registro SET DEFAULT nex
 
 
 --
--- TOC entry 4987 (class 0 OID 40962)
+-- TOC entry 4989 (class 0 OID 40962)
 -- Dependencies: 220
 -- Data for Name: alumnos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -245,7 +245,7 @@ COPY public.alumnos (id_alumno, nombre, apellidos, correo, contrasena, fecha) FR
 
 
 --
--- TOC entry 4989 (class 0 OID 40970)
+-- TOC entry 4991 (class 0 OID 40970)
 -- Dependencies: 222
 -- Data for Name: encuesta_general; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -255,7 +255,7 @@ COPY public.encuesta_general (id_general, edad, sexo, carrera, institucion, fech
 
 
 --
--- TOC entry 4993 (class 0 OID 41015)
+-- TOC entry 4995 (class 0 OID 41015)
 -- Dependencies: 226
 -- Data for Name: predicciones; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -265,7 +265,7 @@ COPY public.predicciones (id_prediccion, id_alumno) FROM stdin;
 
 
 --
--- TOC entry 4991 (class 0 OID 40993)
+-- TOC entry 4993 (class 0 OID 40993)
 -- Dependencies: 224
 -- Data for Name: registro_diario; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -275,7 +275,7 @@ COPY public.registro_diario (id_registro, fecha, h_sueno, cal_sueno, n_comidas, 
 
 
 --
--- TOC entry 5003 (class 0 OID 0)
+-- TOC entry 5005 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: alumnos_id_alumno_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -284,7 +284,7 @@ SELECT pg_catalog.setval('public.alumnos_id_alumno_seq', 1, false);
 
 
 --
--- TOC entry 5004 (class 0 OID 0)
+-- TOC entry 5006 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: encuesta_general_id_general_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -293,7 +293,7 @@ SELECT pg_catalog.setval('public.encuesta_general_id_general_seq', 1, false);
 
 
 --
--- TOC entry 5005 (class 0 OID 0)
+-- TOC entry 5007 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: predicciones_id_prediccion_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -302,7 +302,7 @@ SELECT pg_catalog.setval('public.predicciones_id_prediccion_seq', 1, false);
 
 
 --
--- TOC entry 5006 (class 0 OID 0)
+-- TOC entry 5008 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: registro_diario_id_registro_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -320,7 +320,7 @@ ALTER TABLE ONLY public.alumnos
 
 
 --
--- TOC entry 4831 (class 2606 OID 40986)
+-- TOC entry 4833 (class 2606 OID 40986)
 -- Name: encuesta_general encuesta_general_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -329,7 +329,7 @@ ALTER TABLE ONLY public.encuesta_general
 
 
 --
--- TOC entry 4835 (class 2606 OID 41021)
+-- TOC entry 4837 (class 2606 OID 41021)
 -- Name: predicciones predicciones_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -338,7 +338,7 @@ ALTER TABLE ONLY public.predicciones
 
 
 --
--- TOC entry 4833 (class 2606 OID 41008)
+-- TOC entry 4835 (class 2606 OID 41008)
 -- Name: registro_diario registro_diario_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -347,7 +347,16 @@ ALTER TABLE ONLY public.registro_diario
 
 
 --
--- TOC entry 4836 (class 2606 OID 40987)
+-- TOC entry 4831 (class 2606 OID 49153)
+-- Name: alumnos uc_correo; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.alumnos
+    ADD CONSTRAINT uc_correo UNIQUE (correo);
+
+
+--
+-- TOC entry 4838 (class 2606 OID 40987)
 -- Name: encuesta_general encuesta_general_id_alumno_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -356,7 +365,7 @@ ALTER TABLE ONLY public.encuesta_general
 
 
 --
--- TOC entry 4838 (class 2606 OID 41022)
+-- TOC entry 4840 (class 2606 OID 41022)
 -- Name: predicciones predicciones_id_alumno_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -365,7 +374,7 @@ ALTER TABLE ONLY public.predicciones
 
 
 --
--- TOC entry 4837 (class 2606 OID 41009)
+-- TOC entry 4839 (class 2606 OID 41009)
 -- Name: registro_diario registro_diario_id_alumno_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -373,11 +382,11 @@ ALTER TABLE ONLY public.registro_diario
     ADD CONSTRAINT registro_diario_id_alumno_fkey FOREIGN KEY (id_alumno) REFERENCES public.alumnos(id_alumno);
 
 
--- Completed on 2026-06-17 19:45:09
+-- Completed on 2026-06-17 20:02:01
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict bmFoDL4V5PTjNY8teustDfPyV6kZLu1Ou8NsPlxK0R2ewZDC4PLqJgDpSVoVXxC
+\unrestrict ccvPzFvopJjG98wokjus7pzoohWJ2wELt1ni3vlGKqsLVmeHQpKLxWyr4cTrp0A
 
