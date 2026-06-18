@@ -1,17 +1,13 @@
--- A ver sebas, la base de datos tiene un problema con respecto
--- a la contraseña dado a que cambia el simbolo "ñ" a "¤", si
--- tienes algo en contra intenta poner el simbolo "¤" sin copiar
-
 --
 -- PostgreSQL database dump
 --
 
-\restrict 63TtUX1oqIshSkmyoyvKnFWBfyNGUk7c8BLYdoJjhRpRdWmWoL1uXowIPN7vonY
+\restrict bmFoDL4V5PTjNY8teustDfPyV6kZLu1Ou8NsPlxK0R2ewZDC4PLqJgDpSVoVXxC
 
 -- Dumped from database version 18.3
 -- Dumped by pg_dump version 18.3
 
--- Started on 2026-06-15 18:34:06
+-- Started on 2026-06-17 19:45:09
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -35,12 +31,11 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.alumnos (
-    -- id_alumno UUID NOT NULL,
     id_alumno integer NOT NULL,
     nombre character varying(20) NOT NULL,
     apellidos character varying(40) NOT NULL,
     correo character varying(50) NOT NULL,
-    contrasena character varying(255) NOT NULL,
+    contrasena character varying(255) CONSTRAINT "alumnos_contrsae¤a_not_null" NOT NULL,
     fecha date NOT NULL
 );
 
@@ -78,7 +73,6 @@ ALTER SEQUENCE public.alumnos_id_alumno_seq OWNED BY public.alumnos.id_alumno;
 --
 
 CREATE TABLE public.encuesta_general (
-    -- id_general UUID NOT NULL,
     id_general integer NOT NULL,
     edad integer NOT NULL,
     sexo character(1) NOT NULL,
@@ -127,7 +121,6 @@ ALTER SEQUENCE public.encuesta_general_id_general_seq OWNED BY public.encuesta_g
 --
 
 CREATE TABLE public.predicciones (
-    -- id_prediccion UUID NOT NULL,
     id_prediccion integer NOT NULL,
     id_alumno integer
 );
@@ -166,7 +159,6 @@ ALTER SEQUENCE public.predicciones_id_prediccion_seq OWNED BY public.prediccione
 --
 
 CREATE TABLE public.registro_diario (
-    -- id_registro UUID NOT NULL,
     id_registro integer NOT NULL,
     fecha date NOT NULL,
     h_sueno real NOT NULL,
@@ -381,11 +373,11 @@ ALTER TABLE ONLY public.registro_diario
     ADD CONSTRAINT registro_diario_id_alumno_fkey FOREIGN KEY (id_alumno) REFERENCES public.alumnos(id_alumno);
 
 
--- Completed on 2026-06-15 18:34:06
+-- Completed on 2026-06-17 19:45:09
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 63TtUX1oqIshSkmyoyvKnFWBfyNGUk7c8BLYdoJjhRpRdWmWoL1uXowIPN7vonY
+\unrestrict bmFoDL4V5PTjNY8teustDfPyV6kZLu1Ou8NsPlxK0R2ewZDC4PLqJgDpSVoVXxC
 
