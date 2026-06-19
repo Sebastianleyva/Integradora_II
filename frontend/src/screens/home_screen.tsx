@@ -9,9 +9,10 @@ import styles from '../styles/home_screen';
 
 interface HomeScreenProps {
     onLogout: () => void;
+    onNavigateToRegistroSueno: () => void;
 }
 
-export default function HomeScreen({ onLogout }: HomeScreenProps) {
+export default function HomeScreen({ onLogout, onNavigateToRegistroSueno }: HomeScreenProps) {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -21,6 +22,10 @@ export default function HomeScreen({ onLogout }: HomeScreenProps) {
 
             <View style={styles.content}>
                 <Text style={styles.message}>¡Iniciaste sesión exitosamente!</Text>
+
+                <TouchableOpacity style={styles.primaryButton} onPress={onNavigateToRegistroSueno}>
+                    <Text style={styles.primaryButtonText}>Hacer mi registro</Text>
+                </TouchableOpacity>
             </View>
 
             <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>

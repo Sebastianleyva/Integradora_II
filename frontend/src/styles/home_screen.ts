@@ -32,6 +32,19 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: '600',
     },
+    primaryButton: {
+        backgroundColor: '#4CAF50',
+        borderRadius: 12,
+        paddingVertical: 16,
+        paddingHorizontal: 24,
+        marginTop: 24,
+        alignItems: 'center',
+    },
+    primaryButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '700',
+    },
     logoutButton: {
         backgroundColor: '#f44336',
         borderRadius: 12,
