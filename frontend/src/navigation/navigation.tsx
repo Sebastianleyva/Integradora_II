@@ -12,9 +12,10 @@ const Tab = createBottomTabNavigator();
 
 interface HomeTabNavigatorProps {
     onLogout: () => void;
+    onNavigateToRegistroSueno: () => void;
 }
 
-export function HomeTabNavigator({ onLogout }: HomeTabNavigatorProps) {
+export function HomeTabNavigator({ onLogout, onNavigateToRegistroSueno }: HomeTabNavigatorProps) {
     return (
         <NavigationContainer>
             <Tab.Navigator
@@ -70,7 +71,12 @@ export function HomeTabNavigator({ onLogout }: HomeTabNavigatorProps) {
                         title: 'Home',
                     }}
                 >
-                    {() => <HomeScreen onLogout={onLogout} />}
+                    {() => (
+                        <HomeScreen
+                            onLogout={onLogout}
+                            onNavigateToRegistroSueno={onNavigateToRegistroSueno}
+                        />
+                    )}
                 </Tab.Screen>
 
                 <Tab.Screen

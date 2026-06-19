@@ -4,8 +4,12 @@ import LoginScreen from './frontend/src/screens/login_screen';
 import SignupScreen from './frontend/src/screens/signup_screen';
 import GeneralSurvey from './frontend/src/screens/general_survey';
 import { HomeTabNavigator } from './frontend/src/navigation/navigation';
+import RegistroSueno from './frontend/src/screens/registro_sueno';
+import RegistroComida from './frontend/src/screens/registro_comida';
+import TecnoRegistro from './frontend/src/screens/tecno_registro';
+import ObjetivoScreen from './frontend/src/screens/objetivo_screen';
 
-type Screen = 'login' | 'home' | 'signup' | 'survey';
+type Screen = 'login' | 'home' | 'signup' | 'survey' | 'registro_sueno' | 'registro_comida' | 'tecno_registro' | 'objetivo';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
@@ -21,7 +25,10 @@ export default function App() {
         );
       case 'home':
         return (
-          <HomeTabNavigator onLogout={() => setCurrentScreen('login')} />
+          <HomeTabNavigator
+            onLogout={() => setCurrentScreen('login')}
+            onNavigateToRegistroSueno={() => setCurrentScreen('registro_sueno')}
+          />
         );
       case 'signup':
         return (
@@ -37,6 +44,33 @@ export default function App() {
             onNavigateToLogin={() => setCurrentScreen('login')}
           />
         );
+      case 'registro_sueno':
+        return (
+          <RegistroSueno
+            onNavigateToComida={() => setCurrentScreen('registro_comida')}
+            onNavigateToHome={() => setCurrentScreen('home')}
+          />
+        );
+      case 'registro_comida':
+        return (
+          <RegistroComida
+            onNavigateToTecno={() => setCurrentScreen('tecno_registro')}
+            onNavigateToHome={() => setCurrentScreen('home')}
+          />
+        );
+      case 'tecno_registro':
+        return (
+          <TecnoRegistro
+            onNavigateToObjetivo={() => setCurrentScreen('objetivo')}
+            onNavigateToHome={() => setCurrentScreen('home')}
+          />
+        );
+      case 'objetivo':
+        return (
+          <ObjetivoScreen onNavigateToHome={() => setCurrentScreen('home')} />
+        );
+      default:
+        return null;
     }
   };
 
