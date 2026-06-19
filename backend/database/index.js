@@ -1,5 +1,5 @@
 // Importaciones
-import "dotenv/config";
+import "dotenv/config.js";
 import { Pool } from "pg";
 
 // Pool de conexiones PostgreSQL
