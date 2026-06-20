@@ -1,3 +1,4 @@
+//Importaciones
 import express from "express";
 import session from "express-session";
 import bcrypt from "bcrypt";
@@ -5,6 +6,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import pool from "../database/index.js";
 
+//Aplicación y puerto
 const app = express();
 const port = 5000;
 
@@ -28,10 +30,8 @@ app.use(
 app.post("/account/register", async (req, res) => {
   try {
     const { nombre, apellidos, correo, contra } = req.body;
-    const fecha = new Date().toISOString().split("T")[0];
-    //const ide = uuid();
+    const fecha = new Date().toISOString().split("T")[0]; //De nuevo, ¿Para qué?
     const contraHash = await bcrypt.hash(contra, 10);
-    //console.log("Datos de registro: ", ide, nombre, apellidos, correo, contraHash, fecha);
     console.log(
       "Datos de registro: ",
       nombre,
@@ -40,8 +40,6 @@ app.post("/account/register", async (req, res) => {
       contraHash,
       fecha,
     );
-    //const sql = "INSERT INTO alumnos (id_alumno, nombre, apellidos, correo, contrasena, fecha) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;";
-    //const result = await pool.query(sql, [ide, nombre, apellidos, correo, contraHash, fecha]);
     const sql =
       "INSERT INTO alumnos (nombre, apellidos, correo, contrasena, fecha) VALUES ($1, $2, $3, $4, $5) RETURNING *;";
     const result = await pool.query(sql, [
@@ -89,22 +87,22 @@ app.post("/account/login", async (req, res) => {
       if (!ver) {
         console.error("La contraseña es incorrecta");
         return res.status(400).send("Contraseña incorrecta");
+      } else {
+        req.session.usuario = {
+            id: usuario.id_alumno,
+            nombre: usuario.nombre,
+            apellidos: usuario.apellidos,
+            correo: usuario.correo,
+        };
+
+        return res.status(200).json({
+            mensaje: "Inicio de sesión exitoso",
+            id: usuario.id_alumno,
+            nombre: usuario.nombre,
+            apellidos: usuario.apellidos,
+            correo: usuario.correo,
+        });
       }
-
-      req.session.usuario = {
-        id: usuario.id_alumno,
-        nombre: usuario.nombre,
-        apellidos: usuario.apellidos,
-        correo: usuario.correo,
-      };
-
-      return res.status(200).json({
-        mensaje: "Inicio de sesión exitoso",
-        id: usuario.id_alumno,
-        nombre: usuario.nombre,
-        apellidos: usuario.apellidos,
-        correo: usuario.correo,
-      });
     }
   } catch (err) {
     console.error(err);
@@ -198,13 +196,13 @@ app.post("/general/:id", async (req, res) => {
       sexo,
       carrera,
       instituto,
+      fecha,
       n_insc,
       burnout,
       actividad,
       psiquia,
       psico,
     } = req.body;
-    const fecha = new Date().toISOString().split("T")[0];
     const existe = await pool.query(
       `SELECT 1
         FROM encuesta_general
@@ -215,57 +213,59 @@ app.post("/general/:id", async (req, res) => {
       return res.status(409).json({
         error: "La encuesta general ya fue respondida",
       });
-    }
-    if (
-      !Number.isFinite(edad) ||
-      !sexo.trim() ||
-      !carrera.trim() ||
-      !instituto.trim() ||
-      !Number.isFinite(Number(n_insc)) ||
-      typeof burnout !== "boolean" ||
-      typeof actividad !== "boolean" ||
-      typeof psiquia !== "boolean" ||
-      typeof psico !== "boolean"
-    ) {
-      console.log(
-        Number(edad),
-        sexo,
-        carrera,
-        instituto,
-        Number(n_insc),
-        burnout,
-        actividad,
-        psiquia,
-        psico,
-      );
-      return res.status(400).send({
-        error:
-          "No se han insertado los datos correspondientes, inténtelo de nuevo",
-      });
     } else {
-      // const result = await pool.query(sql, [ide, edad, sexo, carrera, instituto, fecha, n_insc, burnout, actividad, psiquia, psico, id]);
-      const sql =
-        "INSERT INTO encuesta_general (edad, sexo, carrera, institucion, fecha, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
-      const result = await pool.query(sql, [
-        edad,
-        sexo,
-        carrera,
-        instituto,
-        fecha,
-        n_insc,
-        burnout,
-        actividad,
-        psiquia,
-        psico,
-        id,
-      ]);
-      return res.status(201).send({ result });
+        if (
+        !Number.isFinite(edad) ||
+        !sexo.trim() ||
+        !carrera.trim() ||
+        !instituto.trim() ||
+        !Number.isFinite(Number(n_insc)) ||
+        typeof burnout !== "boolean" ||
+        typeof actividad !== "boolean" ||
+        typeof psiquia !== "boolean" ||
+        typeof psico !== "boolean"
+        ) {
+            console.log(
+                Number(edad),
+                sexo,
+                carrera,
+                instituto,
+                Date(fecha),
+                Number(n_insc),
+                burnout,
+                actividad,
+                psiquia,
+                psico,
+            );
+            return res.status(400).send({
+                error:
+                "No se han insertado los datos correspondientes, inténtelo de nuevo",
+            });
+        } else {
+            // const result = await pool.query(sql, [ide, edad, sexo, carrera, instituto, fecha, n_insc, burnout, actividad, psiquia, psico, id]);
+            const sql =
+                "INSERT INTO encuesta_general (edad, sexo, carrera, institucion, fecha, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
+            const result = await pool.query(sql, [
+                edad,
+                sexo,
+                carrera,
+                instituto,
+                fecha,
+                n_insc,
+                burnout,
+                actividad,
+                psiquia,
+                psico,
+                id,
+            ]);
+            return res.status(201).send({ result });
+        }
     }
   } catch (err) {
     console.error(err.message || err);
     return res.status(500).send({ error: err.message || err });
   }
-});
+}); //¿Le metieron mano al backend mientras no estaba? Ya funcionaba antes qué pasó .-.
 
 //Inserción de datos de la encuesta
 app.post("/registros/:id", async (req, res) => {
@@ -295,56 +295,54 @@ app.post("/registros/:id", async (req, res) => {
       return res.status(409).json({
         error: "Ya existe un registro para hoy",
       });
-    }
-    if (
-      !Number.isFinite(Number(h_sueno)) ||
-      !Number.isFinite(Number(cal_sueno)) ||
-      !Number.isFinite(Number(n_comidas)) ||
-      !hor_comidas?.trim() ||
-      !Number.isFinite(Number(cal_consumo)) ||
-      !Number.isFinite(Number(h_osio)) ||
-      !Number.isFinite(Number(cal_consumo_tec)) ||
-      typeof uso_ia !== "boolean" ||
-      !aplicacion?.trim() ||
-      !Number.isFinite(Number(pregunta_objetivo))
-    ) {
-      // console.log(id, ide, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo);
-      console.log(
-        id,
-        h_sueno,
-        cal_sueno,
-        n_comidas,
-        hor_comidas,
-        cal_consumo,
-        h_osio,
-        cal_consumo_tec,
-        uso_ia,
-        aplicacion,
-        pregunta_objetivo,
-      );
-      return res
-        .status(400)
-        .send({ error: "No se han insertado los datos correspondientes" });
     } else {
-      // const sql = "INSERT INTO registro_diario (id_registro, fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);"
-      // const result = await pool.query(sql, [ide, fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id])
-      const sql =
-        "INSERT INTO registro_diario (fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
-      const result = await pool.query(sql, [
-        fecha,
-        Number(h_sueno),
-        Number(cal_sueno),
-        Number(n_comidas),
-        hor_comidas,
-        Number(cal_consumo),
-        Number(h_osio),
-        Number(cal_consumo_tec),
-        uso_ia,
-        aplicacion,
-        Number(pregunta_objetivo),
-        id,
-      ]);
-      return res.status(201).send({ result });
+        if (
+        !Number.isFinite(Number(h_sueno)) ||
+        !Number.isFinite(Number(cal_sueno)) ||
+        !Number.isFinite(Number(n_comidas)) ||
+        !hor_comidas?.trim() ||
+        !Number.isFinite(Number(cal_consumo)) ||
+        !Number.isFinite(Number(h_osio)) ||
+        !Number.isFinite(Number(cal_consumo_tec)) ||
+        typeof uso_ia !== "boolean" ||
+        !aplicacion?.trim() ||
+        !Number.isFinite(Number(pregunta_objetivo))
+        ) {
+            console.log(
+                id,
+                h_sueno,
+                cal_sueno,
+                n_comidas,
+                hor_comidas,
+                cal_consumo,
+                h_osio,
+                cal_consumo_tec,
+                uso_ia,
+                aplicacion,
+                pregunta_objetivo,
+            );
+            return res
+                .status(400)
+                .send({ error: "No se han insertado los datos correspondientes" });
+        } else {
+            const sql =
+                "INSERT INTO registro_diario (fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
+            const result = await pool.query(sql, [
+                fecha,
+                Number(h_sueno),
+                Number(cal_sueno),
+                Number(n_comidas),
+                hor_comidas,
+                Number(cal_consumo),
+                Number(h_osio),
+                Number(cal_consumo_tec),
+                uso_ia,
+                aplicacion,
+                Number(pregunta_objetivo),
+                id,
+            ]);
+            return res.status(201).send({ result });
+        }
     }
   } catch (err) {
     console.error(err.message || err);

@@ -35,7 +35,7 @@ CREATE TABLE public.alumnos (
     nombre character varying(20) NOT NULL,
     apellidos character varying(40) NOT NULL,
     correo character varying(50) NOT NULL,
-    contrasena character varying(255) CONSTRAINT "alumnos_contrsae¤a_not_null" NOT NULL,
+    contrasena character varying(255) CONSTRAINT "alumnos_contrsaena_not_null" NOT NULL,
     fecha date NOT NULL
 );
 

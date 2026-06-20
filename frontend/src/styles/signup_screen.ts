@@ -89,6 +89,43 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'flex-start',
     },
+    calendarContainer: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
+    padding: 8,
+    marginVertical: 10,
+    alignSelf: 'center',
+    width: '95%', // responsivo: se adapta al ancho de pantalla
+    },
+    calendarText: {
+        fontSize: 12, // más pequeño
+        color: '#333',
+    },
+    selectedDay: {
+        backgroundColor: '#2196F3',
+        borderRadius: 6,
+    },
+    selectedDayText: {
+        color: '#000',
+        fontSize: 12,
+        fontWeight: '600',
+    },
+    todayText: {
+        color: '#d32f2f',
+        fontWeight: '700',
+        fontSize: 12,
+    },
+    monthTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#2196F3',
+        marginBottom: 6,
+    },
+    weekDayLabels: {
+        fontSize: 11,
+        fontWeight: '500',
+        color: '#555',
+    },
 });
 
 export default styles;

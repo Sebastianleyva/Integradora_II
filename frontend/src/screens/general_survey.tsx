@@ -9,8 +9,50 @@ import {
     KeyboardAvoidingView,
     Platform,
 } from 'react-native';
+import CalendarPicker from "react-native-calendar-picker";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/signup_screen';
+import * as Yup from "yup";
+import axios from "axios";
+
+type GeneralSurveyStruct = {
+    age: string;
+    sex: string;
+    career: string;
+    institution: string;
+    date: Date;
+    grade: string;
+    previousBurnout: boolean;
+    physicalActivity: boolean;
+    psychiatricTreatment: boolean;
+    psychologicalTreatment: boolean;
+};
+
+const initialState: GeneralSurveyStruct = {
+    age: "",
+    sex: "",
+    career: "",
+    institution: "",
+    date: new Date(),
+    grade: "",
+    previousBurnout: false,
+    physicalActivity: false,
+    psychiatricTreatment: false,
+    psychologicalTreatment: false,
+};
+
+const validationSchema = Yup.object().shape({
+    age: Yup.number().min(0, "Inserta una edad válida").required("Dato obligatorio"),
+    sex: Yup.string().required("Es obligatorio especificar el sexo, caso contrario elige 'otro'"),
+    career: Yup.string().required("La carrera estudiada es obligatoria"),
+    institution: Yup.string().required("La institución de estudio es obligatorio"),
+    date: Yup.date().required("Inserta una fecha válida de ingreso"),
+    grade: Yup.number().min(0, "Inserta un grado válido").required("El grado de estudio es obligatorio, inserta el número independientemente de la cantidad que sea (año: 2, semestre: 3, cuatrimestre: 4)"),
+    previousBurnout: Yup.boolean().required("¿No se sabe si hay burnout?"),
+    physicalActivity: Yup.boolean().required("¿No se sabe si se hace condición física?"),
+    psychiatricTreatment: Yup.boolean().required("¿No se sabe si se sigue tratamiento psiquiátrico?"),
+    psychologicalTreatment: Yup.boolean().required("¿No se sabe si se sigue tratamiento psicológico?"),
+});
 
 interface GeneralSurveyProps {
     onNavigateToHome: () => void;
@@ -21,33 +63,48 @@ export default function GeneralSurvey({
     onNavigateToHome,
     onNavigateToLogin,
 }: GeneralSurveyProps) {
-    const [age, setAge] = useState('');
-    const [sex, setSex] = useState('');
-    const [sexOther, setSexOther] = useState('');
-    const [career, setCareer] = useState('');
-    const [school, setSchool] = useState('');
-    const [date, setDate] = useState('');
-    const [grade, setGrade] = useState('');
-    const [previousBurnout, setPreviousBurnout] = useState('');
-    const [physicalActivity, setPhysicalActivity] = useState('');
-    const [psychiatricTreatment, setPsychiatricTreatment] = useState('');
-    const [psychologicalTreatment, setPsychologicalTreatment] = useState('');
+    const [info, setInfo] = useState <GeneralSurveyStruct>(initialState)
     const [error, setError] = useState('');
 
-    const handleSubmit = () => {
-        if (!age.trim() || !sex || !career.trim() || !school.trim() || !date.trim() || !grade) {
-            setError('Todos los campos obligatorios deben completarse.');
-            return;
+    const handleChange = (name: keyof GeneralSurveyStruct, value: string|number|boolean|Date) => {
+        if (name === "date") {
+            setInfo({ ...info, [name]: value as Date });
+        } else if (name === "age" || name === "grade") {
+            setInfo({...info, [name]: Number(value)});
+        } else if (name === "sex" || name === "career" || name === "institution") {
+            setInfo({...info, [name]: value})
+        } else {
+            setInfo({...info, [name]: Boolean(value)})
         }
+    }
 
-        if (sex === 'Otro' && !sexOther.trim()) {
-            setError('Por favor especifica tu género.');
-            return;
+    const handleSubmit = async () => {
+        try {
+            await validationSchema.validate(info, { abortEarly: false});
+
+            //Payload (para poner el formato del handlesubmit)
+            const payload = {
+                ...info,
+                date: info.date.toISOString(),
+            };
+
+            console.info("Datos entregados: ", payload);
+
+            await axios.post("http://127.0.0.1:5000/general/:id", payload);
+
+            setError('');
+            Alert.alert('Encuesta completada', 'Tu encuesta ha sido registrada correctamente.');
+            onNavigateToHome();
+        } catch (err: any) {
+            if (err && err.inner) {
+                const mensajes = err.inner.map((e:any) => `- ${e.message}`).join("\n");
+                setError(`Error de validación: ${mensajes}`);
+            } else if (err && err.message) {
+                setError(`Error: ${err.message}`);
+            } else {
+                setError('Error desconocido');
+            }
         }
-
-        setError('');
-        Alert.alert('Encuesta completada', 'Tu encuesta ha sido registrada correctamente.');
-        onNavigateToHome();
     };
 
     return (
@@ -69,38 +126,38 @@ export default function GeneralSurvey({
                         <TextInput
                             style={styles.input}
                             placeholder="Ej: 22"
-                            value={age}
-                            onChangeText={setAge}
+                            value={info.age.toString()}
+                            onChangeText={(val) => handleChange("age", val)}
                             keyboardType="numeric"
                         />
 
                         <Text style={styles.label}>Sexo</Text>
                         <View style={{ flexDirection: 'row', gap: 10, marginBottom: 10 }}>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: sex === 'M' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setSex('M')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.sex === 'Masculino' ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("sex", "Masculino")}
                             >
                                 <Text style={styles.submitButtonText}>Masculino</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: sex === 'F' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setSex('F')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.sex === 'Femenino' ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("sex", "Femenino")}
                             >
                                 <Text style={styles.submitButtonText}>Femenino</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: sex === 'Otro' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setSex('Otro')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.sex === 'Otro' ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("sex", "Otro")}
                             >
                                 <Text style={styles.submitButtonText}>Otro</Text>
                             </TouchableOpacity>
                         </View>
-                        {sex === 'Otro' && (
+                        {info.sex === 'Otro' && (
                             <TextInput
                                 style={styles.input}
                                 placeholder="Especifica tu género"
-                                value={sexOther}
-                                onChangeText={setSexOther}
+                                value={info.sex.toString()}
+                                onChangeText={(val) => handleChange("sex", val)}
                                 autoCapitalize="words"
                             />
                         )}
@@ -109,48 +166,65 @@ export default function GeneralSurvey({
                         <TextInput
                             style={styles.input}
                             placeholder="Ej: Ingeniería en Sistemas"
-                            value={career}
-                            onChangeText={setCareer}
+                            value={info.career.toString()}
+                            onChangeText={(val) => handleChange("career", val)}
                             autoCapitalize="words"
                         />
 
                         <Text style={styles.label}>Institución Educativa</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Ej: Universidad..."
-                            value={school}
-                            onChangeText={setSchool}
+                            placeholder="Ej: Ingeniería en Sistemas"
+                            value={info.institution}
+                            onChangeText={(val) => handleChange("institution", val)}
                             autoCapitalize="words"
                         />
 
                         <Text style={styles.label}>Fecha de Ingreso</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ej: 2022-01-15"
-                            value={date}
-                            onChangeText={setDate}
+                        <View style={styles.calendarContainer}>
+                        <CalendarPicker
+                            onDateChange={(val: Date) => handleChange("date", val)}
+                            allowRangeSelection={false}   // Solo permite seleccionar un día
+                            selectedStartDate={info.date}
+
+                            //Estilos
+                            textStyle={styles.calendarText}                 
+                            selectedDayStyle={styles.selectedDay}           
+                            selectedDayTextStyle={styles.selectedDayText}   
+                            todayTextStyle={styles.todayText}               
+                            monthTitleStyle={styles.monthTitle}             
+                            yearTitleStyle={styles.monthTitle}              
+                            dayLabelsStyle={styles.weekDayLabels}
+                            scaleFactor={350}          
                         />
+
+                        {info.date && (
+                            <Text style={styles.submitButtonText}>
+                            Día seleccionado: {info.date.toDateString()}
+                            </Text>
+                        )}
+                        </View>
 
                         <Text style={styles.label}>Grado/Semestre/Cuatrimestre</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Ej: 5"
-                            value={grade}
-                            onChangeText={setGrade}
+                            value={info.grade.toString()}
+                            onChangeText={(val) => handleChange("grade", val)}
                             keyboardType="numeric"
                         />
 
                         <Text style={styles.label}>¿Ha experimentado burnout previamente?</Text>
                         <View style={{ flexDirection: 'row', gap: 10 }}>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: previousBurnout === 'Sí' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setPreviousBurnout('Sí')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.previousBurnout === true ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("previousBurnout", true)}
                             >
                                 <Text style={styles.submitButtonText}>Sí</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: previousBurnout === 'No' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setPreviousBurnout('No')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.previousBurnout === false ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("previousBurnout", false)}
                             >
                                 <Text style={styles.submitButtonText}>No</Text>
                             </TouchableOpacity>
@@ -159,14 +233,14 @@ export default function GeneralSurvey({
                         <Text style={styles.label}>¿Realiza actividad física regularmente?</Text>
                         <View style={{ flexDirection: 'row', gap: 10 }}>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: physicalActivity === 'Sí' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setPhysicalActivity('Sí')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.physicalActivity === true ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("physicalActivity", true)}
                             >
                                 <Text style={styles.submitButtonText}>Sí</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: physicalActivity === 'No' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setPhysicalActivity('No')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.physicalActivity === false ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("physicalActivity", false)}
                             >
                                 <Text style={styles.submitButtonText}>No</Text>
                             </TouchableOpacity>
@@ -175,14 +249,14 @@ export default function GeneralSurvey({
                         <Text style={styles.label}>¿Está en tratamiento psiquiátrico?</Text>
                         <View style={{ flexDirection: 'row', gap: 10 }}>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: psychiatricTreatment === 'Sí' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setPsychiatricTreatment('Sí')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.psychiatricTreatment === true ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("psychiatricTreatment", true)}
                             >
                                 <Text style={styles.submitButtonText}>Sí</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: psychiatricTreatment === 'No' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setPsychiatricTreatment('No')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.psychiatricTreatment === false ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("psychiatricTreatment", false)}
                             >
                                 <Text style={styles.submitButtonText}>No</Text>
                             </TouchableOpacity>
@@ -191,14 +265,14 @@ export default function GeneralSurvey({
                         <Text style={styles.label}>¿Está en tratamiento psicológico?</Text>
                         <View style={{ flexDirection: 'row', gap: 10 }}>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: psychologicalTreatment === 'Sí' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setPsychologicalTreatment('Sí')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.psychologicalTreatment === true ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("psychologicalTreatment", true)}
                             >
                                 <Text style={styles.submitButtonText}>Sí</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: psychologicalTreatment === 'No' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setPsychologicalTreatment('No')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.psychologicalTreatment === false ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("psychologicalTreatment", false)}
                             >
                                 <Text style={styles.submitButtonText}>No</Text>
                             </TouchableOpacity>
@@ -215,3 +289,11 @@ export default function GeneralSurvey({
         </SafeAreaView>
     );
 }
+
+//<Text style={styles.label}>Fecha de Ingreso</Text>
+//<TextInput
+//    style={styles.input}
+//    placeholder="Ej: 2022-01-15"
+//    value={}
+//    onChangeText={setDate}
+///>
