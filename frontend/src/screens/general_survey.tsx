@@ -16,12 +16,12 @@ import * as Yup from "yup";
 import axios from "axios";
 
 type GeneralSurveyStruct = {
-    age: number;
+    age: string;
     sex: string;
     career: string;
     institution: string;
     date: Date;
-    grade: number;
+    grade: string;
     previousBurnout: boolean;
     physicalActivity: boolean;
     psychiatricTreatment: boolean;
@@ -29,12 +29,12 @@ type GeneralSurveyStruct = {
 };
 
 const initialState: GeneralSurveyStruct = {
-    age: -1,
+    age: "",
     sex: "",
     career: "",
     institution: "",
     date: new Date(),
-    grade: -1,
+    grade: "",
     previousBurnout: false,
     physicalActivity: false,
     psychiatricTreatment: false,
@@ -81,7 +81,16 @@ export default function GeneralSurvey({
     const handleSubmit = async () => {
         try {
             await validationSchema.validate(info, { abortEarly: false});
-            console.info("Datos entregados: ", info);
+
+            //Payload (para poner el formato del handlesubmit)
+            const payload = {
+                ...info,
+                date: info.date.toISOString(),
+            };
+
+            console.info("Datos entregados: ", payload);
+
+            await axios.post("http://127.0.0.1:5000/general/:id", payload);
 
             setError('');
             Alert.alert('Encuesta completada', 'Tu encuesta ha sido registrada correctamente.');
@@ -96,11 +105,6 @@ export default function GeneralSurvey({
                 setError('Error desconocido');
             }
         }
-    };
-
-    const handleCancel = () => {
-        setInfo(initialState);
-        onNavigateToLogin();
     };
 
     return (
@@ -130,14 +134,14 @@ export default function GeneralSurvey({
                         <Text style={styles.label}>Sexo</Text>
                         <View style={{ flexDirection: 'row', gap: 10, marginBottom: 10 }}>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: info.sex === 'M' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => handleChange("sex", "M")}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.sex === 'Masculino' ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("sex", "Masculino")}
                             >
                                 <Text style={styles.submitButtonText}>Masculino</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: info.sex === 'F' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => handleChange("sex", "F")}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.sex === 'Femenino' ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("sex", "Femenino")}
                             >
                                 <Text style={styles.submitButtonText}>Femenino</Text>
                             </TouchableOpacity>
@@ -177,18 +181,28 @@ export default function GeneralSurvey({
                         />
 
                         <Text style={styles.label}>Fecha de Ingreso</Text>
-                        <View style={{ flex: 1, padding: 20 }}>
-                            <CalendarPicker
-                                onDateChange={(val: Date) => handleChange("date", val)}
-                                allowRangeSelection={false}   // Solo permite seleccionar un día
-                                selectedStartDate={info.date}
-                            />
+                        <View style={styles.calendarContainer}>
+                        <CalendarPicker
+                            onDateChange={(val: Date) => handleChange("date", val)}
+                            allowRangeSelection={false}   // Solo permite seleccionar un día
+                            selectedStartDate={info.date}
 
-                            {info.date && (
-                                <Text style={styles.submitButtonText}>
-                                Día seleccionado: {info.date.toString()}
-                                </Text>
-                            )}
+                            //Estilos
+                            textStyle={styles.calendarText}                 
+                            selectedDayStyle={styles.selectedDay}           
+                            selectedDayTextStyle={styles.selectedDayText}   
+                            todayTextStyle={styles.todayText}               
+                            monthTitleStyle={styles.monthTitle}             
+                            yearTitleStyle={styles.monthTitle}              
+                            dayLabelsStyle={styles.weekDayLabels}
+                            scaleFactor={350}          
+                        />
+
+                        {info.date && (
+                            <Text style={styles.submitButtonText}>
+                            Día seleccionado: {info.date.toDateString()}
+                            </Text>
+                        )}
                         </View>
 
                         <Text style={styles.label}>Grado/Semestre/Cuatrimestre</Text>
