@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -14,6 +14,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/signup_screen';
 import * as Yup from "yup";
 import axios from "axios";
+
+axios.defaults.withCredentials = true;
 
 type GeneralSurveyStruct = {
     age: string;
@@ -65,6 +67,17 @@ export default function GeneralSurvey({
 }: GeneralSurveyProps) {
     const [info, setInfo] = useState <GeneralSurveyStruct>(initialState)
     const [error, setError] = useState('');
+    const [usuario, setUsuario] = useState({id: "", nombre: "", apellido: "", correo: ""})
+
+    useEffect(() => {
+        axios.get("http://127.0.0.1:5000/account/me").then(res => {
+            if (res.data.loggedIn) {
+                setUsuario(res.data.usuario);
+            }
+        }).catch(err => {
+            console.error("No hay sesión activa: ", err.response?.data || err.message);
+        });
+    }, []);
 
     const handleChange = (name: keyof GeneralSurveyStruct, value: string|number|boolean|Date) => {
         if (name === "date") {
@@ -72,7 +85,7 @@ export default function GeneralSurvey({
         } else if (name === "age" || name === "grade") {
             setInfo({...info, [name]: Number(value)});
         } else if (name === "sex" || name === "career" || name === "institution") {
-            setInfo({...info, [name]: value})
+            setInfo({...info, [name]: value.toString()})
         } else {
             setInfo({...info, [name]: Boolean(value)})
         }
@@ -90,19 +103,28 @@ export default function GeneralSurvey({
 
             console.info("Datos entregados: ", payload);
 
-            await axios.post("http://127.0.0.1:5000/general/:id", payload);
+            const status = await axios.post(`http://127.0.0.1:5000/general/${usuario.id}`, payload);
+
+            if (status.status == 400) {
+                return setError(`${status.data.error}`);
+            } else if (status.status == 500) {
+                return setError(`Error interno: ${status.data}`)
+            }
 
             setError('');
             Alert.alert('Encuesta completada', 'Tu encuesta ha sido registrada correctamente.');
             onNavigateToHome();
         } catch (err: any) {
-            if (err && err.inner) {
-                const mensajes = err.inner.map((e:any) => `- ${e.message}`).join("\n");
-                setError(`Error de validación: ${mensajes}`);
-            } else if (err && err.message) {
-                setError(`Error: ${err.message}`);
+            if (err.name === "ValidationError") {
+                // Errores de validación de Yup
+                const mensajes = err.inner.map((e: any) => `• ${e.message}`).join("\n");
+                setError(`Errores de validación:\n${mensajes}`);
+            } else if (err.response) {
+                // Errores del backend
+                setError(`Error del servidor: ${err.response.data.error || err.message}`);
             } else {
-                setError('Error desconocido');
+                // Otros errores
+                setError(`Error inesperado: ${err.message || 'Error desconocido'}`);
             }
         }
     };
@@ -152,7 +174,7 @@ export default function GeneralSurvey({
                                 <Text style={styles.submitButtonText}>Otro</Text>
                             </TouchableOpacity>
                         </View>
-                        {info.sex === 'Otro' && (
+                        {(info.sex !== 'Masculino' && info.sex !== "Femenino") && (
                             <TextInput
                                 style={styles.input}
                                 placeholder="Especifica tu género"
@@ -174,7 +196,7 @@ export default function GeneralSurvey({
                         <Text style={styles.label}>Institución Educativa</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Ej: Ingeniería en Sistemas"
+                            placeholder="Ej: Universidad Tecnológica de Durango"
                             value={info.institution}
                             onChangeText={(val) => handleChange("institution", val)}
                             autoCapitalize="words"

@@ -11,6 +11,34 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/signup_screen';
+import * as Yup from "yup";
+import axios from "axios";
+
+axios.defaults.withCredentials = true;
+
+type RegisterStruct = {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+};
+
+const initialState: RegisterStruct = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+};
+
+const validationSchema = Yup.object().shape({
+    firstName: Yup.string().required("Es obligatorio insertar tu/s nombre/s"),
+    lastName: Yup.string().required("Es obligatorio insertar tus apellidos"),
+    email: Yup.string().email("Formato de correo incorrecto").required("Es obligatorio el correo electrónico"),
+    password: Yup.string().required("La contraseña es obligatoria").min(8),
+    confirmPassword: Yup.string().required("Es obligatorio confirmar la contraseña").oneOf([Yup.ref(`password`)], "Las contraseñas no coinciden"),
+});
 
 interface SignupScreenProps {
     onNavigateToHome: () => void;
@@ -21,27 +49,42 @@ export default function SignupScreen({
     onNavigateToHome,
     onNavigateToLogin,
 }: SignupScreenProps) {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [session, setSession] = useState<RegisterStruct>(initialState)
     const [error, setError] = useState('');
 
-    const handleRegister = () => {
-        if (!firstName.trim() || !lastName.trim() || !email.trim() || !password || !confirmPassword) {
-            setError('Todos los campos son obligatorios.');
-            return;
-        }
+    const handleChange = (name: keyof RegisterStruct, value: string) => {
+        setSession({... session, [name]: value})
+    };
 
-        if (password !== confirmPassword) {
-            setError('Las contraseñas no coinciden.');
-            return;
-        }
+    const handleRegister = async () => {
+        try {
+            //Validación
+            await validationSchema.validate(session, {abortEarly: false});
 
-        setError('');
-        Alert.alert('Registro exitoso', 'Tu cuenta ha sido creada correctamente.');
-        onNavigateToHome();
+            console.info("Dato entregados: ", session);
+
+            const status = await axios.post(`http://127.0.0.1:5000/account/register`, session);
+
+            if (status.status == 500) {
+                return setError(`Error interno: ${status.data.error}`)
+            }
+
+            setError('');
+            Alert.alert('Registro exitoso', 'Tu cuenta ha sido creada correctamente.');
+            onNavigateToHome();
+        } catch (err: any) {
+            if (err.name == "ValidationError") {
+                //Validación de Yup
+                const mensajes = err.inner.map((e: any) => `• ${e.message}`).join("\n");
+                setError(`Errores de validación:\n ${mensajes}`);
+            } else if (err.response) {
+                //Backend
+                setError(`Error del servidor: ${err.response.data.error || err.message}`);
+            } else {
+                //Otros
+                setError(`Error inesperado: ${err.message || "Error desconocido"}`);
+            }
+        }
     };
 
     return (
@@ -71,8 +114,8 @@ export default function SignupScreen({
                         <TextInput
                             style={styles.input}
                             placeholder="Nombre"
-                            value={firstName}
-                            onChangeText={setFirstName}
+                            value={session.firstName}
+                            onChangeText={(val) => handleChange("firstName", val)}
                             autoCapitalize="words"
                         />
 
@@ -80,8 +123,8 @@ export default function SignupScreen({
                         <TextInput
                             style={styles.input}
                             placeholder="Apellido(s)"
-                            value={lastName}
-                            onChangeText={setLastName}
+                            value={session.lastName}
+                            onChangeText={(val) => handleChange("lastName", val)}
                             autoCapitalize="words"
                         />
 
@@ -89,8 +132,8 @@ export default function SignupScreen({
                         <TextInput
                             style={styles.input}
                             placeholder="Correo electrónico"
-                            value={email}
-                            onChangeText={setEmail}
+                            value={session.email}
+                            onChangeText={(val) => handleChange("email", val)}
                             keyboardType="email-address"
                             autoCapitalize="none"
                         />
@@ -99,8 +142,8 @@ export default function SignupScreen({
                         <TextInput
                             style={styles.input}
                             placeholder="Contraseña"
-                            value={password}
-                            onChangeText={setPassword}
+                            value={session.password}
+                            onChangeText={(val) => handleChange("password", val)}
                             secureTextEntry
                             autoCapitalize="none"
                         />
@@ -109,8 +152,8 @@ export default function SignupScreen({
                         <TextInput
                             style={styles.input}
                             placeholder="Repetir contraseña"
-                            value={confirmPassword}
-                            onChangeText={setConfirmPassword}
+                            value={session.confirmPassword}
+                            onChangeText={(val) => handleChange("confirmPassword", val)}
                             secureTextEntry
                             autoCapitalize="none"
                         />
