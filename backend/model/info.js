@@ -13,7 +13,7 @@ const port = 5000;
 //Restricciones
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-app.use(cors());
+app.use(cors({credentials: true}));
 
 //Datos de sesión
 app.use(
@@ -50,6 +50,17 @@ app.post("/account/register", async (req, res) => {
       fecha,
     ]);
     console.log(result);
+
+    const sql2 = "SELECT id_alumno, nombre, apellidos, correo FROM alumnos where correo = $1"
+    const usuarioResult = await pool.query(sql2, [correo]);
+    const usuario = usuarioResult.rows[0]
+    req.session.usuario = {
+      id: usuario.id_alumno,
+      nombre: usuario.nombre,
+      apellidos: usuario.apellidos,
+      correo: usuario.correo,
+    };
+
     return res.status(201).send(result.rows || result);
   } catch (err) {
     console.error(err);
@@ -169,6 +180,15 @@ app.delete("/account/delete/:id", async (req, res) => {
     return res.status(500).send(err);
   }
 });
+
+//Pedir datos de la sesión
+app.get("/account/me", (req, res) => {
+  if (!req.session.usuario) {
+    return res.status(401).send({loggedIn: false, error: "Acceso no autorizado"});
+  } else {
+    return res.json({loggedIn: true,usuario: req.session.usuario});
+  }
+})
 
 //Funciones de base de datos
 //Endpoint inicial
