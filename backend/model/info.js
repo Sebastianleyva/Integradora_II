@@ -70,10 +70,12 @@ app.post("/account/register", async (req, res) => {
 
 //Login
 app.post("/account/login", async (req, res) => {
-  const { correo, contra } = req.body;
-  const sql = "SELECT * FROM alumnos WHERE correo = $1;";
   try {
+    const { correo, contra } = req.body;
+    const sql = "SELECT * FROM alumnos WHERE correo = $1;";
     const result = await pool.query(sql, [correo]);
+
+    console.log(correo, contra);
     if (result.rows.length === 0) {
       console.error("Usuario no encontrado");
       return res.status(404).send("Alumno no encontrado");
@@ -81,45 +83,35 @@ app.post("/account/login", async (req, res) => {
 
     const usuario = result.rows[0];
     const ver = await bcrypt.compare(contra, usuario.contrasena);
+
     if (!ver) {
       console.error("La contraseña es incorrecta");
-      return res.status(400).send("Contraseña incorrecta");
-    } else {
-      req.session.usuario = {
-        id: usuario.id_alumno,
-        nombre: usuario.nombre,
-        apellidos: usuario.apellidos,
-        correo: usuario.correo,
-      };
-      console.log(usuario);
-      const usuario = result.rows[0];
-      const ver = await bcrypt.compare(contra, usuario.contrasena);
-
-      if (!ver) {
-        console.error("La contraseña es incorrecta");
-        return res.status(400).send("Contraseña incorrecta");
-      } else {
-        req.session.usuario = {
-            id: usuario.id_alumno,
-            nombre: usuario.nombre,
-            apellidos: usuario.apellidos,
-            correo: usuario.correo,
-        };
-
-        return res.status(200).json({
-            mensaje: "Inicio de sesión exitoso",
-            id: usuario.id_alumno,
-            nombre: usuario.nombre,
-            apellidos: usuario.apellidos,
-            correo: usuario.correo,
-        });
-      }
+      return res.status(401).send("Contraseña incorrecta");
     }
+
+    // Guardar datos en la sesión
+    req.session.usuario = {
+      id: usuario.id_alumno,
+      nombre: usuario.nombre,
+      apellidos: usuario.apellidos,
+      correo: usuario.correo,
+    };
+
+    console.log("Usuario autenticado:", usuario);
+
+    return res.status(200).json({
+      mensaje: "Inicio de sesión exitoso",
+      id: usuario.id_alumno,
+      nombre: usuario.nombre,
+      apellidos: usuario.apellidos,
+      correo: usuario.correo,
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).send({ error: err.message || err });
   }
 });
+
 
 //Cerrar sesión
 app.get("/account/logout", (req, res) => {
