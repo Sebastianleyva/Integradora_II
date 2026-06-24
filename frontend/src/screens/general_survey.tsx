@@ -9,7 +9,6 @@ import {
     KeyboardAvoidingView,
     Platform,
 } from 'react-native';
-import CalendarPicker from "react-native-calendar-picker";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/signup_screen';
 import * as Yup from "yup";
@@ -65,9 +64,9 @@ export default function GeneralSurvey({
     onNavigateToHome,
     onNavigateToLogin,
 }: GeneralSurveyProps) {
-    const [info, setInfo] = useState <GeneralSurveyStruct>(initialState)
+    const [info, setInfo] = useState<GeneralSurveyStruct>(initialState)
     const [error, setError] = useState('');
-    const [usuario, setUsuario] = useState({id: "", nombre: "", apellido: "", correo: ""})
+    const [usuario, setUsuario] = useState({ id: "", nombre: "", apellido: "", correo: "" })
 
     useEffect(() => {
         axios.get("http://127.0.0.1:5000/account/me").then(res => {
@@ -79,21 +78,21 @@ export default function GeneralSurvey({
         });
     }, []);
 
-    const handleChange = (name: keyof GeneralSurveyStruct, value: string|number|boolean|Date) => {
+    const handleChange = (name: keyof GeneralSurveyStruct, value: string | number | boolean | Date) => {
         if (name === "date") {
             setInfo({ ...info, [name]: value as Date });
         } else if (name === "age" || name === "grade") {
-            setInfo({...info, [name]: Number(value)});
+            setInfo({ ...info, [name]: Number(value) });
         } else if (name === "sex" || name === "career" || name === "institution") {
-            setInfo({...info, [name]: value.toString()})
+            setInfo({ ...info, [name]: value.toString() })
         } else {
-            setInfo({...info, [name]: Boolean(value)})
+            setInfo({ ...info, [name]: Boolean(value) })
         }
     }
 
     const handleSubmit = async () => {
         try {
-            await validationSchema.validate(info, { abortEarly: false});
+            await validationSchema.validate(info, { abortEarly: false });
 
             //Payload (para poner el formato del handlesubmit)
             const payload = {
@@ -201,32 +200,6 @@ export default function GeneralSurvey({
                             onChangeText={(val) => handleChange("institution", val)}
                             autoCapitalize="words"
                         />
-
-                        <Text style={styles.label}>Fecha de Ingreso</Text>
-                        <View style={styles.calendarContainer}>
-                        <CalendarPicker
-                            onDateChange={(val: Date) => handleChange("date", val)}
-                            allowRangeSelection={false}   // Solo permite seleccionar un día
-                            selectedStartDate={info.date}
-
-                            //Estilos
-                            textStyle={styles.calendarText}                 
-                            selectedDayStyle={styles.selectedDay}           
-                            selectedDayTextStyle={styles.selectedDayText}   
-                            todayTextStyle={styles.todayText}               
-                            monthTitleStyle={styles.monthTitle}             
-                            yearTitleStyle={styles.monthTitle}              
-                            dayLabelsStyle={styles.weekDayLabels}
-                            scaleFactor={350}          
-                        />
-
-                        {info.date && (
-                            <Text style={styles.submitButtonText}>
-                            Día seleccionado: {info.date.toDateString()}
-                            </Text>
-                        )}
-                        </View>
-
                         <Text style={styles.label}>Grado/Semestre/Cuatrimestre</Text>
                         <TextInput
                             style={styles.input}

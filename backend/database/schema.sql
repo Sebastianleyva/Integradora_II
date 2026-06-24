@@ -78,7 +78,6 @@ CREATE TABLE public.encuesta_general (
     sexo character(1) NOT NULL,
     carrera character varying(100) NOT NULL,
     institucion character varying(100) NOT NULL,
-    fecha date NOT NULL,
     n_inscripcion integer NOT NULL,
     burnout_previo boolean NOT NULL,
     actividad_f boolean NOT NULL,

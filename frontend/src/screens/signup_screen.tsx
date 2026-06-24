@@ -53,13 +53,13 @@ export default function SignupScreen({
     const [error, setError] = useState('');
 
     const handleChange = (name: keyof RegisterStruct, value: string) => {
-        setSession({... session, [name]: value})
+        setSession({ ...session, [name]: value })
     };
 
     const handleRegister = async () => {
         try {
             //Validación
-            await validationSchema.validate(session, {abortEarly: false});
+            await validationSchema.validate(session, { abortEarly: false });
 
             console.info("Dato entregados: ", session);
 
