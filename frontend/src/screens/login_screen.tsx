@@ -3,6 +3,7 @@ import {
     View,
     Text,
     TextInput,
+    Alert,
     TouchableOpacity,
     ScrollView,
     ActivityIndicator,
@@ -10,6 +11,25 @@ import {
     Platform,
 } from 'react-native';
 import styles from '../styles/login_screen';
+import * as Yup from "yup";
+import axios from "axios";
+
+axios.defaults.withCredentials = true;
+
+type LoginStruct = {
+    email: string;
+    password: string
+};
+
+const initialState: LoginStruct = {
+    email: "",
+    password: "",
+};
+
+const validationSchema = Yup.object().shape({
+    email: Yup.string().email("Formato de correo incorrecto").required("Es obligatorio el correo electrónico"),
+    password: Yup.string().required("La contraseña es obligatoria"),
+});
 
 interface LoginScreenProps {
     onNavigateToHome: () => void;
@@ -20,17 +40,52 @@ export default function LoginScreen({
     onNavigateToHome,
     onNavigateToSignup,
 }: LoginScreenProps) {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [session, setSession] = useState<LoginStruct>(initialState);
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
+    const handleChange = (name: keyof LoginStruct, value: string) => {
+        setSession({... session, [name]: value});
+    };
+
     const handleLogin = async () => {
-        setLoading(true);
-        setTimeout(() => {
+        try {
+            setLoading(true);
+            await validationSchema.validate(session, {abortEarly: false});
+            
+            const payload = {
+                correo: session.email,
+                contra: session.password
+            };
+
+            console.info("Datos entregados: ", payload)
+            
+            const status = await axios.post(`http://10.0.2.2:5000/account/login`, payload);
+
             setLoading(false);
             onNavigateToHome();
-        }, 800);
+        } catch (err: any) {
+            if (err.name == "ValidationError") {
+                const mensajes = err.inner.map((e: any) => `• ${e.message}`).join("\n");
+                Alert.alert(`Errores de validación:\n ${mensajes}`);
+            } else if (err.response) {
+                if (err.status == 401) {
+                    setLoading(false);
+                    return Alert.alert(err.data);
+                } else if (err.status == 404) {
+                    setLoading(false);
+                    return Alert.alert("No se pudo encontrar el correo electrónico.");
+                } else if (err.status == 500) {
+                    setLoading(false)
+                    return Alert.alert(`Error interno: ${err.data.error}`);
+                } else {
+                    Alert.alert(`Error del servidor: ${err.response.data.error || err.message}`);
+                }
+            } else {
+                Alert.alert(`Error inesperado: ${err.message || "Error desconocido"}`)
+            }
+            setLoading(false);
+        }
     };
 
     const handleForgotPassword = () => {
@@ -61,8 +116,8 @@ export default function LoginScreen({
                             style={styles.input}
                             placeholder="correo@ejemplo.com"
                             placeholderTextColor="#999"
-                            value={email}
-                            onChangeText={setEmail}
+                            value={session.email}
+                            onChangeText={(val) => handleChange("email", val)}
                             keyboardType="email-address"
                             editable={!loading}
                             autoCapitalize="none"
@@ -77,15 +132,15 @@ export default function LoginScreen({
                                 style={styles.passwordInput}
                                 placeholder="••••••••"
                                 placeholderTextColor="#999"
-                                value={password}
-                                onChangeText={setPassword}
+                                value={session.password}
+                                onChangeText={(val) => handleChange("password", val)}
                                 secureTextEntry={!showPassword}
                                 editable={!loading}
                             />
                             <TouchableOpacity
                                 style={styles.eyeButton}
                                 onPress={() => setShowPassword(!showPassword)}
-                                disabled={!password}
+                                disabled={!session.password}
                             >
                                 <Text style={styles.eyeIcon}>
                                     {showPassword ? '👁️' : '👁️‍🗨️'}
@@ -128,5 +183,3 @@ export default function LoginScreen({
         </KeyboardAvoidingView>
     );
 }
-
-

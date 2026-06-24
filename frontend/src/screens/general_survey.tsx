@@ -70,12 +70,13 @@ export default function GeneralSurvey({
     const [usuario, setUsuario] = useState({id: "", nombre: "", apellido: "", correo: ""})
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:5000/account/me").then(res => {
+        axios.get("http://10.0.2.2:5000/account/me").then(res => {
             if (res.data.loggedIn) {
                 setUsuario(res.data.usuario);
             }
         }).catch(err => {
             console.error("No hay sesión activa: ", err.response?.data || err.message);
+            setError(`No hay sesión activa, ${err.response?.data || err.message}`);
         });
     }, []);
 
@@ -97,19 +98,21 @@ export default function GeneralSurvey({
 
             //Payload (para poner el formato del handlesubmit)
             const payload = {
-                ...info,
-                date: info.date.toISOString(),
+                edad: info.age,
+                sexo: info.sex,
+                carrera: info.career,
+                instituto: info.institution,
+                fecha: info.date.toISOString(),
+                n_insc: info.grade,
+                burnout: info.previousBurnout,
+                actividad: info.physicalActivity,
+                psiquia: info.psychiatricTreatment,
+                psico: info.psychologicalTreatment,
             };
 
             console.info("Datos entregados: ", payload);
 
-            const status = await axios.post(`http://127.0.0.1:5000/general/${usuario.id}`, payload);
-
-            if (status.status == 400) {
-                return setError(`${status.data.error}`);
-            } else if (status.status == 500) {
-                return setError(`Error interno: ${status.data}`)
-            }
+            const status = await axios.post(`http://10.0.2.2:5000/general/${usuario.id}`, payload);
 
             setError('');
             Alert.alert('Encuesta completada', 'Tu encuesta ha sido registrada correctamente.');
@@ -121,7 +124,13 @@ export default function GeneralSurvey({
                 setError(`Errores de validación:\n${mensajes}`);
             } else if (err.response) {
                 // Errores del backend
-                setError(`Error del servidor: ${err.response.data.error || err.message}`);
+                if (err.status == 400) {
+                    return setError(`${err.data.error}`);
+                } else if (err.status == 500) {
+                    return setError(`Error interno: ${err.data}`);
+                } else {
+                    setError(`Error del servidor: ${err.response.data.error || err.message}`);
+                }
             } else {
                 // Otros errores
                 setError(`Error inesperado: ${err.message || 'Error desconocido'}`);
