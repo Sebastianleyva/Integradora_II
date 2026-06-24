@@ -36,7 +36,7 @@ const validationSchema = Yup.object().shape({
     firstName: Yup.string().required("Es obligatorio insertar tu/s nombre/s"),
     lastName: Yup.string().required("Es obligatorio insertar tus apellidos"),
     email: Yup.string().email("Formato de correo incorrecto").required("Es obligatorio el correo electrónico"),
-    password: Yup.string().required("La contraseña es obligatoria").min(8),
+    password: Yup.string().required("La contraseña es obligatoria").min(8, "La contraseña debe de tener un mínimo de 8 carácteres"),
     confirmPassword: Yup.string().required("Es obligatorio confirmar la contraseña").oneOf([Yup.ref(`password`)], "Las contraseñas no coinciden"),
 });
 
@@ -59,15 +59,22 @@ export default function SignupScreen({
     const handleRegister = async () => {
         try {
             //Validación
+<<<<<<< HEAD
             await validationSchema.validate(session, { abortEarly: false });
+=======
+            await validationSchema.validate(session, {abortEarly: false});
+            
+            const payload = {
+                nombre: session.firstName,
+                apellidos: session.lastName,
+                correo: session.email,
+                contra: session.password,
+            };
+>>>>>>> 6967fbf293da50c0ef1ecf8359cbee80568f3303
 
-            console.info("Dato entregados: ", session);
+            console.info("Dato entregados: ", payload);
 
-            const status = await axios.post(`http://127.0.0.1:5000/account/register`, session);
-
-            if (status.status == 500) {
-                return setError(`Error interno: ${status.data.error}`)
-            }
+            const status = await axios.post(`http://10.0.2.2:5000/account/register`, payload);
 
             setError('');
             Alert.alert('Registro exitoso', 'Tu cuenta ha sido creada correctamente.');
@@ -79,7 +86,11 @@ export default function SignupScreen({
                 setError(`Errores de validación:\n ${mensajes}`);
             } else if (err.response) {
                 //Backend
-                setError(`Error del servidor: ${err.response.data.error || err.message}`);
+                if (err.status == 500) {
+                    return setError(`Error interno: ${err.data.error}`)
+                } else {
+                    setError(`Error del servidor: ${err.response.data.error || err.message}`);
+                }
             } else {
                 //Otros
                 setError(`Error inesperado: ${err.message || "Error desconocido"}`);
@@ -169,5 +180,3 @@ export default function SignupScreen({
         </SafeAreaView>
     );
 }
-
-
