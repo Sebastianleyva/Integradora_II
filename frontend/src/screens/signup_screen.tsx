@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/signup_screen';
+import styless from '../styles/link_text';
 import * as Yup from "yup";
 import axios from "axios";
 
@@ -51,6 +52,7 @@ export default function SignupScreen({
 }: SignupScreenProps) {
     const [session, setSession] = useState<RegisterStruct>(initialState)
     const [error, setError] = useState('');
+    const [acceptedDocuments, setAcceptedDocuments] = useState(false);
 
     const handleChange = (name: keyof RegisterStruct, value: string) => {
         setSession({ ...session, [name]: value })
@@ -59,18 +61,18 @@ export default function SignupScreen({
     const handleRegister = async () => {
         try {
             //Validación
-<<<<<<< HEAD
             await validationSchema.validate(session, { abortEarly: false });
-=======
-            await validationSchema.validate(session, {abortEarly: false});
-            
+            if (!acceptedDocuments) {
+                return setError(
+                    "Debes aceptar el Aviso de Privacidad y el Consentimiento Informado para continuar."
+                );
+            }
             const payload = {
                 nombre: session.firstName,
                 apellidos: session.lastName,
                 correo: session.email,
                 contra: session.password,
             };
->>>>>>> 6967fbf293da50c0ef1ecf8359cbee80568f3303
 
             console.info("Dato entregados: ", payload);
 
@@ -170,7 +172,57 @@ export default function SignupScreen({
                         />
 
                         {error ? <Text style={styles.errorText}>{error}</Text> : null}
+                        <View style={styless.consentContainer}>
+                            <TouchableOpacity
+                                style={styless.checkboxRow}
+                                onPress={() => setAcceptedDocuments(!acceptedDocuments)}
+                                activeOpacity={0.7}
+                            >
+                                <View
+                                    style={[
+                                        styless.checkbox,
+                                        acceptedDocuments && styless.checkboxSelected,
+                                    ]}
+                                >
+                                    {acceptedDocuments && (
+                                        <Text style={styless.checkboxCheck}>✓</Text>
+                                    )}
+                                </View>
 
+                                <Text style={styless.consentText}>
+                                    He leído y acepto el Aviso de Privacidad y el Consentimiento
+                                    Informado para participar en la investigación.
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                onPress={() => {
+                                    // Navegar a pantalla de privacidad
+                                    Alert.alert(
+                                        "Aviso de Privacidad",
+                                        "Aquí posteriormente se abrirá la pantalla del Aviso de Privacidad."
+                                    );
+                                }}
+                            >
+                                <Text style={styless.linkText}>
+                                    Ver Aviso de Privacidad
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                onPress={() => {
+                                    // Navegar a pantalla de consentimiento
+                                    Alert.alert(
+                                        "Consentimiento Informado",
+                                        "Aquí posteriormente se abrirá la pantalla del Consentimiento Informado."
+                                    );
+                                }}
+                            >
+                                <Text style={styless.linkText}>
+                                    Ver Consentimiento Informado
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                         <TouchableOpacity style={styles.submitButton} onPress={handleRegister}>
                             <Text style={styles.submitButtonText}>Crear cuenta</Text>
                         </TouchableOpacity>
