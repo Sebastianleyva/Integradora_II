@@ -34,11 +34,13 @@ const validationSchema = Yup.object().shape({
 interface LoginScreenProps {
     onNavigateToHome: () => void;
     onNavigateToSignup: () => void;
+    onNavigateToSurvey: () => void;
 }
 
 export default function LoginScreen({
     onNavigateToHome,
     onNavigateToSignup,
+    onNavigateToSurvey,
 }: LoginScreenProps) {
     const [session, setSession] = useState<LoginStruct>(initialState);
     const [loading, setLoading] = useState(false);

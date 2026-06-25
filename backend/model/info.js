@@ -78,7 +78,7 @@ app.post("/account/login", async (req, res) => {
     console.log(correo, contra);
     if (result.rows.length === 0) {
       console.error("Usuario no encontrado");
-      return res.status(404).send("Alumno no encontrado");
+      return res.status(404).send("Usuario no encontrado");
     }
 
     const usuario = result.rows[0];
@@ -86,7 +86,7 @@ app.post("/account/login", async (req, res) => {
 
     if (!ver) {
       console.error("La contraseña es incorrecta");
-      return res.status(401).send("Contraseña incorrecta");
+      return res.status(401).send("La contraseña es incorrecta");
     }
 
     // Guardar datos en la sesión

@@ -41,12 +41,12 @@ const validationSchema = Yup.object().shape({
 });
 
 interface SignupScreenProps {
-    onNavigateToHome: () => void;
+    onNavigateToSurvey: () => void;
     onNavigateToLogin: () => void;
 }
 
 export default function SignupScreen({
-    onNavigateToHome,
+    onNavigateToSurvey,
     onNavigateToLogin,
 }: SignupScreenProps) {
     const [session, setSession] = useState<RegisterStruct>(initialState)
@@ -74,7 +74,7 @@ export default function SignupScreen({
 
             setError('');
             Alert.alert('Registro exitoso', 'Tu cuenta ha sido creada correctamente.');
-            onNavigateToHome();
+            onNavigateToSurvey();
         } catch (err: any) {
             if (err.name == "ValidationError") {
                 //Validación de Yup
