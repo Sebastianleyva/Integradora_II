@@ -47,45 +47,49 @@ export default function LoginScreen({
     const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (name: keyof LoginStruct, value: string) => {
-        setSession({... session, [name]: value});
+        setSession({ ...session, [name]: value });
     };
 
     const handleLogin = async () => {
         try {
             setLoading(true);
-            await validationSchema.validate(session, {abortEarly: false});
-            
+            await validationSchema.validate(session, { abortEarly: false });
+
             const payload = {
                 correo: session.email,
                 contra: session.password
             };
 
-            console.info("Datos entregados: ", payload)
-            
-            const status = await axios.post(`http://10.0.2.2:5000/account/login`, payload);
+            console.info("Datos entregados: ", payload);
 
-            setLoading(false);
+            // RECUERDA: Cambiar por IP local si estás usando un celular real
+            const response = await axios.post(`http://10.0.2.2:5000/account/login`, payload);
+
             onNavigateToHome();
         } catch (err: any) {
             if (err.name == "ValidationError") {
                 const mensajes = err.inner.map((e: any) => `• ${e.message}`).join("\n");
                 Alert.alert(`Errores de validación:\n ${mensajes}`);
             } else if (err.response) {
-                if (err.status == 401) {
-                    setLoading(false);
-                    return Alert.alert(err.data);
-                } else if (err.status == 404) {
-                    setLoading(false);
-                    return Alert.alert("No se pudo encontrar el correo electrónico.");
-                } else if (err.status == 500) {
-                    setLoading(false)
-                    return Alert.alert(`Error interno: ${err.data.error}`);
+
+                const statusCode = err.response.status;
+                const responseData = err.response.data;
+
+                if (statusCode == 401) {
+                    Alert.alert(responseData?.error || "Credenciales incorrectas.");
+                } else if (statusCode == 404) {
+                    Alert.alert("No se pudo encontrar el correo electrónico.");
+                } else if (statusCode == 500) {
+                    Alert.alert(`Error interno: ${responseData?.error || "Error en el servidor"}`);
                 } else {
-                    Alert.alert(`Error del servidor: ${err.response.data.error || err.message}`);
+                    Alert.alert(`Error del servidor: ${responseData?.error || err.message}`);
                 }
+            } else if (err.message === "Network Error") {
+                Alert.alert("Error de Red", "No se pudo conectar al servidor. Verifica la IP de tu backend y que estén en la misma red.");
             } else {
-                Alert.alert(`Error inesperado: ${err.message || "Error desconocido"}`)
+                Alert.alert(`Error inesperado: ${err.message || "Error desconocido"}`);
             }
+        } finally {
             setLoading(false);
         }
     };

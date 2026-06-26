@@ -2,12 +2,13 @@
 import "dotenv/config.js";
 import { Pool } from "pg";
 
+console.log(process.env.DB_NAME);
 // Pool de conexiones PostgreSQL
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
   database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
+  password: 1234,
   port: Number(process.env.DB_PORT),
   max: 10,
   idleTimeoutMillis: 30000,
