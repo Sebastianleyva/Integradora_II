@@ -42,7 +42,7 @@ const validationSchema = Yup.object().shape({
 
 interface RegistroComidaProps {
     datos: data
-    onNavigateToTecno: (datos:data) => void;
+    onNavigateToTecno: (datos: data) => void;
     onNavigateToHome: () => void;
 }
 
@@ -52,15 +52,15 @@ export default function RegistroComida({ datos, onNavigateToTecno, onNavigateToH
 
     const handleChange = (name: keyof data, value: string | number) => {
         if (name == "calidadSueno" || name == "calidadComida") {
-            setHoras({... horas!, [name]: Number(value)})
+            setHoras({ ...horas!, [name]: Number(value) })
         } else {
-            setHoras({... horas!, [name]: value as string})
+            setHoras({ ...horas!, [name]: value as string })
         }
     };
 
     const handleContinue = async () => {
         try {
-            await validationSchema.validate(horas, {abortEarly: false});
+            await validationSchema.validate(horas, { abortEarly: false });
 
             setError('');
             onNavigateToTecno(horas);

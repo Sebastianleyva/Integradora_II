@@ -13,7 +13,12 @@ const port = 5000;
 //Restricciones
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-app.use(cors({credentials: true}));
+app.use(
+  cors({
+    origin: true, // Permite que cualquier IP conecte
+    credentials: true, // Necesario para que combine con axios.defaults.withCredentials = true
+  }),
+);
 
 //Datos de sesión
 app.use(
@@ -51,9 +56,10 @@ app.post("/account/register", async (req, res) => {
     ]);
     console.log(result);
 
-    const sql2 = "SELECT id_alumno, nombre, apellidos, correo FROM alumnos where correo = $1"
+    const sql2 =
+      "SELECT id_alumno, nombre, apellidos, correo FROM alumnos where correo = $1";
     const usuarioResult = await pool.query(sql2, [correo]);
-    const usuario = usuarioResult.rows[0]
+    const usuario = usuarioResult.rows[0];
     req.session.usuario = {
       id: usuario.id_alumno,
       nombre: usuario.nombre,
@@ -111,7 +117,6 @@ app.post("/account/login", async (req, res) => {
     return res.status(500).send({ error: err.message || err });
   }
 });
-
 
 //Cerrar sesión
 app.get("/account/logout", (req, res) => {
@@ -176,11 +181,13 @@ app.delete("/account/delete/:id", async (req, res) => {
 //Pedir datos de la sesión
 app.get("/account/me", (req, res) => {
   if (!req.session.usuario) {
-    return res.status(401).send({loggedIn: false, error: "Acceso no autorizado"});
+    return res
+      .status(401)
+      .send({ loggedIn: false, error: "Acceso no autorizado" });
   } else {
-    return res.json({loggedIn: true,usuario: req.session.usuario});
+    return res.json({ loggedIn: true, usuario: req.session.usuario });
   }
-})
+});
 
 //Funciones de base de datos
 //Endpoint inicial
@@ -226,7 +233,7 @@ app.post("/general/:id", async (req, res) => {
         error: "La encuesta general ya fue respondida",
       });
     } else {
-        if (
+      if (
         !Number.isFinite(edad) ||
         !sexo.trim() ||
         !carrera.trim() ||
@@ -236,42 +243,42 @@ app.post("/general/:id", async (req, res) => {
         typeof actividad !== "boolean" ||
         typeof psiquia !== "boolean" ||
         typeof psico !== "boolean"
-        ) {
-            console.log(
-                Number(edad),
-                sexo,
-                carrera,
-                instituto,
-                Date(fecha),
-                Number(n_insc),
-                burnout,
-                actividad,
-                psiquia,
-                psico,
-            );
-            return res.status(400).send({
-                error:
-                "No se han insertado los datos correspondientes, inténtelo de nuevo",
-            });
-        } else {
-            // const result = await pool.query(sql, [ide, edad, sexo, carrera, instituto, fecha, n_insc, burnout, actividad, psiquia, psico, id]);
-            const sql =
-                "INSERT INTO encuesta_general (edad, sexo, carrera, institucion, fecha, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
-            const result = await pool.query(sql, [
-                edad,
-                sexo,
-                carrera,
-                instituto,
-                fecha,
-                n_insc,
-                burnout,
-                actividad,
-                psiquia,
-                psico,
-                id,
-            ]);
-            return res.status(201).send({ result });
-        }
+      ) {
+        console.log(
+          Number(edad),
+          sexo,
+          carrera,
+          instituto,
+          Date(fecha),
+          Number(n_insc),
+          burnout,
+          actividad,
+          psiquia,
+          psico,
+        );
+        return res.status(400).send({
+          error:
+            "No se han insertado los datos correspondientes, inténtelo de nuevo",
+        });
+      } else {
+        // const result = await pool.query(sql, [ide, edad, sexo, carrera, instituto, fecha, n_insc, burnout, actividad, psiquia, psico, id]);
+        const sql =
+          "INSERT INTO encuesta_general (edad, sexo, carrera, institucion, fecha, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
+        const result = await pool.query(sql, [
+          edad,
+          sexo,
+          carrera,
+          instituto,
+          fecha,
+          n_insc,
+          burnout,
+          actividad,
+          psiquia,
+          psico,
+          id,
+        ]);
+        return res.status(201).send({ result });
+      }
     }
   } catch (err) {
     console.error(err.message || err);
@@ -308,7 +315,7 @@ app.post("/registros/:id", async (req, res) => {
         error: "Ya existe un registro para hoy",
       });
     } else {
-        if (
+      if (
         !Number.isFinite(Number(h_sueno)) ||
         !Number.isFinite(Number(cal_sueno)) ||
         !Number.isFinite(Number(n_comidas)) ||
@@ -319,42 +326,42 @@ app.post("/registros/:id", async (req, res) => {
         typeof uso_ia !== "boolean" ||
         !aplicacion?.trim() ||
         !Number.isFinite(Number(pregunta_objetivo))
-        ) {
-            console.log(
-                id,
-                h_sueno,
-                cal_sueno,
-                n_comidas,
-                hor_comidas,
-                cal_consumo,
-                h_osio,
-                cal_consumo_tec,
-                uso_ia,
-                aplicacion,
-                pregunta_objetivo,
-            );
-            return res
-                .status(400)
-                .send({ error: "No se han insertado los datos correspondientes" });
-        } else {
-            const sql =
-                "INSERT INTO registro_diario (fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
-            const result = await pool.query(sql, [
-                fecha,
-                Number(h_sueno),
-                Number(cal_sueno),
-                Number(n_comidas),
-                hor_comidas,
-                Number(cal_consumo),
-                Number(h_osio),
-                Number(cal_consumo_tec),
-                uso_ia,
-                aplicacion,
-                Number(pregunta_objetivo),
-                id,
-            ]);
-            return res.status(201).send({ result });
-        }
+      ) {
+        console.log(
+          id,
+          h_sueno,
+          cal_sueno,
+          n_comidas,
+          hor_comidas,
+          cal_consumo,
+          h_osio,
+          cal_consumo_tec,
+          uso_ia,
+          aplicacion,
+          pregunta_objetivo,
+        );
+        return res
+          .status(400)
+          .send({ error: "No se han insertado los datos correspondientes" });
+      } else {
+        const sql =
+          "INSERT INTO registro_diario (fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
+        const result = await pool.query(sql, [
+          fecha,
+          Number(h_sueno),
+          Number(cal_sueno),
+          Number(n_comidas),
+          hor_comidas,
+          Number(cal_consumo),
+          Number(h_osio),
+          Number(cal_consumo_tec),
+          uso_ia,
+          aplicacion,
+          Number(pregunta_objetivo),
+          id,
+        ]);
+        return res.status(201).send({ result });
+      }
     }
   } catch (err) {
     console.error(err.message || err);
@@ -380,7 +387,7 @@ app.all("/*splat", (req, res) => {
 });
 
 //El escuchar
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Tablos controla el servidor en puerto ${port}`);
 });
 
