@@ -27,8 +27,8 @@ const initialState: LoginStruct = {
 };
 
 const validationSchema = Yup.object().shape({
-    email: Yup.string().email("Formato de correo incorrecto").required("Es obligatorio el correo electrónico"),
-    password: Yup.string().required("La contraseña es obligatoria"),
+    email: Yup.string().email("El formato del correo es invalido. Debe ser: ejemplo@dominio.com").required("Campo requerido: Ingresa tu correo electronico"),
+    password: Yup.string().required("Campo requerido: Ingresa tu contrasena"),
 });
 
 interface LoginScreenProps {
@@ -77,24 +77,24 @@ export default function LoginScreen({
             }
         } catch (err: any) {
             if (err.name == "ValidationError") {
-                const mensajes = err.inner.map((e: any) => `• ${e.message}`).join("\n");
-                Alert.alert(`Errores de validación:\n ${mensajes}`);
+                const mensajes = err.inner.map((e: any) => `${e.message}`).join("\n");
+                Alert.alert("Validación", mensajes);
             } else if (err.response) {
                 const statusCode = err.response.status;
                 const responseData = err.response.data;
                 if (statusCode == 401) {
-                    Alert.alert(responseData?.error || "Credenciales incorrectas.");
+                    Alert.alert("Acceso denegado", responseData?.error || "El correo o la contraseña son incorrectos. Verifica tus datos e intenta de nuevo.");
                 } else if (statusCode == 404) {
-                    Alert.alert("No se pudo encontrar el correo electrónico.");
+                    Alert.alert("Correo no encontrado", "No existe una cuenta con este correo. ¿Quizas querías registrarte?");
                 } else if (statusCode == 500) {
-                    Alert.alert(`Error interno: ${responseData?.error || "Error en el servidor"}`);
+                    Alert.alert("Error del servidor (500)", "El servidor está teniendo problemas. Intenta de nuevo más tarde.");
                 } else {
-                    Alert.alert(`Error del servidor: ${responseData?.error || err.message}`);
+                    Alert.alert("Error del servidor (" + statusCode + ")", responseData?.error || err.message);
                 }
             } else if (err.message === "Network Error") {
-                Alert.alert("Error de Red", "No se pudo conectar al servidor. Verifica la IP de tu backend y que estén en la misma red.");
+                Alert.alert("Error de conexión", "No se pudo conectar al servidor.\n\nSolución:\n1. Verifica tu conexión a internet\n2. Asegúrate que el backend esté disponible\n3. En dispositivo físico, cambia la IP 10.0.2.2 a tu IP local");
             } else {
-                Alert.alert(`Error inesperado: ${err.message || "Error desconocido"}`);
+                Alert.alert("Error inesperado", `${err.message || "Algo salió mal. Intenta de nuevo o contacta soporte"}`);
             }
         } finally {
             setLoading(false);
@@ -156,7 +156,7 @@ export default function LoginScreen({
                                 disabled={!session.password}
                             >
                                 <Text style={styles.eyeIcon}>
-                                    {showPassword ? '👁️' : '👁️‍🗨️'}
+                                    {showPassword ? 'Show' : 'Hide'}
                                 </Text>
                             </TouchableOpacity>
                         </View>

@@ -47,10 +47,10 @@ export default function ProfileScreen({ onLogout }: ProfileScreenProps) {
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Preferencias</Text>
                     <TouchableOpacity style={styles.settingItem}>
-                        <Text style={styles.settingText}>⚙️ Configuración</Text>
+                        <Text style={styles.settingText}>Configuración</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.settingItem}>
-                        <Text style={styles.settingText}>🔔 Notificaciones</Text>
+                        <Text style={styles.settingText}>Notificaciones</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.settingItem}>
                         <Text style={styles.settingText}>🔒 Privacidad</Text>

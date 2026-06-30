@@ -43,16 +43,16 @@ const initialState: GeneralSurveyStruct = {
 };
 
 const validationSchema = Yup.object().shape({
-    age: Yup.number().min(0, "Inserta una edad válida").required("Dato obligatorio"),
-    sex: Yup.string().required("Es obligatorio especificar el sexo, caso contrario elige 'otro'"),
-    career: Yup.string().required("La carrera estudiada es obligatoria"),
-    institution: Yup.string().required("La institución de estudio es obligatorio"),
-    date: Yup.date().required("Inserta una fecha válida de ingreso"),
-    grade: Yup.number().min(0, "Inserta un grado válido").required("El grado de estudio es obligatorio, inserta el número independientemente de la cantidad que sea (año: 2, semestre: 3, cuatrimestre: 4)"),
-    previousBurnout: Yup.boolean().required("¿No se sabe si hay burnout?"),
-    physicalActivity: Yup.boolean().required("¿No se sabe si se hace condición física?"),
-    psychiatricTreatment: Yup.boolean().required("¿No se sabe si se sigue tratamiento psiquiátrico?"),
-    psychologicalTreatment: Yup.boolean().required("¿No se sabe si se sigue tratamiento psicológico?"),
+    age: Yup.number().min(0, "Ingresa una edad valida (0 o mayor)").required("Campo requerido: Tu edad es necesaria"),
+    sex: Yup.string().required("Campo requerido: Especifica tu sexo o selecciona 'Otro'"),
+    career: Yup.string().required("Campo requerido: Ingresa tu carrera de estudio"),
+    institution: Yup.string().required("Campo requerido: Ingresa tu institucion educativa"),
+    date: Yup.date().required("Campo requerido: Selecciona la fecha en que ingresaste a estudiar"),
+    grade: Yup.number().min(0, "Ingresa un grado valido (0 o mayor)").required("Campo requerido: Especifica tu grado actual (ano: 2, semestre: 3, cuatrimestre: 4)"),
+    previousBurnout: Yup.boolean().required("Campo requerido: Indica si has sufrido de burnout antes"),
+    physicalActivity: Yup.boolean().required("Campo requerido: Especifica si realizas actividad fisica"),
+    psychiatricTreatment: Yup.boolean().required("Campo requerido: Indica si sigues tratamiento psiquiatrico"),
+    psychologicalTreatment: Yup.boolean().required("Campo requerido: Indica si sigues tratamiento psicologico"),
 });
 
 interface GeneralSurveyProps {
@@ -76,7 +76,7 @@ export default function GeneralSurvey({
             }
         }).catch(err => {
             console.error("No hay sesión activa: ", err.response?.data || err.message);
-            setError(`No hay sesión activa, ${err.response?.data || err.message}`);
+            setError(`Error de sesión: No se detectó un usuario activo.\n\nSolución: Vuelve a iniciar sesión. Si el problema persiste, cierra la app y vuelve a abrirla.`);
         });
     }, []);
 
@@ -120,22 +120,26 @@ export default function GeneralSurvey({
         } catch (err: any) {
             if (err.name === "ValidationError") {
                 // Errores de validación de Yup
-                const mensajes = err.inner.map((e: any) => `• ${e.message}`).join("\n");
-                setError(`Errores de validación:\n${mensajes}`);
+                const mensajes = err.inner.map((e: any) => `${e.message}`).join("\n");
+                setError(`${mensajes}`);
             } else if (err.response) {
                 const statusCode = err.response.status;
                 const responseData = err.response.data;
 
                 if (statusCode === 400) {
-                    return setError(responseData.error);
+                    return setError(`Datos inválidos: ${responseData.error || "Verifica que todos los campos sean correctos"}`);
+                } else if (statusCode === 409) {
+                    return setError(`Conflicto: ${responseData.error || "Ya existe un registro con esta información. Contacta soporte"}`);
                 } else if (statusCode === 500) {
-                    return setError(`Error interno: ${responseData.error}`);
+                    return setError(`Error del servidor (500): ${responseData.error || "El servidor está teniendo problemas"}.\n\nIntenta de nuevo más tarde.`);
                 } else {
-                    setError(`Error del servidor: ${responseData.error || err.message}`);
+                    setError(`Error del servidor (${statusCode}): ${responseData.error || err.message}`);
                 }
+            } else if (err.message === "Network Error") {
+                setError("Error de conexión: No se pudo conectar al servidor.\n\nSolución:\n1. Verifica tu conexión a internet\n2. Asegúrate que el backend esté disponible");
             } else {
                 // Otros errores
-                setError(`Error inesperado: ${err.message || 'Error desconocido'}`);
+                setError(`Error inesperado: ${err.message || 'Algo salió mal. Intenta de nuevo o contacta soporte'}`);
             }
         }
     };

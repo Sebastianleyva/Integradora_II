@@ -26,7 +26,7 @@ interface data {
 }
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('login');
+  const [currentScreen, setCurrentScreen] = useState<Screen>('home');
   const [encuesta, setEncuesta] = useState<data | null>(null)
 
   const renderScreen = () => {

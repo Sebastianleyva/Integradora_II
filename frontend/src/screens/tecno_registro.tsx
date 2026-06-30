@@ -12,6 +12,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/tecno_registro';
 import * as Yup from "yup";
+import { LikertScale } from '../components/LikertScale';
+import { HourIntervals } from '../components/HourIntervals';
 
 interface data {
     horasSueno: string;
@@ -32,16 +34,16 @@ const validationSchema = Yup.object().shape({
     numeroComidas: Yup.string(),
     horasComida: Yup.string(),
     calidadComida: Yup.number(),
-    horasOcio: Yup.string().required("Inserta las horas de ocio que tuviste"),
+    horasOcio: Yup.string().required("Campo requerido: Selecciona cuantas horas de ocio tuviste"),
     calidadConsumo: Yup.number()
-        .min(1, "Selecciona la calidad de tiempo de ocio con al menos 1 estrella")
-        .required("Inserta la calidad de consumo de tecnología")
-        .max(10, "No se como le hiciste alch"),
-    usoIa: Yup.boolean().required("¿De verdad medio-usaste la IA para indefinirlo?"),
+        .min(1, "Debes calificar como te sentiste usando tecnologia seleccionando una opcion en la escala")
+        .required("Campo requerido: Selecciona tu calificacion en la escala de opciones")
+        .max(10, "Error interno: valor fuera de rango"),
+    usoIa: Yup.boolean().required("Campo requerido: Selecciona si usaste IA hoy (Si o No)"),
 
     usoIaEn: Yup.string().when('usoIa', {
         is: true,
-        then: (schema) => schema.required("Por favor, selecciona en qué usaste la IA (Escuela, Trabajo o Vida personal)"),
+        then: (schema) => schema.required("Campo requerido: Especifica en que ambito usaste IA. Opciones: Escuela, Trabajo o Vida personal"),
         otherwise: (schema) => schema.notRequired(),
     }),
 
@@ -87,9 +89,10 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
             onNavigateToObjetivo(horas);
         } catch (err: any) {
             if (err.name === "ValidationError") {
-                setError(`Errores de validación:\n ${err.errors.join('\n')}`); // err.errors es un array en Yup, es mejor mostrarlo así
+                const mensajes = err.inner.map((e: any) => `${e.message}`).join("\n");
+                setError(`${mensajes}`);
             } else {
-                setError(`Error inesperado: ${err.message || "Error desconocido"}`);
+                setError(`Error inesperado: ${err.message || "Algo salió mal. Intenta de nuevo o contacta soporte"}`)
             }
         }
     };
@@ -109,34 +112,17 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
 
                     <View style={styles.form}>
                         <Text style={styles.label}>Horas de ocio</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ej: 2"
-                            keyboardType="numeric"
+                        <HourIntervals
                             value={horas.horasOcio}
-                            onChangeText={(val) => handleChange("horasOcio", val)}
+                            onChange={(val) => handleChange("horasOcio", val)}
+                            includeLongSleep={false}
                         />
 
-                        <Text style={styles.label}>¿Del 1 al 10 que tan bien te sentiste al usar tu teléfono?</Text>
-                        <View style={styles.starRow}>
-                            {Array.from({ length: 10 }, (_, index) => {
-                                const starIndex = index + 1;
-                                return (
-                                    <TouchableOpacity
-                                        key={starIndex}
-                                        style={styles.starButton}
-                                        onPress={() => handleChange("calidadConsumo", starIndex)}
-                                    >
-                                        <Text style={[
-                                            styles.star,
-                                            horas.calidadConsumo >= starIndex && styles.starSelected,
-                                        ]}>
-                                            ★
-                                        </Text>
-                                    </TouchableOpacity>
-                                );
-                            })}
-                        </View>
+                        <Text style={styles.label}>¿Qué tan bien te sentiste al usar tu teléfono?</Text>
+                        <LikertScale
+                            value={horas.calidadConsumo}
+                            onChange={(value) => handleChange("calidadConsumo", value)}
+                        />
 
                         <Text style={[styles.label, { marginTop: 8 }]}>¿Se usó IA?</Text>
                         <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
