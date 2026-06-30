@@ -62,30 +62,30 @@ export default function App() {
       case 'registro_sueno':
         return (
           <RegistroSueno
-            onNavigateToComida={(datos) => {setEncuesta(datos); setCurrentScreen('registro_comida');}}
+            onNavigateToComida={(datos) => { setEncuesta(datos); setCurrentScreen('registro_comida'); }}
             onNavigateToHome={() => setCurrentScreen('home')}
           />
         );
       case 'registro_comida':
         return (
           <RegistroComida
-            datos= {encuesta as data}
-            onNavigateToTecno={(datos) => {setEncuesta(datos); setCurrentScreen('tecno_registro')}}
+            datos={encuesta as data}
+            onNavigateToTecno={(datos) => { setEncuesta(datos); setCurrentScreen('tecno_registro') }}
             onNavigateToHome={() => setCurrentScreen('home')}
           />
         );
       case 'tecno_registro':
         return (
           <TecnoRegistro
-            datos = {encuesta as data}
+            datos={encuesta as data}
             onNavigateToObjetivo={(datos) => setCurrentScreen('objetivo')}
             onNavigateToHome={() => setCurrentScreen('home')}
           />
         );
       case 'objetivo':
         return (
-          <ObjetivoScreen 
-            datos = {encuesta as data}
+          <ObjetivoScreen
+            datos={encuesta as data}
             onNavigateToHome={() => setCurrentScreen('home')}
           />
         );

@@ -62,20 +62,20 @@ export default function RegistroSueno({ onNavigateToComida, onNavigateToHome }: 
     const [error, setError] = useState('');
 
     const handleChange = (name: keyof data, value: string | number) => {
-        if (name == "horasSueno" && typeof value == "string") { 
+        if (name == "horasSueno" && typeof value == "string") {
             const sanitized = value.replace(/[^0-9]/g, '');
         }
 
         if (name == "calidadSueno") {
-            setHoras({... horas!, [name]: Number(value)})
+            setHoras({ ...horas!, [name]: Number(value) })
         } else {
-            setHoras({... horas!, [name]: value as string})
+            setHoras({ ...horas!, [name]: value as string })
         }
     };
 
     const handleContinue = async () => {
         try {
-            await validationSchema.validate(horas, {abortEarly: false});
+            await validationSchema.validate(horas, { abortEarly: false });
 
             setError('');
             onNavigateToComida(horas);
@@ -141,11 +141,12 @@ export default function RegistroSueno({ onNavigateToComida, onNavigateToHome }: 
                         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
                     </View>
-                    <TouchableOpacity style={styles.primaryButton} onPress={handleContinue}>
-                        <Text style={styles.primaryButtonText}>Continuar</Text>
-                    </TouchableOpacity>
+
                 </ScrollView>
             </KeyboardAvoidingView>
+            <TouchableOpacity style={styles.primaryButton} onPress={handleContinue}>
+                <Text style={styles.primaryButtonText}>Continuar</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     );
 }

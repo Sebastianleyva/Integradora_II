@@ -39,10 +39,10 @@ interface ObjetivoScreenProps {
 export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScreenProps) {
     const [horas, setHoras] = useState<data>(datos);
     const [error, setError] = useState('');
-    const [usuario, setUsuario] = useState({id: "", nombre: "", apellido: "", correo: ""})
+    const [usuario, setUsuario] = useState({ id: "", nombre: "", apellido: "", correo: "" })
 
     const handleChange = (name: keyof data, value: number) => {
-        setHoras({... horas, [name]: Number(value)})
+        setHoras({ ...horas, [name]: Number(value) })
     }
 
     useEffect(() => {
@@ -58,7 +58,13 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
 
     const handleSubmit = async () => {
         try {
-            await validationSchema.validate(horas, {abortEarly: false});
+            // Prevenir el envío si el ID del usuario aún no carga o falló
+            if (!usuario || !usuario.id) {
+                setError("No se detectó una sesión activa. Espera un momento o vuelve a iniciar sesión.");
+                return;
+            }
+
+            await validationSchema.validate(horas, { abortEarly: false });
 
             const payload = {
                 h_sueno: horas.horasSueno,
@@ -73,26 +79,31 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
                 pregunta_objetivo: horas.bienestar,
             };
 
-            const status = await axios.post(`http://10.0.2.2:5000/registros/${usuario.id}`, payload);
-            
+            // Enviar al backend
+            await axios.post(`http://10.0.2.2:5000/registros/${usuario.id}`, payload);
+
             Alert.alert('Registro exitoso', 'Gracias por registrar en esta encuesta');
             setError("");
             onNavigateToHome();
+
         } catch (err: any) {
-            if (err.name == "ValidationError") {
-                //Validación de Yup
+            if (err.name === "ValidationError") {
+                // Validación de Yup
                 const mensajes = err.inner.map((e: any) => `• ${e.message}`).join("\n");
                 setError(`Errores de validación:\n ${mensajes}`);
             } else if (err.response) {
-                //Backend
-                if (err.status == 500 || err.status == 409 || err.status == 400) {
-                    return setError(`Error interno: ${err.data.error}`)
+                // CORRECCIÓN: Manejo correcto del objeto de error de Axios
+                const status = err.response.status;
+                const backendError = err.response.data?.error || "Error desconocido";
+
+                if (status === 500 || status === 409 || status === 400) {
+                    setError(`Error interno: ${backendError}`);
                 } else {
-                    setError(`Error del servidor: ${err.response.data.error || err.message}`);
+                    setError(`Error del servidor: ${backendError}`);
                 }
             } else {
-                //Otros
-                setError(`Error inesperado: ${err.message || "Error desconocido"}`);
+                // Otros (Ej. falta de internet)
+                setError(`Error inesperado: ${err.message || "Error de red"}`);
             }
         }
     };
@@ -104,12 +115,12 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
             </View>
 
             <View style={styles.content}>
-                <Text style={styles.label}>¿Cómo calificas tu bienestar general?</Text>
+                <Text style={styles.label}>¿Cómo calificas tu bienestar general el día de hoy?</Text>
                 <View style={styles.starRow}>
                     {Array.from({ length: 10 }, (_, i) => {
                         const idx = i + 1;
                         return (
-                            <TouchableOpacity key={idx} onPress={() => handleChange("bienestar",idx)} style={styles.starButton}>
+                            <TouchableOpacity key={idx} onPress={() => handleChange("bienestar", idx)} style={styles.starButton}>
                                 <Text style={[styles.star, horas.bienestar >= idx && styles.starSelected]}>★</Text>
                             </TouchableOpacity>
                         );

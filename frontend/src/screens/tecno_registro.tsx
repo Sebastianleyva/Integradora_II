@@ -33,9 +33,18 @@ const validationSchema = Yup.object().shape({
     horasComida: Yup.string(),
     calidadComida: Yup.number(),
     horasOcio: Yup.string().required("Inserta las horas de ocio que tuviste"),
-    calidadConsumo: Yup.number().min(1, "Selecciona la calidad de tiempo de ocio con al menos 1 estrella").required("Inserta la calidad de consumo de tecnología").max(10, "No se como le hiciste alch"),
+    calidadConsumo: Yup.number()
+        .min(1, "Selecciona la calidad de tiempo de ocio con al menos 1 estrella")
+        .required("Inserta la calidad de consumo de tecnología")
+        .max(10, "No se como le hiciste alch"),
     usoIa: Yup.boolean().required("¿De verdad medio-usaste la IA para indefinirlo?"),
-    usoIaEn: Yup.string(),
+
+    usoIaEn: Yup.string().when('usoIa', {
+        is: true,
+        then: (schema) => schema.required("Por favor, selecciona en qué usaste la IA (Escuela, Trabajo o Vida personal)"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+
     bienestar: Yup.number()
 });
 
@@ -50,31 +59,38 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
     const [error, setError] = useState('');
 
     const handleChange = (name: keyof data, value: string | number | boolean) => {
-        if (name == "horasOcio" && typeof value == "string" ) {
-            const sanitized = value.replace(/[^0-9]/g, '');
+        let finalValue = value;
+
+        if (name === "horasOcio" && typeof value === "string") {
+            finalValue = value.replace(/[^0-9]/g, '');
         }
 
-        if(name == "calidadConsumo") {
-            setHoras({... horas, [name]: Number(value)});
-        } else if (name == "usoIa") {
-            setHoras({... horas, [name]: Boolean(value)});
+        if (name === "calidadConsumo") {
+            setHoras({ ...horas, [name]: Number(finalValue) });
+        } else if (name === "usoIa") {
+            // Si dice que NO usó IA, limpiamos el campo 'usoIaEn' por si había seleccionado algo antes
+            if (finalValue === false) {
+                setHoras({ ...horas, usoIa: false, usoIaEn: '' });
+            } else {
+                setHoras({ ...horas, usoIa: true });
+            }
         } else {
-            setHoras({... horas, [name]: value as string});
+            setHoras({ ...horas, [name]: finalValue as string });
         }
     };
 
     const handleContinue = async () => {
         try {
-            await validationSchema.validate(datos, {abortEarly: false});
+            await validationSchema.validate(horas, { abortEarly: false });
 
             setError('');
             onNavigateToObjetivo(horas);
         } catch (err: any) {
-            if (err.name == "ValidationError") {
-                setError(`Errores de validación:\n ${err.message}`);
+            if (err.name === "ValidationError") {
+                setError(`Errores de validación:\n ${err.errors.join('\n')}`); // err.errors es un array en Yup, es mejor mostrarlo así
             } else {
                 setError(`Error inesperado: ${err.message || "Error desconocido"}`);
-            } 
+            }
         }
     };
 
@@ -101,7 +117,7 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
                             onChangeText={(val) => handleChange("horasOcio", val)}
                         />
 
-                        <Text style={styles.label}>Calidad de consumo</Text>
+                        <Text style={styles.label}>¿Del 1 al 10 que tan bien te sentiste al usar tu teléfono?</Text>
                         <View style={styles.starRow}>
                             {Array.from({ length: 10 }, (_, index) => {
                                 const starIndex = index + 1;
@@ -166,12 +182,13 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
 
                         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-                        <TouchableOpacity style={styles.primaryButton} onPress={handleContinue}>
-                            <Text style={styles.primaryButtonText}>Continuar</Text>
-                        </TouchableOpacity>
+
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
+            <TouchableOpacity style={styles.primaryButton} onPress={handleContinue}>
+                <Text style={styles.primaryButtonText}>Continuar</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     );
 }

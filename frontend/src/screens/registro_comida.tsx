@@ -104,7 +104,7 @@ export default function RegistroComida({ datos, onNavigateToTecno, onNavigateToH
                             onChangeText={(val) => handleChange("horasComida", val)}
                         />
 
-                        <Text style={styles.label}>Calidad de sueño</Text>
+                        <Text style={styles.label}>¿Del 1 al 10 que tan bien te sentiste al comer?</Text>
                         <View style={styles.starRow}>
                             {Array.from({ length: 10 }, (_, index) => {
                                 const starIndex = index + 1;
@@ -127,12 +127,13 @@ export default function RegistroComida({ datos, onNavigateToTecno, onNavigateToH
 
                         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-                        <TouchableOpacity style={styles.primaryButton} onPress={handleContinue}>
-                            <Text style={styles.primaryButtonText}>Continuar</Text>
-                        </TouchableOpacity>
+
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
+            <TouchableOpacity style={styles.primaryButton} onPress={handleContinue}>
+                <Text style={styles.primaryButtonText}>Continuar</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     );
 }
