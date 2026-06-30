@@ -108,7 +108,7 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
                     </View>
 
                     <View style={styles.form}>
-                        <Text style={styles.label}>Horas de ocio</Text>
+                        <Text style={styles.label}>¿Cuántas horas dedicaste el día de hoy a actividades de ocio en algun dispositivo tecnológico?</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Ej: 2"
@@ -138,7 +138,7 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
                             })}
                         </View>
 
-                        <Text style={[styles.label, { marginTop: 8 }]}>¿Se usó IA?</Text>
+                        <Text style={[styles.label, { marginTop: 8 }]}>¿Usaste IA en el transcurso del día de hoy?</Text>
                         <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
                             <TouchableOpacity
                                 style={[styles.submitButton, { flex: 1, backgroundColor: horas.usoIa === true ? '#2196F3' : '#ccc' }]}
