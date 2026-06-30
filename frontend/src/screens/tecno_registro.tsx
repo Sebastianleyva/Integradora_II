@@ -11,47 +11,87 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/tecno_registro';
+import * as Yup from "yup";
+
+interface data {
+    horasSueno: string;
+    calidadSueno: number;
+    numeroComidas: string;
+    horasComida: string;
+    calidadComida: number;
+    horasOcio: string;
+    calidadConsumo: number;
+    usoIa: boolean;
+    usoIaEn: string;
+    bienestar: number;
+}
+
+const validationSchema = Yup.object().shape({
+    horasSueno: Yup.string(),
+    calidadSueno: Yup.number(),
+    numeroComidas: Yup.string(),
+    horasComida: Yup.string(),
+    calidadComida: Yup.number(),
+    horasOcio: Yup.string().required("Inserta las horas de ocio que tuviste"),
+    calidadConsumo: Yup.number()
+        .min(1, "Selecciona la calidad de tiempo de ocio con al menos 1 estrella")
+        .required("Inserta la calidad de consumo de tecnología")
+        .max(10, "No se como le hiciste alch"),
+    usoIa: Yup.boolean().required("¿De verdad medio-usaste la IA para indefinirlo?"),
+
+    usoIaEn: Yup.string().when('usoIa', {
+        is: true,
+        then: (schema) => schema.required("Por favor, selecciona en qué usaste la IA (Escuela, Trabajo o Vida personal)"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+
+    bienestar: Yup.number()
+});
 
 interface TecnoRegistroProps {
-    onNavigateToObjetivo: () => void;
+    datos: data
+    onNavigateToObjetivo: (datos: data) => void;
     onNavigateToHome: () => void;
 }
 
-export default function TecnoRegistro({ onNavigateToObjetivo, onNavigateToHome }: TecnoRegistroProps) {
-    const [horasOcio, setHorasOcio] = useState('');
-    const [calidadConsumo, setCalidadConsumo] = useState(0);
-    const [seUsoIA, setSeUsoIA] = useState<'Sí' | 'No' | ''>('');
-    const [usoIAEn, setUsoIAEn] = useState<'escuela' | 'trabajo' | 'vida_personal' | ''>('');
+export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateToHome }: TecnoRegistroProps) {
+    const [horas, setHoras] = useState<data>(datos);
     const [error, setError] = useState('');
 
-    const handleHorasOcioChange = (value: string) => {
-        const sanitized = value.replace(/[^0-9]/g, '');
-        setHorasOcio(sanitized);
+    const handleChange = (name: keyof data, value: string | number | boolean) => {
+        let finalValue = value;
+
+        if (name === "horasOcio" && typeof value === "string") {
+            finalValue = value.replace(/[^0-9]/g, '');
+        }
+
+        if (name === "calidadConsumo") {
+            setHoras({ ...horas, [name]: Number(finalValue) });
+        } else if (name === "usoIa") {
+            // Si dice que NO usó IA, limpiamos el campo 'usoIaEn' por si había seleccionado algo antes
+            if (finalValue === false) {
+                setHoras({ ...horas, usoIa: false, usoIaEn: '' });
+            } else {
+                setHoras({ ...horas, usoIa: true });
+            }
+        } else {
+            setHoras({ ...horas, [name]: finalValue as string });
+        }
     };
 
-    const handleContinue = () => {
-        if (!horasOcio.trim()) {
-            setError('Por favor ingresa las horas de ocio.');
-            return;
-        }
+    const handleContinue = async () => {
+        try {
+            await validationSchema.validate(horas, { abortEarly: false });
 
-        if (calidadConsumo < 1) {
-            setError('Selecciona la calidad de consumo con al menos una estrella.');
-            return;
+            setError('');
+            onNavigateToObjetivo(horas);
+        } catch (err: any) {
+            if (err.name === "ValidationError") {
+                setError(`Errores de validación:\n ${err.errors.join('\n')}`); // err.errors es un array en Yup, es mejor mostrarlo así
+            } else {
+                setError(`Error inesperado: ${err.message || "Error desconocido"}`);
+            }
         }
-
-        if (seUsoIA === '') {
-            setError('Indica si se usó IA (Sí/No).');
-            return;
-        }
-
-        if (seUsoIA === 'Sí' && usoIAEn === '') {
-            setError('Selecciona en qué se usó la IA.');
-            return;
-        }
-
-        setError('');
-        onNavigateToObjetivo();
     };
 
     return (
@@ -73,11 +113,11 @@ export default function TecnoRegistro({ onNavigateToObjetivo, onNavigateToHome }
                             style={styles.input}
                             placeholder="Ej: 2"
                             keyboardType="numeric"
-                            value={horasOcio}
-                            onChangeText={handleHorasOcioChange}
+                            value={horas.horasOcio}
+                            onChangeText={(val) => handleChange("horasOcio", val)}
                         />
 
-                        <Text style={styles.label}>Calidad de consumo</Text>
+                        <Text style={styles.label}>¿Del 1 al 10 que tan bien te sentiste al usar tu teléfono?</Text>
                         <View style={styles.starRow}>
                             {Array.from({ length: 10 }, (_, index) => {
                                 const starIndex = index + 1;
@@ -85,11 +125,11 @@ export default function TecnoRegistro({ onNavigateToObjetivo, onNavigateToHome }
                                     <TouchableOpacity
                                         key={starIndex}
                                         style={styles.starButton}
-                                        onPress={() => setCalidadConsumo(starIndex)}
+                                        onPress={() => handleChange("calidadConsumo", starIndex)}
                                     >
                                         <Text style={[
                                             styles.star,
-                                            calidadConsumo >= starIndex && styles.starSelected,
+                                            horas.calidadConsumo >= starIndex && styles.starSelected,
                                         ]}>
                                             ★
                                         </Text>
@@ -101,38 +141,38 @@ export default function TecnoRegistro({ onNavigateToObjetivo, onNavigateToHome }
                         <Text style={[styles.label, { marginTop: 8 }]}>¿Se usó IA?</Text>
                         <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: seUsoIA === 'Sí' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setSeUsoIA('Sí')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: horas.usoIa === true ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("usoIa", true)}
                             >
                                 <Text style={styles.submitButtonText}>Sí</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.submitButton, { flex: 1, backgroundColor: seUsoIA === 'No' ? '#2196F3' : '#ccc' }]}
-                                onPress={() => setSeUsoIA('No')}
+                                style={[styles.submitButton, { flex: 1, backgroundColor: horas.usoIa === false ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("usoIa", false)}
                             >
                                 <Text style={styles.submitButtonText}>No</Text>
                             </TouchableOpacity>
                         </View>
 
-                        {seUsoIA === 'Sí' && (
+                        {horas.usoIa === true && (
                             <>
                                 <Text style={styles.label}>¿En qué se usó?</Text>
                                 <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
                                     <TouchableOpacity
-                                        style={[styles.submitButton, { flex: 1, backgroundColor: usoIAEn === 'escuela' ? '#2196F3' : '#ccc' }]}
-                                        onPress={() => setUsoIAEn('escuela')}
+                                        style={[styles.submitButton, { flex: 1, backgroundColor: horas.usoIaEn === 'escuela' ? '#2196F3' : '#ccc' }]}
+                                        onPress={() => handleChange("usoIaEn", 'escuela')}
                                     >
                                         <Text style={styles.submitButtonText}>Escuela</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        style={[styles.submitButton, { flex: 1, backgroundColor: usoIAEn === 'trabajo' ? '#2196F3' : '#ccc' }]}
-                                        onPress={() => setUsoIAEn('trabajo')}
+                                        style={[styles.submitButton, { flex: 1, backgroundColor: horas.usoIaEn === 'trabajo' ? '#2196F3' : '#ccc' }]}
+                                        onPress={() => handleChange("usoIaEn", 'trabajo')}
                                     >
                                         <Text style={styles.submitButtonText}>Trabajo</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        style={[styles.submitButton, { flex: 1, backgroundColor: usoIAEn === 'vida_personal' ? '#2196F3' : '#ccc' }]}
-                                        onPress={() => setUsoIAEn('vida_personal')}
+                                        style={[styles.submitButton, { flex: 1, backgroundColor: horas.usoIaEn === 'vida_personal' ? '#2196F3' : '#ccc' }]}
+                                        onPress={() => handleChange("usoIaEn", 'vida_personal')}
                                     >
                                         <Text style={styles.submitButtonText}>Vida personal</Text>
                                     </TouchableOpacity>
@@ -142,12 +182,13 @@ export default function TecnoRegistro({ onNavigateToObjetivo, onNavigateToHome }
 
                         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-                        <TouchableOpacity style={styles.primaryButton} onPress={handleContinue}>
-                            <Text style={styles.primaryButtonText}>Continuar</Text>
-                        </TouchableOpacity>
+
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
+            <TouchableOpacity style={styles.primaryButton} onPress={handleContinue}>
+                <Text style={styles.primaryButtonText}>Continuar</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     );
 }

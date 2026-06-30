@@ -12,8 +12,22 @@ import ObjetivoScreen from './frontend/src/screens/objetivo_screen';
 
 type Screen = 'login' | 'home' | 'signup' | 'survey' | 'registro_sueno' | 'registro_comida' | 'tecno_registro' | 'objetivo';
 
+interface data {
+  horasSueno: string;
+  calidadSueno: number;
+  numeroComidas: string;
+  horasComida: string;
+  calidadComida: number;
+  horasOcio: string;
+  calidadConsumo: number;
+  usoIa: boolean;
+  usoIaEn: string;
+  bienestar: number;
+}
+
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
+  const [encuesta, setEncuesta] = useState<data | null>(null)
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -22,6 +36,7 @@ export default function App() {
           <LoginScreen
             onNavigateToHome={() => setCurrentScreen('home')}
             onNavigateToSignup={() => setCurrentScreen('signup')}
+            onNavigateToSurvey={() => setCurrentScreen('survey')}
           />
         );
       case 'home':
@@ -34,7 +49,7 @@ export default function App() {
       case 'signup':
         return (
           <SignupScreen
-            onNavigateToHome={() => setCurrentScreen('survey')}
+            onNavigateToSurvey={() => setCurrentScreen('survey')}
             onNavigateToLogin={() => setCurrentScreen('login')}
           />
         );
@@ -48,27 +63,32 @@ export default function App() {
       case 'registro_sueno':
         return (
           <RegistroSueno
-            onNavigateToComida={() => setCurrentScreen('registro_comida')}
+            onNavigateToComida={(datos) => { setEncuesta(datos); setCurrentScreen('registro_comida'); }}
             onNavigateToHome={() => setCurrentScreen('home')}
           />
         );
       case 'registro_comida':
         return (
           <RegistroComida
-            onNavigateToTecno={() => setCurrentScreen('tecno_registro')}
+            datos={encuesta as data}
+            onNavigateToTecno={(datos) => { setEncuesta(datos); setCurrentScreen('tecno_registro') }}
             onNavigateToHome={() => setCurrentScreen('home')}
           />
         );
       case 'tecno_registro':
         return (
           <TecnoRegistro
-            onNavigateToObjetivo={() => setCurrentScreen('objetivo')}
+            datos={encuesta as data}
+            onNavigateToObjetivo={(datos) => setCurrentScreen('objetivo')}
             onNavigateToHome={() => setCurrentScreen('home')}
           />
         );
       case 'objetivo':
         return (
-          <ObjetivoScreen onNavigateToHome={() => setCurrentScreen('home')} />
+          <ObjetivoScreen
+            datos={encuesta as data}
+            onNavigateToHome={() => setCurrentScreen('home')}
+          />
         );
       default:
         return null;
