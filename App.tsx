@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoginScreen from './frontend/src/screens/login_screen';
 import SignupScreen from './frontend/src/screens/signup_screen';
 import GeneralSurvey from './frontend/src/screens/general_survey';
@@ -76,8 +77,10 @@ export default function App() {
 
   return (
     <>
+    <SafeAreaProvider>
       {renderScreen()}
       <StatusBar style="auto" />
-    </>
+    </SafeAreaProvider>
+      </>
   );
 }
