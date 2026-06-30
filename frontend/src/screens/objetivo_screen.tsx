@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/objetivo_screen';
 import * as Yup from "yup";
 import axios from "axios";
+import { LikertScale } from '../components/LikertScale';
 
 interface data {
     horasSueno: string;
@@ -28,7 +29,7 @@ const validationSchema = Yup.object().shape({
     calidadConsumo: Yup.number(),
     usoIa: Yup.boolean(),
     usoIaEn: Yup.string(),
-    bienestar: Yup.number().min(1, "Ingresa un número para verificar tu bienestar").required("Ingresa una calificación por favor").max(10, "¿Cómo le haces?")
+    bienestar: Yup.number().min(1, "Debes evaluar tu bienestar seleccionando una opcion en la escala").required("Campo requerido: Selecciona tu nivel de bienestar en la escala de opciones").max(10, "Error interno: valor fuera de rango")
 });
 
 interface ObjetivoScreenProps {
@@ -39,10 +40,10 @@ interface ObjetivoScreenProps {
 export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScreenProps) {
     const [horas, setHoras] = useState<data>(datos);
     const [error, setError] = useState('');
-    const [usuario, setUsuario] = useState({id: "", nombre: "", apellido: "", correo: ""})
+    const [usuario, setUsuario] = useState({ id: "", nombre: "", apellido: "", correo: "" })
 
     const handleChange = (name: keyof data, value: number) => {
-        setHoras({... horas, [name]: Number(value)})
+        setHoras({ ...horas, [name]: Number(value) })
     }
 
     useEffect(() => {
@@ -52,13 +53,19 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
             }
         }).catch(err => {
             console.error("No hay sesión activa: ", err.response?.data || err.message);
-            setError(`No hay sesión activa, ${err.response?.data || err.message}`);
+            setError(`Error de sesión: No se detectó un usuario activo.\n\nSolución: Vuelve a iniciar sesión. Si el problema persiste, cierra la app y vuelve a abrirla.`);
         });
     }, []);
 
     const handleSubmit = async () => {
         try {
-            await validationSchema.validate(horas, {abortEarly: false});
+            // Prevenir el envío si el ID del usuario aún no carga o falló
+            if (!usuario || !usuario.id) {
+                setError("Error de sesión: No se detectó un usuario activo.\n\nSolución: Vuelve a iniciar sesión. Si el problema persiste, cierra la app y vuelve a abrirla.");
+                return;
+            }
+
+            await validationSchema.validate(horas, { abortEarly: false });
 
             const payload = {
                 h_sueno: horas.horasSueno,
@@ -73,27 +80,15 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
                 pregunta_objetivo: horas.bienestar,
             };
 
-            const status = await axios.post(`http://10.0.2.2:5000/registros/${usuario.id}`, payload);
-            
+            // Enviar al backend
+            await axios.post(`http://10.0.2.2:5000/registros/${usuario.id}`, payload);
+
             Alert.alert('Registro exitoso', 'Gracias por registrar en esta encuesta');
             setError("");
             onNavigateToHome();
+
         } catch (err: any) {
-            if (err.name == "ValidationError") {
-                //Validación de Yup
-                const mensajes = err.inner.map((e: any) => `• ${e.message}`).join("\n");
-                setError(`Errores de validación:\n ${mensajes}`);
-            } else if (err.response) {
-                //Backend
-                if (err.status == 500 || err.status == 409 || err.status == 400) {
-                    return setError(`Error interno: ${err.data.error}`)
-                } else {
-                    setError(`Error del servidor: ${err.response.data.error || err.message}`);
-                }
-            } else {
-                //Otros
-                setError(`Error inesperado: ${err.message || "Error desconocido"}`);
-            }
+            setError("An error occurred. Please try again.");
         }
     };
 
@@ -104,17 +99,11 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
             </View>
 
             <View style={styles.content}>
-                <Text style={styles.label}>¿Cómo calificas tu bienestar general?</Text>
-                <View style={styles.starRow}>
-                    {Array.from({ length: 10 }, (_, i) => {
-                        const idx = i + 1;
-                        return (
-                            <TouchableOpacity key={idx} onPress={() => handleChange("bienestar",idx)} style={styles.starButton}>
-                                <Text style={[styles.star, horas.bienestar >= idx && styles.starSelected]}>★</Text>
-                            </TouchableOpacity>
-                        );
-                    })}
-                </View>
+                <Text style={styles.label}>Rate your overall well-being today</Text>
+                <LikertScale
+                    value={horas.bienestar}
+                    onChange={(value) => handleChange("bienestar", value)}
+                />
             </View>
 
             {error ? <Text style={styles.errorText}>{error}</Text> : null}

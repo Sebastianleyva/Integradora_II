@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoginScreen from './frontend/src/screens/login_screen';
 import SignupScreen from './frontend/src/screens/signup_screen';
 import GeneralSurvey from './frontend/src/screens/general_survey';
@@ -25,7 +26,7 @@ interface data {
 }
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('login');
+  const [currentScreen, setCurrentScreen] = useState<Screen>('home');
   const [encuesta, setEncuesta] = useState<data | null>(null)
 
   const renderScreen = () => {
@@ -62,30 +63,30 @@ export default function App() {
       case 'registro_sueno':
         return (
           <RegistroSueno
-            onNavigateToComida={(datos) => {setEncuesta(datos); setCurrentScreen('registro_comida');}}
+            onNavigateToComida={(datos) => { setEncuesta(datos); setCurrentScreen('registro_comida'); }}
             onNavigateToHome={() => setCurrentScreen('home')}
           />
         );
       case 'registro_comida':
         return (
           <RegistroComida
-            datos= {encuesta as data}
-            onNavigateToTecno={(datos) => {setEncuesta(datos); setCurrentScreen('tecno_registro')}}
+            datos={encuesta as data}
+            onNavigateToTecno={(datos) => { setEncuesta(datos); setCurrentScreen('tecno_registro') }}
             onNavigateToHome={() => setCurrentScreen('home')}
           />
         );
       case 'tecno_registro':
         return (
           <TecnoRegistro
-            datos = {encuesta as data}
+            datos={encuesta as data}
             onNavigateToObjetivo={(datos) => setCurrentScreen('objetivo')}
             onNavigateToHome={() => setCurrentScreen('home')}
           />
         );
       case 'objetivo':
         return (
-          <ObjetivoScreen 
-            datos = {encuesta as data}
+          <ObjetivoScreen
+            datos={encuesta as data}
             onNavigateToHome={() => setCurrentScreen('home')}
           />
         );
@@ -96,8 +97,10 @@ export default function App() {
 
   return (
     <>
+    <SafeAreaProvider>
       {renderScreen()}
       <StatusBar style="auto" />
-    </>
+    </SafeAreaProvider>
+      </>
   );
 }

@@ -28,9 +28,6 @@ export default function HomeScreen({ onLogout, onNavigateToRegistroSueno }: Home
                 </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
-                <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
-            </TouchableOpacity>
         </SafeAreaView>
     );
 }
