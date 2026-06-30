@@ -71,6 +71,7 @@ export default function GeneralSurvey({
     useEffect(() => {
         axios.get("http://10.0.2.2:5000/account/me").then(res => {
             if (res.data.loggedIn) {
+                console.log(res.data.usuario);
                 setUsuario(res.data.usuario);
             }
         }).catch(err => {
@@ -122,13 +123,15 @@ export default function GeneralSurvey({
                 const mensajes = err.inner.map((e: any) => `• ${e.message}`).join("\n");
                 setError(`Errores de validación:\n${mensajes}`);
             } else if (err.response) {
-                // Errores del backend
-                if (err.status == 400) {
-                    return setError(`${err.data.error}`);
-                } else if (err.status == 500) {
-                    return setError(`Error interno: ${err.data}`);
+                const statusCode = err.response.status;
+                const responseData = err.response.data;
+
+                if (statusCode === 400) {
+                    return setError(responseData.error);
+                } else if (statusCode === 500) {
+                    return setError(`Error interno: ${responseData.error}`);
                 } else {
-                    setError(`Error del servidor: ${err.response.data.error || err.message}`);
+                    setError(`Error del servidor: ${responseData.error || err.message}`);
                 }
             } else {
                 // Otros errores

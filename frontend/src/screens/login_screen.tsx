@@ -63,18 +63,25 @@ export default function LoginScreen({
             console.info("Datos entregados: ", payload);
 
             // RECUERDA: Cambiar por IP local si estás usando un celular real
-            const response = await axios.post(`http://10.0.2.2:5000/account/login`, payload);
+            const resp = await axios.post(`http://10.0.2.2:5000/account/login`, payload);
 
-            onNavigateToHome();
+            if (resp.status == 200) {
+                const resp2 = await axios.get(`http://10.0.2.2:5000/general/${resp.data.id}`);
+                Alert.alert(resp2.data.message);
+                setLoading(false);
+                if (resp2.data.encuesta) {
+                    onNavigateToSurvey();
+                } else {
+                    onNavigateToHome();
+                }
+            }
         } catch (err: any) {
             if (err.name == "ValidationError") {
                 const mensajes = err.inner.map((e: any) => `• ${e.message}`).join("\n");
                 Alert.alert(`Errores de validación:\n ${mensajes}`);
             } else if (err.response) {
-
                 const statusCode = err.response.status;
                 const responseData = err.response.data;
-
                 if (statusCode == 401) {
                     Alert.alert(responseData?.error || "Credenciales incorrectas.");
                 } else if (statusCode == 404) {

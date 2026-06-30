@@ -215,7 +215,6 @@ app.post("/general/:id", async (req, res) => {
       sexo,
       carrera,
       instituto,
-      fecha,
       n_insc,
       burnout,
       actividad,
@@ -249,7 +248,6 @@ app.post("/general/:id", async (req, res) => {
           sexo,
           carrera,
           instituto,
-          Date(fecha),
           Number(n_insc),
           burnout,
           actividad,
@@ -263,13 +261,12 @@ app.post("/general/:id", async (req, res) => {
       } else {
         // const result = await pool.query(sql, [ide, edad, sexo, carrera, instituto, fecha, n_insc, burnout, actividad, psiquia, psico, id]);
         const sql =
-          "INSERT INTO encuesta_general (edad, sexo, carrera, institucion, fecha, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
+          "INSERT INTO encuesta_general (edad, sexo, carrera, institucion, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
         const result = await pool.query(sql, [
           edad,
           sexo,
           carrera,
           instituto,
-          fecha,
           n_insc,
           burnout,
           actividad,
@@ -284,7 +281,24 @@ app.post("/general/:id", async (req, res) => {
     console.error(err.message || err);
     return res.status(500).send({ error: err.message || err });
   }
-}); //¿Le metieron mano al backend mientras no estaba? Ya funcionaba antes qué pasó .-.
+});
+
+//Verificación de la encuesta general (por si hay bugs)
+app.get("/general/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sql = "SELECT * FROM encuesta_general WHERE id_alumno = $1;"
+    const result = await pool.query(sql, [ id ]);
+    if (result.rows.length > 0) {
+      return res.status(200).json({encuesta: false, message: "Verificado en la encuesta"});
+    } else {
+      return res.status(200).json({encuesta: true, message: "Encuesta general no verificada"});
+    }
+  } catch (err) {
+    console.error(err.message || err);
+    return res.status(500).send({ error: err.message || err});
+  }
+});
 
 //Inserción de datos de la encuesta
 app.post("/registros/:id", async (req, res) => {
@@ -399,3 +413,7 @@ process.on("uncaughtException", (err) => {
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Promise rechazada no manejada:", reason);
 });
+
+/*
+Nota para el que está haciendo estos cambios: guarda estas funciones para la base de datos y así será más rápido
+*/

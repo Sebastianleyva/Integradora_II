@@ -75,7 +75,7 @@ ALTER SEQUENCE public.alumnos_id_alumno_seq OWNED BY public.alumnos.id_alumno;
 CREATE TABLE public.encuesta_general (
     id_general integer NOT NULL,
     edad integer NOT NULL,
-    sexo character(1) NOT NULL,
+    sexo character varying(25) NOT NULL,
     carrera character varying(100) NOT NULL,
     institucion character varying(100) NOT NULL,
     n_inscripcion integer NOT NULL,
