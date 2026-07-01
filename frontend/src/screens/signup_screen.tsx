@@ -37,11 +37,11 @@ const initialState: RegisterStruct = {
 };
 
 const validationSchema = Yup.object().shape({
-    firstName: Yup.string().required("Es obligatorio insertar tu/s nombre/s"),
-    lastName: Yup.string().required("Es obligatorio insertar tus apellidos"),
-    email: Yup.string().email("Formato de correo incorrecto").required("Es obligatorio el correo electrónico"),
-    password: Yup.string().required("La contraseña es obligatoria").min(8, "La contraseña debe de tener un mínimo de 8 carácteres"),
-    confirmPassword: Yup.string().required("Es obligatorio confirmar la contraseña").oneOf([Yup.ref(`password`)], "Las contraseñas no coinciden"),
+    firstName: Yup.string().required("Campo requerido: Ingresa tu(s) nombre(s)"),
+    lastName: Yup.string().required("Campo requerido: Ingresa tus apellidos"),
+    email: Yup.string().email("El formato del correo es invalido. Debe ser: ejemplo@dominio.com").required("Campo requerido: Ingresa tu correo electronico"),
+    password: Yup.string().required("Campo requerido: Ingresa una contrasena").min(8, "Tu contrasena debe tener minimo 8 caracteres para mayor seguridad"),
+    confirmPassword: Yup.string().required("Campo requerido: Confirma tu contrasena").oneOf([Yup.ref(`password`)], "Las contrasenias no coinciden. Asegurate de escribir la misma contrasena en ambos campos"),
 });
 
 interface SignupScreenProps {
@@ -74,7 +74,7 @@ export default function SignupScreen({
 
             if (!acceptedDocuments) {
                 return setError(
-                    "Debes aceptar el Aviso de Privacidad y el Consentimiento Informado para continuar."
+                    "Debes aceptar el Aviso de Privacidad y el Consentimiento Informado para poder registrarte."
                 );
             }
 
@@ -92,20 +92,28 @@ export default function SignupScreen({
             // Recomiendo verificar que en Android real o iOS esa IP '10.0.2.2' cambie por tu IP local si testeas en físico.
             const response = await axios.post(`http://10.0.2.2:5000/account/register`, payload);
 
-            Alert.alert('Registro exitoso', 'Tu cuenta ha sido creada correctamente.');
+            Alert.alert("Éxito", "Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.");
             onNavigateToSurvey();
         } catch (err: any) {
             if (err.name == "ValidationError") {
-                const mensajes = err.inner.map((e: any) => `• ${e.message}`).join("\n");
-                setError(`Errores de validación:\n ${mensajes}`);
+                const mensajes = err.inner.map((e: any) => `${e.message}`).join("\n");
+                setError(mensajes);
             } else if (err.response) {
-                if (err.status == 500) {
-                    setError(`Error interno: ${err.response.data?.error || "Error en el servidor"}`);
+                const statusCode = err.response.status;
+                const responseData = err.response.data;
+                if (statusCode == 400) {
+                    setError("Datos invalidos: " + (responseData?.error || "Verifica que todos los campos sean correctos"));                  
+                } else if (statusCode == 409) {
+                    setError("Este correo ya esta registrado. Intenta con otro correo o inicia sesion si es tu cuenta.");
+                } else if (statusCode == 500) {
+                    setError("Error del servidor (500): " + (responseData?.error || "El servidor esta teniendo problemas") + ". Intenta de nuevo mas tarde.");
                 } else {
-                    setError(`Error del servidor: ${err.response.data?.error || err.message}`);
+                    setError("Error del servidor: " + statusCode + ": " + (responseData?.error || err.message));
                 }
+            } else if (err.message === "Network Error") {
+                setError("Error de conexion: No se pudo conectar al servidor. Verifica tu conexion a internet y que el backend este disponible.");
             } else {
-                setError(`Error inesperado: ${err.message || "Error desconocido"}`);
+                setError("Error inesperado: " + (err.message || "Algo salio mal. Intenta de nuevo o contacta soporte"));
             }
         } finally {
             setLoading(false); // 4. Apagamos la carga pase lo que pase

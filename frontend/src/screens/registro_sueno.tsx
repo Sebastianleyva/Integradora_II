@@ -12,6 +12,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/registro_sueno';
 import * as Yup from "yup";
+import { LikertScale } from '../components/LikertScale';
+import { HourIntervals } from '../components/HourIntervals';
 
 interface data {
     horasSueno: string;
@@ -40,8 +42,8 @@ const initialState: data = {
 };
 
 const validationSchema = Yup.object().shape({
-    horasSueno: Yup.string().required("Por favor ingresa las horas del sueño"),
-    calidadSueno: Yup.number().min(1, "Ingresa un dato para poder continuar").max(10, "No se cómo le hiciste ._.").required("Ingresa un número para continuar"),
+    horasSueno: Yup.string().required("Campo requerido: Selecciona cuantas horas dormiste"),
+    calidadSueno: Yup.number().min(1, "Debes calificar tu calidad de sueno seleccionando una opcion en la escala").max(10, "Error interno: valor fuera de rango").required("Campo requerido: Selecciona tu calidad de sueno en la escala de opciones"),
     numeroComidas: Yup.string(),
     horasComida: Yup.string(),
     calidadComida: Yup.number(),
@@ -81,9 +83,10 @@ export default function RegistroSueno({ onNavigateToComida, onNavigateToHome }: 
             onNavigateToComida(horas);
         } catch (err: any) {
             if (err.name == "ValidationError") {
-                setError(`Errores de validación:\n ${err.message}`);
+                const mensajes = err.inner.map((e: any) => `${e.message}`).join("\n");
+                setError(`${mensajes}`);
             } else {
-                setError(`Error inesperado: ${err.message || "Error desconocido"}`);
+                setError(`Error inesperado: ${err.message || "Algo salió mal. Intenta de nuevo o contacta soporte"}`)
             }
         }
     };
@@ -103,15 +106,11 @@ export default function RegistroSueno({ onNavigateToComida, onNavigateToHome }: 
 
                     <View style={styles.form}>
                         <Text style={styles.label}>Horas de sueño</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ej: 7"
-                            keyboardType="numeric"
+                        <HourIntervals
                             value={horas.horasSueno}
-                            onChangeText={(val) => handleChange("horasSueno", val)}
+                            onChange={(val) => handleChange("horasSueno", val)}
+                            includeLongSleep={true}
                         />
-
-
 
                         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
@@ -119,25 +118,10 @@ export default function RegistroSueno({ onNavigateToComida, onNavigateToHome }: 
                     </View>
                     <View style={styles.form}>
                         <Text style={styles.label}>Calidad de sueño</Text>
-                        <View style={styles.starRow}>
-                            {Array.from({ length: 10 }, (_, index) => {
-                                const starIndex = index + 1;
-                                return (
-                                    <TouchableOpacity
-                                        key={starIndex}
-                                        style={styles.starButton}
-                                        onPress={() => handleChange("calidadSueno", starIndex)}
-                                    >
-                                        <Text style={[
-                                            styles.star,
-                                            horas.calidadSueno >= starIndex && styles.starSelected,
-                                        ]}>
-                                            ★
-                                        </Text>
-                                    </TouchableOpacity>
-                                );
-                            })}
-                        </View>
+                        <LikertScale
+                            value={horas.calidadSueno}
+                            onChange={(value) => handleChange("calidadSueno", value)}
+                        />
                         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
                     </View>
