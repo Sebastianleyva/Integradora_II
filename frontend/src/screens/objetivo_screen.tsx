@@ -99,7 +99,7 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
             </View>
 
             <View style={styles.content}>
-                <Text style={styles.label}>Rate your overall well-being today</Text>
+                <Text style={styles.label}>Calificando del 1 al 5 ¿cómo calificaría su bienestar emocional el día de hoy?</Text>
                 <LikertScale
                     value={horas.bienestar}
                     onChange={(value) => handleChange("bienestar", value)}

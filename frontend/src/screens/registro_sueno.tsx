@@ -105,7 +105,7 @@ export default function RegistroSueno({ onNavigateToComida, onNavigateToHome }: 
                     </View>
 
                     <View style={styles.form}>
-                        <Text style={styles.label}>Horas de sueño</Text>
+                        <Text style={styles.label}>¿Cuántas horas de sueño tuvo el día de hoy?</Text>
                         <HourIntervals
                             value={horas.horasSueno}
                             onChange={(val) => handleChange("horasSueno", val)}
@@ -117,7 +117,7 @@ export default function RegistroSueno({ onNavigateToComida, onNavigateToHome }: 
 
                     </View>
                     <View style={styles.form}>
-                        <Text style={styles.label}>Calidad de sueño</Text>
+                        <Text style={styles.label}>Del 1 al 5 ¿cómo calificaría la calidad de descanso de su sueño el día de hoy?</Text>
                         <LikertScale
                             value={horas.calidadSueno}
                             onChange={(value) => handleChange("calidadSueno", value)}

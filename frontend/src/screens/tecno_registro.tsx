@@ -108,7 +108,7 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
                     </View>
 
                     <View style={styles.form}>
-                        <Text style={styles.label}>¿Cuántas horas dedicaste el día de hoy a actividades de ocio en algun dispositivo tecnológico?</Text>
+                        <Text style={styles.label}>¿Cuántas horas dedicó el día de hoy a actividades de ocio en algún dispositivo tecnológico?</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Ej: 2"
@@ -117,7 +117,7 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
                             onChangeText={(val) => handleChange("horasOcio", val)}
                         />
 
-                        <Text style={styles.label}>¿Del 1 al 10 que tan bien te sentiste al usar tu teléfono?</Text>
+                        <Text style={styles.label}>Calificando del 1 al 5 ¿qué tan bien se sintió al realizar estas actividades?</Text>
                         <View style={styles.starRow}>
                             {Array.from({ length: 10 }, (_, index) => {
                                 const starIndex = index + 1;
@@ -138,7 +138,7 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
                             })}
                         </View>
 
-                        <Text style={[styles.label, { marginTop: 8 }]}>¿Usaste IA en el transcurso del día de hoy?</Text>
+                        <Text style={[styles.label, { marginTop: 8 }]}>¿Usó IA en el transcurso del día de hoy?</Text>
                         <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
                             <TouchableOpacity
                                 style={[styles.submitButton, { flex: 1, backgroundColor: horas.usoIa === true ? '#2196F3' : '#ccc' }]}
@@ -156,7 +156,7 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
 
                         {horas.usoIa === true && (
                             <>
-                                <Text style={styles.label}>¿En qué se usó?</Text>
+                                <Text style={styles.label}>¿En qué se usó? Puede seleccionar más de una opción</Text>
                                 <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
                                     <TouchableOpacity
                                         style={[styles.submitButton, { flex: 1, backgroundColor: horas.usoIaEn === 'escuela' ? '#2196F3' : '#ccc' }]}

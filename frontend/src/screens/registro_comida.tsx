@@ -89,7 +89,7 @@ export default function RegistroComida({ datos, onNavigateToTecno, onNavigateToH
                     </View>
 
                     <View style={styles.form}>
-                        <Text style={styles.label}>Número de comidas</Text>
+                        <Text style={styles.label}>¿Cuál fue el número de comidas que ingirió el día de hoy?</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Ej: 3"
@@ -99,7 +99,7 @@ export default function RegistroComida({ datos, onNavigateToTecno, onNavigateToH
                         />
 
 
-                        <Text style={styles.label}>¿Qué tan bien te sentiste al comer?</Text>
+                        <Text style={styles.label}>Del 1 al 5 ¿cómo calificaría la calidad de sus comidas el día de hoy?</Text>
                         <LikertScale
                             value={horas.calidadComida}
                             onChange={(value) => handleChange("calidadComida", value)}

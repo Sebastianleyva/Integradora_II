@@ -102,7 +102,7 @@ export default function SignupScreen({
                 const statusCode = err.response.status;
                 const responseData = err.response.data;
                 if (statusCode == 400) {
-                    setError("Datos invalidos: " + (responseData?.error || "Verifica que todos los campos sean correctos"));                  
+                    setError("Datos invalidos: " + (responseData?.error || "Verifica que todos los campos sean correctos"));
                 } else if (statusCode == 409) {
                     setError("Este correo ya esta registrado. Intenta con otro correo o inicia sesion si es tu cuenta.");
                 } else if (statusCode == 500) {
@@ -330,7 +330,6 @@ export default function SignupScreen({
                 </View>
             </Modal>
 
-            /* MODAL DE CONSENTIMIENTO INFORMADO */
             <Modal
                 visible={showConsentModal}
                 animationType="slide"
