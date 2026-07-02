@@ -88,7 +88,28 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
             onNavigateToHome();
 
         } catch (err: any) {
-            setError("An error occurred. Please try again.");
+            if (err.name === "ValidationError") {
+                // Validación de Yup
+                const mensajes = err.inner.map((e: any) => `• ${e.message}`).join("\n");
+                setError(`Errores de la encuesta:\n ${mensajes}`);
+            } else if (err.response) {
+                // CORRECCIÓN: Manejo correcto del objeto de error de Axios
+                const status = err.response.status;
+                const backendError = err.response.data?.error || "Error desconocido";
+
+                if (status === 500)  {
+                    setError("Error interno del servidor, inténtelo más tarde");
+                } else if (status === 409) {
+                    setError("Ya se había hecho un registro anterior, gracias por responder");
+                } else if (status === 400) {
+                    setError("Faltan datos por introducir, inténtelo de nuevo");
+                } else {
+                    setError(`Error del servidor: ${backendError}`);
+                }
+            } else {
+                // Otros (Ej. falta de internet)
+                setError(`Error inesperado: ${err.message || "Error de red"}`);
+            }
         }
     };
 

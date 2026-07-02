@@ -91,7 +91,7 @@ export default function SignupScreen({
             // Recomiendo verificar que en Android real o iOS esa IP '10.0.2.2' cambie por tu IP local si testeas en físico.
             const response = await axios.post(`http://10.0.2.2:5000/account/register`, payload);
 
-            Alert.alert("Éxito", "Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.");
+            Alert.alert("Éxito", response.data.message || "Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.");
             onNavigateToSurvey();
         } catch (err: any) {
             if (err.name == "ValidationError") {
