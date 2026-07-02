@@ -97,10 +97,10 @@ export default function App() {
 
   return (
     <>
-    <SafeAreaProvider>
-      {renderScreen()}
-      <StatusBar style="auto" />
-    </SafeAreaProvider>
-      </>
+      <SafeAreaProvider>
+        {renderScreen()}
+        <StatusBar style="auto" />
+      </SafeAreaProvider>
+    </>
   );
 }

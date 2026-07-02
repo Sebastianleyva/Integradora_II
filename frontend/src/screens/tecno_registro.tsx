@@ -12,8 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/tecno_registro';
 import * as Yup from "yup";
-import { LikertScale } from '../components/LikertScale';
-import { HourIntervals } from '../components/HourIntervals';
+import OptionSelector from '../components/HourIntervals';
 
 interface data {
     horasSueno: string;
@@ -29,26 +28,37 @@ interface data {
 }
 
 const validationSchema = Yup.object().shape({
-    horasSueno: Yup.string(),
-    calidadSueno: Yup.number(),
-    numeroComidas: Yup.string(),
-    horasComida: Yup.string(),
-    calidadComida: Yup.number(),
-    horasOcio: Yup.string().required("Campo requerido: Selecciona cuantas horas de ocio tuviste"),
+    horasOcio: Yup.string().required("Inserta las horas de ocio que tuviste"),
     calidadConsumo: Yup.number()
-        .min(1, "Debes calificar como te sentiste usando tecnologia seleccionando una opcion en la escala")
-        .required("Campo requerido: Selecciona tu calificacion en la escala de opciones")
-        .max(10, "Error interno: valor fuera de rango"),
-    usoIa: Yup.boolean().required("Campo requerido: Selecciona si usaste IA hoy (Si o No)"),
+        .min(1, "Selecciona la calidad de tiempo de ocio con al menos 1 estrella")
+        .required("Inserta la calidad de consumo de tecnología")
+        .max(10, "No se como le hiciste alch"),
+    usoIa: Yup.boolean().required("¿De verdad medio-usaste la IA para indefinirlo?"),
 
     usoIaEn: Yup.string().when('usoIa', {
         is: true,
-        then: (schema) => schema.required("Campo requerido: Especifica en que ambito usaste IA. Opciones: Escuela, Trabajo o Vida personal"),
+        then: (schema) => schema.required("Por favor, selecciona en qué usaste la IA (Escuela, Trabajo o Vida personal)"),
         otherwise: (schema) => schema.notRequired(),
     }),
 
     bienestar: Yup.number()
 });
+
+const tecnoOptions = [
+    { label: 'menos de 1h', value: 1 },
+    { label: '1-3h', value: 2 },
+    { label: '3-5h', value: 3 },
+    { label: '5-7h', value: 4 },
+    { label: 'más de 7h', value: 5 }
+]
+
+const calidadconsumo = [
+    { label: '1-Muy mal', value: 1 },
+    { label: '2-Mal', value: 2 },
+    { label: '3-Regular', value: 3 },
+    { label: '4-Bien', value: 4 },
+    { label: '5-Muy bien', value: 5 }
+]
 
 interface TecnoRegistroProps {
     datos: data
@@ -89,10 +99,9 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
             onNavigateToObjetivo(horas);
         } catch (err: any) {
             if (err.name === "ValidationError") {
-                const mensajes = err.inner.map((e: any) => `${e.message}`).join("\n");
-                setError(`${mensajes}`);
+                setError(`Errores de validación:\n ${err.errors.join('\n')}`); // err.errors es un array en Yup, es mejor mostrarlo así
             } else {
-                setError(`Error inesperado: ${err.message || "Algo salió mal. Intenta de nuevo o contacta soporte"}`)
+                setError(`Error inesperado: ${err.message || "Error desconocido"}`);
             }
         }
     };
@@ -111,20 +120,21 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
                     </View>
 
                     <View style={styles.form}>
-                        <Text style={styles.label}>Horas de ocio</Text>
-                        <HourIntervals
+                        <Text style={styles.label}>¿Cuántas horas dedicó el día de hoy a actividades de ocio en algún dispositivo tecnológico?</Text>
+                        <OptionSelector
+                            options={tecnoOptions}
                             value={horas.horasOcio}
                             onChange={(val) => handleChange("horasOcio", val)}
-                            includeLongSleep={false}
                         />
 
-                        <Text style={styles.label}>¿Qué tan bien te sentiste al usar tu teléfono?</Text>
-                        <LikertScale
+                        <Text style={styles.label}>Calificando del 1 al 5 ¿qué tan bien se sintió al realizar estas actividades?</Text>
+                        <OptionSelector
+                            options={calidadconsumo}
                             value={horas.calidadConsumo}
-                            onChange={(value) => handleChange("calidadConsumo", value)}
+                            onChange={(val) => handleChange("calidadConsumo", val)}
                         />
 
-                        <Text style={[styles.label, { marginTop: 8 }]}>¿Se usó IA?</Text>
+                        <Text style={[styles.label, { marginTop: 8 }]}>¿Usó IA en el transcurso del día de hoy?</Text>
                         <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
                             <TouchableOpacity
                                 style={[styles.submitButton, { flex: 1, backgroundColor: horas.usoIa === true ? '#2196F3' : '#ccc' }]}
@@ -142,7 +152,7 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
 
                         {horas.usoIa === true && (
                             <>
-                                <Text style={styles.label}>¿En qué se usó?</Text>
+                                <Text style={styles.label}>¿En qué se usó? Puede seleccionar más de una opción</Text>
                                 <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
                                     <TouchableOpacity
                                         style={[styles.submitButton, { flex: 1, backgroundColor: horas.usoIaEn === 'escuela' ? '#2196F3' : '#ccc' }]}

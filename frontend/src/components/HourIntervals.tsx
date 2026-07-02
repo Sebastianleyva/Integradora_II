@@ -1,32 +1,22 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-interface HourIntervalsProps {
-    value: string;
-    onChange: (value: string) => void;
-    includeLongSleep?: boolean; // true para sueño (7-9, 9+), false para otros
+export interface Option {
+    label: string;
+    value: string | number;
 }
 
-export const HourIntervals: React.FC<HourIntervalsProps> = ({ 
-    value, 
-    onChange, 
-    includeLongSleep = false 
+interface OptionSelectorProps {
+    options: Option[];
+    value: string | number;
+    onChange: (value: string | number) => void;
+}
+
+const OptionSelector: React.FC<OptionSelectorProps> = ({
+    options,
+    value,
+    onChange,
 }) => {
-    const baseOptions = [
-        { label: 'Menos de 1h', value: 'menos1' },
-        { label: '1-3h', value: '1-3' },
-        { label: '3-5h', value: '3-5' },
-        { label: '5-7h', value: '5-7' },
-        { label: 'Mas de 7h', value: 'mas7' },
-    ];
-
-    const sleepOnlyOptions = [
-        { label: '7-9h', value: '7-9' },
-        { label: 'Mas de 9h', value: 'mas9' },
-    ];
-
-    const options = includeLongSleep ? [...baseOptions, ...sleepOnlyOptions] : baseOptions;
-
     return (
         <View style={styles.container}>
             {options.map((option) => (
@@ -37,11 +27,13 @@ export const HourIntervals: React.FC<HourIntervalsProps> = ({
                         value === option.value && styles.buttonSelected,
                     ]}
                     onPress={() => onChange(option.value)}
+                    activeOpacity={0.8}
                 >
                     <Text
                         style={[
                             styles.buttonText,
-                            value === option.value && styles.buttonTextSelected,
+                            value === option.value &&
+                            styles.buttonTextSelected,
                         ]}
                     >
                         {option.label}
@@ -52,30 +44,35 @@ export const HourIntervals: React.FC<HourIntervalsProps> = ({
     );
 };
 
+export default OptionSelector;
+
 const styles = StyleSheet.create({
     container: {
-        flexDirection: 'column',
         gap: 10,
         marginVertical: 10,
     },
+
     button: {
-        paddingVertical: 12,
+        paddingVertical: 14,
         paddingHorizontal: 16,
-        borderRadius: 8,
+        borderRadius: 10,
         borderWidth: 2,
         borderColor: '#2196F3',
-        backgroundColor: '#fff',
+        backgroundColor: '#FFFFFF',
     },
+
     buttonSelected: {
         backgroundColor: '#2196F3',
     },
+
     buttonText: {
         textAlign: 'center',
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: '600',
         color: '#2196F3',
     },
+
     buttonTextSelected: {
-        color: '#fff',
+        color: '#FFFFFF',
     },
 });

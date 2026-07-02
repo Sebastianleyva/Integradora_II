@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import {
     View,
     Text,
-    TextInput,
     TouchableOpacity,
     ScrollView,
     KeyboardAvoidingView,
     Platform,
     Alert,
+    TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/registro_sueno';
 import * as Yup from "yup";
 import { LikertScale } from '../components/LikertScale';
-import { HourIntervals } from '../components/HourIntervals';
+import OptionSelector from '../components/HourIntervals';
 
 interface data {
     horasSueno: string;
@@ -44,15 +44,15 @@ const initialState: data = {
 const validationSchema = Yup.object().shape({
     horasSueno: Yup.string().required("Campo requerido: Selecciona cuantas horas dormiste"),
     calidadSueno: Yup.number().min(1, "Debes calificar tu calidad de sueno seleccionando una opcion en la escala").max(10, "Error interno: valor fuera de rango").required("Campo requerido: Selecciona tu calidad de sueno en la escala de opciones"),
-    numeroComidas: Yup.string(),
-    horasComida: Yup.string(),
-    calidadComida: Yup.number(),
-    horasOcio: Yup.string(),
-    calidadConsumo: Yup.number(),
-    usoIa: Yup.boolean(),
-    usoIaEn: Yup.string(),
-    bienestar: Yup.number()
+
 });
+
+const sleepOptions = [
+    { label: 'Menos de 5 horas', value: 1 },
+    { label: '5-6 horas', value: 2 },
+    { label: '6-7 horas', value: 3 },
+    { label: 'Más de 7 horas', value: 4 },
+];
 
 interface RegistroSuenoProps {
     onNavigateToComida: (datos: data) => void;
@@ -105,11 +105,11 @@ export default function RegistroSueno({ onNavigateToComida, onNavigateToHome }: 
                     </View>
 
                     <View style={styles.form}>
-                        <Text style={styles.label}>Horas de sueño</Text>
-                        <HourIntervals
+                        <Text style={styles.label}>¿Cuántas horas de sueño tuvo el día de hoy?</Text>
+                        <OptionSelector
+                            options={sleepOptions}
                             value={horas.horasSueno}
                             onChange={(val) => handleChange("horasSueno", val)}
-                            includeLongSleep={true}
                         />
 
                         {error ? <Text style={styles.errorText}>{error}</Text> : null}
@@ -117,7 +117,7 @@ export default function RegistroSueno({ onNavigateToComida, onNavigateToHome }: 
 
                     </View>
                     <View style={styles.form}>
-                        <Text style={styles.label}>Calidad de sueño</Text>
+                        <Text style={styles.label}>Del 1 al 5 ¿cómo calificaría la calidad de descanso de su sueño el día de hoy?</Text>
                         <LikertScale
                             value={horas.calidadSueno}
                             onChange={(value) => handleChange("calidadSueno", value)}

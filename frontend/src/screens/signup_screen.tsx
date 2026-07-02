@@ -17,7 +17,6 @@ import styless from '../styles/link_text';
 import modalStyles from '../styles/modalstyles';
 import * as Yup from "yup";
 import axios from "axios";
-
 axios.defaults.withCredentials = true;
 
 type RegisterStruct = {
@@ -100,9 +99,11 @@ export default function SignupScreen({
                 setError(mensajes);
             } else if (err.response) {
                 const statusCode = err.response.status;
-                const responseData = err.response.data;                 
-                if (statusCode == 409) {
-                    setError(responseData?.message || "Este correo ya esta registrado. Intenta con otro correo o inicia sesion si es tu cuenta.");
+                const responseData = err.response.data;
+                if (statusCode == 400) {
+                    setError("Datos invalidos: " + (responseData?.error || "Verifica que todos los campos sean correctos"));
+                } else if (statusCode == 409) {
+                    setError("Este correo ya esta registrado. Intenta con otro correo o inicia sesion si es tu cuenta.");
                 } else if (statusCode == 500) {
                     setError("Error del servidor (500): " + (responseData?.error || "El servidor esta teniendo problemas") + ". Intenta de nuevo mas tarde.");
                 } else {
@@ -328,7 +329,6 @@ export default function SignupScreen({
                 </View>
             </Modal>
 
-            /* MODAL DE CONSENTIMIENTO INFORMADO */
             <Modal
                 visible={showConsentModal}
                 animationType="slide"

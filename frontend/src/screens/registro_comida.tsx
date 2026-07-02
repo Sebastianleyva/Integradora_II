@@ -7,19 +7,17 @@ import {
     ScrollView,
     KeyboardAvoidingView,
     Platform,
-    Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/registro_comida';
 import * as Yup from "yup";
 import { LikertScale } from '../components/LikertScale';
-
+import OptionSelector from '../components/HourIntervals';
 
 interface data {
     horasSueno: string;
     calidadSueno: number;
     numeroComidas: string;
-    horasComida: string;
     calidadComida: number;
     horasOcio: string;
     calidadConsumo: number;
@@ -29,17 +27,21 @@ interface data {
 }
 
 const validationSchema = Yup.object().shape({
-    horasSueno: Yup.string(),
-    calidadSueno: Yup.number(),
-    numeroComidas: Yup.string().required("Campo requerido: Ingresa el numero de comidas que tuviste en el dia (ej: 3, 4)"),
+    numeroComidas: Yup.string().required('Campo requerido: selecciona cuántas comidas tuviste hoy'),
     horasComida: Yup.string(),
-    calidadComida: Yup.number().min(1, "Debes calificar tu experiencia al comer seleccionando una opcion en la escala").max(10, "Error interno: valor fuera de rango").required("Campo requerido: Selecciona tu calificacion en la escala de opciones"),
-    horasOcio: Yup.string(),
-    calidadConsumo: Yup.number(),
-    usoIa: Yup.boolean(),
-    usoIaEn: Yup.string(),
-    bienestar: Yup.number(),
+    calidadComida: Yup.number()
+        .min(1, 'Debes calificar tu experiencia al comer seleccionando una opción en la escala')
+        .max(10, 'Error interno: valor fuera de rango')
+        .required('Campo requerido: selecciona tu calificación en la escala'),
 });
+
+const mealOptions = [
+    { label: '0 comidas', value: 1 },
+    { label: '1 comida', value: 2 },
+    { label: '2 comidas', value: 3 },
+    { label: '3 comidas', value: 4 },
+    { label: '4 o más comidas', value: 5 }
+]
 
 interface RegistroComidaProps {
     datos: data
@@ -48,23 +50,22 @@ interface RegistroComidaProps {
 }
 
 export default function RegistroComida({ datos, onNavigateToTecno, onNavigateToHome }: RegistroComidaProps) {
-    const [horas, setHoras] = useState<data>(datos)
+    const [registro, setRegistro] = useState<data>(datos);
     const [error, setError] = useState('');
 
     const handleChange = (name: keyof data, value: string | number) => {
-        if (name == "calidadSueno" || name == "calidadComida") {
-            setHoras({ ...horas!, [name]: Number(value) })
+        if (name === 'calidadComida') {
+            setRegistro({ ...registro!, [name]: Number(value) });
         } else {
-            setHoras({ ...horas!, [name]: value as string })
+            setRegistro({ ...registro!, [name]: value as string });
         }
     };
 
     const handleContinue = async () => {
         try {
-            await validationSchema.validate(horas, { abortEarly: false });
-
+            await validationSchema.validate(registro, { abortEarly: false });
             setError('');
-            onNavigateToTecno(horas);
+            onNavigateToTecno(registro);
         } catch (err: any) {
             if (err.name == "ValidationError") {
                 const mensajes = err.inner.map((e: any) => `${e.message}`).join("\n");
@@ -89,25 +90,21 @@ export default function RegistroComida({ datos, onNavigateToTecno, onNavigateToH
                     </View>
 
                     <View style={styles.form}>
-                        <Text style={styles.label}>Número de comidas</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ej: 3"
-                            keyboardType="numeric"
-                            value={horas.numeroComidas}
-                            onChangeText={(val) => handleChange("numeroComidas", val)}
+                        <Text style={styles.label}>¿Cuántas comidas realizaste hoy?</Text>
+                        <OptionSelector
+                            options={mealOptions}
+                            value={registro.numeroComidas}
+                            onChange={(val) => handleChange('numeroComidas', val)}
                         />
 
 
-                        <Text style={styles.label}>¿Qué tan bien te sentiste al comer?</Text>
+                        <Text style={styles.label}>Del 1 al 5 ¿cómo describiría su estado de ánimo durante las comidas del día de hoy?</Text>
                         <LikertScale
-                            value={horas.calidadComida}
-                            onChange={(value) => handleChange("calidadComida", value)}
+                            value={registro.calidadComida}
+                            onChange={(value) => handleChange('calidadComida', value)}
                         />
 
                         {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>

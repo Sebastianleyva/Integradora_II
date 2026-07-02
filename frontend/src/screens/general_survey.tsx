@@ -20,9 +20,9 @@ type GeneralSurveyStruct = {
     age: string;
     sex: string;
     career: string;
-    institution: string;
     date: Date;
     grade: string;
+    work: boolean;
     previousBurnout: boolean;
     physicalActivity: boolean;
     psychiatricTreatment: boolean;
@@ -33,9 +33,9 @@ const initialState: GeneralSurveyStruct = {
     age: "",
     sex: "",
     career: "",
-    institution: "",
     date: new Date(),
     grade: "",
+    work: false,
     previousBurnout: false,
     physicalActivity: false,
     psychiatricTreatment: false,
@@ -46,9 +46,9 @@ const validationSchema = Yup.object().shape({
     age: Yup.number().min(0, "Ingresa una edad valida (0 o mayor)").required("Campo requerido: Tu edad es necesaria"),
     sex: Yup.string().required("Campo requerido: Especifica tu sexo o selecciona 'Otro'"),
     career: Yup.string().required("Campo requerido: Ingresa tu carrera de estudio"),
-    institution: Yup.string().required("Campo requerido: Ingresa tu institucion educativa"),
     date: Yup.date().required("Campo requerido: Selecciona la fecha en que ingresaste a estudiar"),
     grade: Yup.number().min(0, "Ingresa un grado valido (0 o mayor)").required("Campo requerido: Especifica tu grado actual (ano: 2, semestre: 3, cuatrimestre: 4)"),
+    work: Yup.boolean().required("Campo requerido: Indica si trabajas"),
     previousBurnout: Yup.boolean().required("Campo requerido: Indica si has sufrido de burnout antes"),
     physicalActivity: Yup.boolean().required("Campo requerido: Especifica si realizas actividad fisica"),
     psychiatricTreatment: Yup.boolean().required("Campo requerido: Indica si sigues tratamiento psiquiatrico"),
@@ -85,7 +85,7 @@ export default function GeneralSurvey({
             setInfo({ ...info, [name]: value as Date });
         } else if (name === "age" || name === "grade") {
             setInfo({ ...info, [name]: Number(value) });
-        } else if (name === "sex" || name === "career" || name === "institution") {
+        } else if (name === "sex" || name === "career") {
             setInfo({ ...info, [name]: value.toString() })
         } else {
             setInfo({ ...info, [name]: Boolean(value) })
@@ -101,7 +101,6 @@ export default function GeneralSurvey({
                 edad: info.age,
                 sexo: info.sex,
                 carrera: info.career,
-                instituto: info.institution,
                 fecha: info.date.toISOString(),
                 n_insc: info.grade,
                 burnout: info.previousBurnout,
@@ -199,7 +198,7 @@ export default function GeneralSurvey({
                             />
                         )}
 
-                        <Text style={styles.label}>Carrera</Text>
+                        <Text style={styles.label}>Carrera que cursa actualmente</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Ej: Ingeniería en Sistemas"
@@ -208,15 +207,8 @@ export default function GeneralSurvey({
                             autoCapitalize="words"
                         />
 
-                        <Text style={styles.label}>Institución Educativa</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ej: Universidad Tecnológica de Durango"
-                            value={info.institution}
-                            onChangeText={(val) => handleChange("institution", val)}
-                            autoCapitalize="words"
-                        />
-                        <Text style={styles.label}>Grado/Semestre/Cuatrimestre</Text>
+
+                        <Text style={styles.label}>Cuatrimestre actual</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Ej: 5"
@@ -224,6 +216,23 @@ export default function GeneralSurvey({
                             onChangeText={(val) => handleChange("grade", val)}
                             keyboardType="numeric"
                         />
+
+                        <Text style={styles.label}>¿Actualmente cuenta con un empleo?</Text>
+                        <View style={{ flexDirection: 'row', gap: 10, marginBottom: 10 }}>
+                            <TouchableOpacity
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.work === true ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("work", true)}
+                            >
+                                <Text style={styles.submitButtonText}>Sí</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.submitButton, { flex: 1, backgroundColor: info.work === false ? '#2196F3' : '#ccc' }]}
+                                onPress={() => handleChange("work", false)}
+                            >
+                                <Text style={styles.submitButtonText}>No</Text>
+                            </TouchableOpacity>
+
+                        </View>
 
                         <Text style={styles.label}>¿Ha experimentado burnout previamente?</Text>
                         <View style={{ flexDirection: 'row', gap: 10 }}>
@@ -301,10 +310,4 @@ export default function GeneralSurvey({
     );
 }
 
-//<Text style={styles.label}>Fecha de Ingreso</Text>
-//<TextInput
-//    style={styles.input}
-//    placeholder="Ej: 2022-01-15"
-//    value={}
-//    onChangeText={setDate}
-///>
+
