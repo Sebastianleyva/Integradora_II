@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/tecno_registro';
 import * as Yup from "yup";
+import OptionSelector from '../components/HourIntervals';
 
 interface data {
     horasSueno: string;
@@ -27,11 +28,6 @@ interface data {
 }
 
 const validationSchema = Yup.object().shape({
-    horasSueno: Yup.string(),
-    calidadSueno: Yup.number(),
-    numeroComidas: Yup.string(),
-    horasComida: Yup.string(),
-    calidadComida: Yup.number(),
     horasOcio: Yup.string().required("Inserta las horas de ocio que tuviste"),
     calidadConsumo: Yup.number()
         .min(1, "Selecciona la calidad de tiempo de ocio con al menos 1 estrella")
@@ -47,6 +43,22 @@ const validationSchema = Yup.object().shape({
 
     bienestar: Yup.number()
 });
+
+const tecnoOptions = [
+    { label: 'menos de 1h', value: 1 },
+    { label: '1-3h', value: 2 },
+    { label: '3-5h', value: 3 },
+    { label: '5-7h', value: 4 },
+    { label: 'más de 7h', value: 5 }
+]
+
+const calidadconsumo = [
+    { label: '1-Muy mal', value: 1 },
+    { label: '2-Mal', value: 2 },
+    { label: '3-Regular', value: 3 },
+    { label: '4-Bien', value: 4 },
+    { label: '5-Muy bien', value: 5 }
+]
 
 interface TecnoRegistroProps {
     datos: data
@@ -109,34 +121,18 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
 
                     <View style={styles.form}>
                         <Text style={styles.label}>¿Cuántas horas dedicó el día de hoy a actividades de ocio en algún dispositivo tecnológico?</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ej: 2"
-                            keyboardType="numeric"
+                        <OptionSelector
+                            options={tecnoOptions}
                             value={horas.horasOcio}
-                            onChangeText={(val) => handleChange("horasOcio", val)}
+                            onChange={(val) => handleChange("horasOcio", val)}
                         />
 
                         <Text style={styles.label}>Calificando del 1 al 5 ¿qué tan bien se sintió al realizar estas actividades?</Text>
-                        <View style={styles.starRow}>
-                            {Array.from({ length: 10 }, (_, index) => {
-                                const starIndex = index + 1;
-                                return (
-                                    <TouchableOpacity
-                                        key={starIndex}
-                                        style={styles.starButton}
-                                        onPress={() => handleChange("calidadConsumo", starIndex)}
-                                    >
-                                        <Text style={[
-                                            styles.star,
-                                            horas.calidadConsumo >= starIndex && styles.starSelected,
-                                        ]}>
-                                            ★
-                                        </Text>
-                                    </TouchableOpacity>
-                                );
-                            })}
-                        </View>
+                        <OptionSelector
+                            options={calidadconsumo}
+                            value={horas.calidadConsumo}
+                            onChange={(val) => handleChange("calidadConsumo", val)}
+                        />
 
                         <Text style={[styles.label, { marginTop: 8 }]}>¿Usó IA en el transcurso del día de hoy?</Text>
                         <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>

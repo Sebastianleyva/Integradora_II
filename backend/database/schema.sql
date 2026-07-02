@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict ccvPzFvopJjG98wokjus7pzoohWJ2wELt1ni3vlGKqsLVmeHQpKLxWyr4cTrp0A
+\restrict uwpKYeAdCA3EiddS3EGSzMbhXa51t6Z5HF5Rh7UpCdr73ZtL7Ceq2dckZX4pFn6
 
 -- Dumped from database version 18.3
 -- Dumped by pg_dump version 18.3
 
--- Started on 2026-06-17 20:02:01
+-- Started on 2026-07-01 17:31:20
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -35,7 +35,7 @@ CREATE TABLE public.alumnos (
     nombre character varying(20) NOT NULL,
     apellidos character varying(40) NOT NULL,
     correo character varying(50) NOT NULL,
-    contrasena character varying(255) CONSTRAINT "alumnos_contrsaena_not_null" NOT NULL,
+    contrasena character varying(255) CONSTRAINT "alumnos_contrsae¤a_not_null" NOT NULL,
     fecha date NOT NULL
 );
 
@@ -75,15 +75,15 @@ ALTER SEQUENCE public.alumnos_id_alumno_seq OWNED BY public.alumnos.id_alumno;
 CREATE TABLE public.encuesta_general (
     id_general integer NOT NULL,
     edad integer NOT NULL,
-    sexo character varying(25) NOT NULL,
+    sexo character(1) NOT NULL,
     carrera character varying(100) NOT NULL,
-    institucion character varying(100) NOT NULL,
-    n_inscripcion integer NOT NULL,
+    cuatrimestre integer CONSTRAINT encuesta_general_n_inscripcion_not_null NOT NULL,
     burnout_previo boolean NOT NULL,
     actividad_f boolean NOT NULL,
     tratamiento_psiquia boolean NOT NULL,
     tratamiento_psico boolean NOT NULL,
-    id_alumno integer
+    id_alumno integer NOT NULL,
+    trabajo boolean NOT NULL
 );
 
 
@@ -249,7 +249,7 @@ COPY public.alumnos (id_alumno, nombre, apellidos, correo, contrasena, fecha) FR
 -- Data for Name: encuesta_general; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.encuesta_general (id_general, edad, sexo, carrera, institucion, fecha, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) FROM stdin;
+COPY public.encuesta_general (id_general, edad, sexo, carrera, cuatrimestre, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno, trabajo) FROM stdin;
 \.
 
 
@@ -381,11 +381,11 @@ ALTER TABLE ONLY public.registro_diario
     ADD CONSTRAINT registro_diario_id_alumno_fkey FOREIGN KEY (id_alumno) REFERENCES public.alumnos(id_alumno);
 
 
--- Completed on 2026-06-17 20:02:01
+-- Completed on 2026-07-01 17:31:21
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict ccvPzFvopJjG98wokjus7pzoohWJ2wELt1ni3vlGKqsLVmeHQpKLxWyr4cTrp0A
+\unrestrict uwpKYeAdCA3EiddS3EGSzMbhXa51t6Z5HF5Rh7UpCdr73ZtL7Ceq2dckZX4pFn6
 

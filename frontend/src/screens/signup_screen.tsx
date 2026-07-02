@@ -17,7 +17,6 @@ import styless from '../styles/link_text';
 import modalStyles from '../styles/modalstyles';
 import * as Yup from "yup";
 import axios from "axios";
-
 axios.defaults.withCredentials = true;
 
 type RegisterStruct = {
