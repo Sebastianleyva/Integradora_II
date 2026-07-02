@@ -15,7 +15,7 @@ SET idle_in_transaction_session_timeout = 0;
 SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
+SELECT pg_catalog.set_config('search_path', 'public', false);
 SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
@@ -380,6 +380,241 @@ ALTER TABLE ONLY public.predicciones
 ALTER TABLE ONLY public.registro_diario
     ADD CONSTRAINT registro_diario_id_alumno_fkey FOREIGN KEY (id_alumno) REFERENCES public.alumnos(id_alumno);
 
+
+--
+--  Procedimientos y vistas de la base de datos (para agilizar esto)
+--
+
+-- Crear cuenta
+
+CREATE OR REPLACE FUNCTION register(
+    v_nombre VARCHAR(20),
+    v_apellidos VARCHAR(40),
+    v_correo VARCHAR(50),
+    v_contrasena VARCHAR(255),
+    v_fecha DATE
+)
+RETURNS TABLE(
+    id_alumno INTEGER,
+    nombre VARCHAR,
+    apellidos VARCHAR,
+    correo VARCHAR
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    INSERT INTO alumnos(nombre, apellidos, correo, contrasena, fecha)
+    VALUES (v_nombre, v_apellidos, v_correo, v_contrasena, v_fecha)
+    RETURNING alumnos.id_alumno, alumnos.nombre, alumnos.apellidos, alumnos.correo;
+END;
+$$;
+
+
+-- Verificar
+
+CREATE OR REPLACE FUNCTION login_cred(v_correo CHARACTER VARYING(50))
+RETURNS TABLE(
+    id_alumno INTEGER,
+    nombre VARCHAR,
+    apellidos VARCHAR,
+    correo VARCHAR,
+    contrasena VARCHAR
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT alumnos.id_alumno, alumnos.nombre, alumnos.apellidos, alumnos.correo, alumnos.contrasena
+    FROM alumnos WHERE alumnos.correo = v_correo;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Buscar alumno
+
+CREATE OR REPLACE FUNCTION alumno(v_id INTEGER)
+RETURNS TABLE(
+    id INTEGER,
+    correo VARCHAR,
+    contrasena VARCHAR
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT alumnos.id_alumno, alumnos.correo, alumnos.contrasena
+    FROM alumnos WHERE alumnos.id_alumno = v_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Cambiar contrasena
+
+CREATE OR REPLACE PROCEDURE pass_change(
+    v_id INTEGER,
+    v_contrasena CHARACTER VARYING(255)
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE alumnos SET alumnos.contrasena = v_contrasena
+    WHERE alumnos.id_alumno = v_id;
+END;
+$$;
+
+
+-- Borrar la cuenta (vamos por fin :D)
+
+CREATE OR REPLACE PROCEDURE delete_acc(
+    v_id INTEGER
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM alumnos
+    WHERE alumnos.id_alumno = v_id;
+END;
+$$;
+
+
+-- Visualizar registros diarios
+
+CREATE OR REPLACE FUNCTION registros_vista()
+RETURNS TABLE(
+    id_registro INTEGER,
+    fecha DATE,
+    h_sueno REAL,
+    cal_sueno INTEGER,
+    n_comidas INTEGER,
+    hor_comidas VARCHAR,
+    cal_consumo INTEGER,
+    h_osio REAL,
+    cal_consumo_tec INTEGER,
+    uso_ia BOOLEAN,
+    aplicacion VARCHAR,
+    pregunta_objetivo REAL,
+    id_alumno INTEGER
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT registro_diario.id_registro, registro_diario.fecha, registro_diario.h_sueno, registro_diario.cal_sueno, registro_diario.n_comidas, registro_diario.hor_comidas, registro_diario.cal_consumo, registro_diario.h_osio, registro_diario.cal_consumo_tec, registro_diario.uso_ia, registro_diario.aplicacion, registro_diario.pregunta_objetivo, registro_diario.id_alumno
+    FROM registro_diario;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Visualizar registros diarios de un alumno específico
+
+CREATE OR REPLACE FUNCTION registros_spec(v_id INTEGER)
+RETURNS TABLE(
+    id_registro INTEGER,
+    fecha DATE,
+    h_sueno REAL,
+    cal_sueno INTEGER,
+    n_comidas INTEGER,
+    hor_comidas VARCHAR,
+    cal_consumo INTEGER,
+    h_osio REAL,
+    cal_consumo_tec INTEGER,
+    uso_ia BOOLEAN,
+    aplicacion VARCHAR,
+    pregunta_objetivo REAL,
+    id_alumno INTEGER
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT registro_diario.id_registro, registro_diario.fecha, registro_diario.h_sueno, registro_diario.cal_sueno, registro_diario.n_comidas, registro_diario.hor_comidas, registro_diario.cal_consumo, registro_diario.h_osio, registro_diario.cal_consumo_tec, registro_diario.uso_ia, registro_diario.aplicacion, registro_diario.pregunta_objetivo, registro_diario.id_alumno
+    FROM registro_diario WHERE registro_diario.id_alumno = v_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Inserción de datos del registro diario
+
+CREATE OR REPLACE PROCEDURE register_insert(
+    v_fecha DATE,
+    v_h_sueno REAL,
+    v_cal_sueno INTEGER,
+    v_n_comidas INTEGER,
+    v_hor_comidas CHARACTER VARYING(9),
+    v_cal_consumo INTEGER,
+    v_h_osio REAL,
+    v_cal_consumo_tec INTEGER,
+    v_uso_ia BOOLEAN,
+    v_aplicacion CHARACTER VARYING(20),
+    v_pregunta_objetivo REAL,
+    v_id_alumno INTEGER
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO registro_diario (fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno)
+    VALUES (v_fecha, v_h_sueno, v_cal_sueno, v_n_comidas, v_hor_comidas, v_cal_consumo, v_h_osio, v_cal_consumo_tec, v_uso_ia, v_aplicacion, v_pregunta_objetivo, v_id_alumno);
+END;
+$$;
+
+
+-- Búsqueda del registro único de la encuesta general
+
+CREATE OR REPLACE FUNCTION registro_vista(v_id INTEGER)
+RETURNS TABLE(
+    id_general INTEGER,
+    edad INTEGER,
+    sexo VARCHAR,
+    carrera VARCHAR,
+    institucion VARCHAR,
+    n_inscripcion INTEGER,
+    burnout_previo BOOLEAN,
+    actividad_f BOOLEAN,
+    tratamiento_psiquia BOOLEAN,
+    tratamiento_psico BOOLEAN,
+    id_alumno INTEGER
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT encuesta_general.id_general, encuesta_general.edad, encuesta_general.sexo, encuesta_general.carrera, encuesta_general.institucion, encuesta_general.n_inscripcion, encuesta_general.burnout_previo, encuesta_general.actividad_f, encuesta_general.tratamiento_psiquia, encuesta_general.tratamiento_psico, encuesta_general.id_alumno
+    FROM encuesta_general WHERE encuesta_general.id_alumno = v_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Inserción de datos en la encuesta general
+
+CREATE OR REPLACE FUNCTION general_insert(
+    v_edad INTEGER,
+    v_sexo CHARACTER VARYING(25),
+    v_carrera CHARACTER VARYING(100),
+    v_institucion CHARACTER VARYING(100),
+    v_n_inscripcion INTEGER,
+    v_burnout_previo BOOLEAN,
+    v_actividad_f BOOLEAN,
+    v_tratamiento_psiquia BOOLEAN,
+    v_tratamiento_psico BOOLEAN,
+    v_id_alumno INTEGER
+)
+RETURNS TABLE (
+    edad INTEGER,
+    sexo VARCHAR,
+    carrera VARCHAR,
+    institucion VARCHAR,
+    n_inscripcion INTEGER,
+    burnout_previo BOOLEAN,
+    actividad_f BOOLEAN,
+    tratamiento_psiquia BOOLEAN,
+    tratamiento_psico BOOLEAN,
+    id_alumno INTEGER
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    INSERT INTO encuesta_general (edad, sexo, carrera, institucion, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno)
+    VALUES (v_edad, v_sexo, v_carrera, v_institucion, v_n_inscripcion, v_burnout_previo, v_actividad_f, v_tratamiento_psiquia, v_tratamiento_psico, v_id_alumno);
+    RETURNING encuesta_general.edad, encuesta_general.sexo, encuesta_general.carrera, encuesta_general.institucion, encuesta_general.n_inscripcion, encuesta_general.burnout_previo, encuesta_general.actividad_f, encuesta_general.tratamiento_psiquia, encuesta_general.tratamiento_psico, encuesta_general.id_alumno;
+END;
+$$;
 
 -- Completed on 2026-06-17 20:02:01
 

@@ -92,7 +92,7 @@ export default function SignupScreen({
             // Recomiendo verificar que en Android real o iOS esa IP '10.0.2.2' cambie por tu IP local si testeas en físico.
             const response = await axios.post(`http://10.0.2.2:5000/account/register`, payload);
 
-            Alert.alert("Éxito", "Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.");
+            Alert.alert("Éxito", response.data.message || "Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.");
             onNavigateToSurvey();
         } catch (err: any) {
             if (err.name == "ValidationError") {
@@ -100,11 +100,9 @@ export default function SignupScreen({
                 setError(mensajes);
             } else if (err.response) {
                 const statusCode = err.response.status;
-                const responseData = err.response.data;
-                if (statusCode == 400) {
-                    setError("Datos invalidos: " + (responseData?.error || "Verifica que todos los campos sean correctos"));                  
-                } else if (statusCode == 409) {
-                    setError("Este correo ya esta registrado. Intenta con otro correo o inicia sesion si es tu cuenta.");
+                const responseData = err.response.data;                 
+                if (statusCode == 409) {
+                    setError(responseData?.message || "Este correo ya esta registrado. Intenta con otro correo o inicia sesion si es tu cuenta.");
                 } else if (statusCode == 500) {
                     setError("Error del servidor (500): " + (responseData?.error || "El servidor esta teniendo problemas") + ". Intenta de nuevo mas tarde.");
                 } else {

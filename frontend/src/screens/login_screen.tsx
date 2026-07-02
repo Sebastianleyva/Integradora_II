@@ -67,7 +67,7 @@ export default function LoginScreen({
 
             if (resp.status == 200) {
                 const resp2 = await axios.get(`http://10.0.2.2:5000/general/${resp.data.id}`);
-                Alert.alert(resp2.data.message);
+                Alert.alert("Éxito", resp2.data.message);
                 setLoading(false);
                 if (resp2.data.encuesta) {
                     onNavigateToSurvey();
@@ -78,23 +78,23 @@ export default function LoginScreen({
         } catch (err: any) {
             if (err.name == "ValidationError") {
                 const mensajes = err.inner.map((e: any) => `${e.message}`).join("\n");
-                Alert.alert("Validación", mensajes);
+                Alert.alert("Validación: ", mensajes);
             } else if (err.response) {
                 const statusCode = err.response.status;
                 const responseData = err.response.data;
                 if (statusCode == 401) {
-                    Alert.alert("Acceso denegado", responseData?.error || "El correo o la contraseña son incorrectos. Verifica tus datos e intenta de nuevo.");
+                    Alert.alert("Acceso denegado: ", responseData?.error || "El correo o la contraseña son incorrectos. Verifica tus datos e intenta de nuevo.");
                 } else if (statusCode == 404) {
-                    Alert.alert("Correo no encontrado", "No existe una cuenta con este correo. ¿Quizas querías registrarte?");
+                    Alert.alert("Correo no encontrado: ", responseData?.error || "No existe una cuenta con este correo. ¿Quizas querías registrarte?");
                 } else if (statusCode == 500) {
-                    Alert.alert("Error del servidor (500)", "El servidor está teniendo problemas. Intenta de nuevo más tarde.");
+                    Alert.alert("Error del servidor (500): ", "El servidor está teniendo problemas. Intenta de nuevo más tarde.");
                 } else {
-                    Alert.alert("Error del servidor (" + statusCode + ")", responseData?.error || err.message);
+                    Alert.alert("Error del servidor: (" + statusCode + "): ", responseData?.error || err.message);
                 }
             } else if (err.message === "Network Error") {
-                Alert.alert("Error de conexión", "No se pudo conectar al servidor.\n\nSolución:\n1. Verifica tu conexión a internet\n2. Asegúrate que el backend esté disponible\n3. En dispositivo físico, cambia la IP 10.0.2.2 a tu IP local");
+                Alert.alert("Error de conexión: ", "No se pudo conectar al servidor.\n\nSolución:\n1. Verifica tu conexión a internet\n2. Asegúrate que el backend esté disponible\n3. En dispositivo físico, cambia la IP 10.0.2.2 a tu IP local");
             } else {
-                Alert.alert("Error inesperado", `${err.message || "Algo salió mal. Intenta de nuevo o contacta soporte"}`);
+                Alert.alert("Error inesperado: ", `${err.message || "Algo salió mal. Intenta de nuevo o contacta soporte"}`);
             }
         } finally {
             setLoading(false);
