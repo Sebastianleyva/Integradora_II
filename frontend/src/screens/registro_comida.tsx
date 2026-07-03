@@ -19,7 +19,7 @@ interface data {
     calidadSueno: number;
     numeroComidas: string;
     calidadComida: number;
-    horasOcio: string;
+    horasOcio: number;
     calidadConsumo: number;
     usoIa: boolean;
     usoIaEn: string;
@@ -28,7 +28,6 @@ interface data {
 
 const validationSchema = Yup.object().shape({
     numeroComidas: Yup.string().required('Campo requerido: selecciona cuántas comidas tuviste hoy'),
-    horasComida: Yup.string(),
     calidadComida: Yup.number()
         .min(1, 'Debes calificar tu experiencia al comer seleccionando una opción en la escala')
         .max(10, 'Error interno: valor fuera de rango')
@@ -55,9 +54,9 @@ export default function RegistroComida({ datos, onNavigateToTecno, onNavigateToH
 
     const handleChange = (name: keyof data, value: string | number) => {
         if (name === 'calidadComida') {
-            setRegistro({ ...registro!, [name]: Number(value) });
+            setRegistro({ ...registro, [name]: Number(value) });
         } else {
-            setRegistro({ ...registro!, [name]: value as string });
+            setRegistro({ ...registro, [name]: value as string });
         }
     };
 

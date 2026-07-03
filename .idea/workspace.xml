@@ -5,16 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c2269309-53b1-4cc9-a8db-34c277fab056" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/database/.env" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/database/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/database/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/schema.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/model/info.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/model/info.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/screens/login_screen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/screens/login_screen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/screens/general_survey.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/screens/general_survey.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/screens/objetivo_screen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/screens/objetivo_screen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/screens/signup_screen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/screens/signup_screen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/screens/profile_screen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/screens/profile_screen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/screens/registro_comida.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/screens/registro_comida.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/screens/registro_sueno.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/screens/registro_sueno.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/screens/tecno_registro.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/screens/tecno_registro.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -16,9 +16,8 @@ interface data {
   horasSueno: string;
   calidadSueno: number;
   numeroComidas: string;
-  horasComida: string;
   calidadComida: number;
-  horasOcio: string;
+  horasOcio: number;
   calidadConsumo: number;
   usoIa: boolean;
   usoIaEn: string;

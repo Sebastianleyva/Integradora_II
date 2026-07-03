@@ -75,15 +75,15 @@ ALTER SEQUENCE public.alumnos_id_alumno_seq OWNED BY public.alumnos.id_alumno;
 CREATE TABLE public.encuesta_general (
     id_general integer NOT NULL,
     edad integer NOT NULL,
-    sexo character(1) NOT NULL,
+    sexo character varying(25) NOT NULL,
     carrera character varying(100) NOT NULL,
-    cuatrimestre integer CONSTRAINT encuesta_general_n_inscripcion_not_null NOT NULL,
+    cuatrimestre integer NOT NULL,
     burnout_previo boolean NOT NULL,
     actividad_f boolean NOT NULL,
     tratamiento_psiquia boolean NOT NULL,
     tratamiento_psico boolean NOT NULL,
-    id_alumno integer NOT NULL,
-    trabajo boolean NOT NULL
+    trabajo boolean NOT NULL,
+    id_alumno integer NOT NULL
 );
 
 
@@ -163,7 +163,6 @@ CREATE TABLE public.registro_diario (
     h_sueno real NOT NULL,
     cal_sueno integer NOT NULL,
     n_comidas integer NOT NULL,
-    hor_comidas character varying(9),
     cal_consumo integer NOT NULL,
     h_osio real NOT NULL,
     cal_consumo_tec integer NOT NULL,
@@ -249,7 +248,7 @@ COPY public.alumnos (id_alumno, nombre, apellidos, correo, contrasena, fecha) FR
 -- Data for Name: encuesta_general; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.encuesta_general (id_general, edad, sexo, carrera, cuatrimestre, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno, trabajo) FROM stdin;
+COPY public.encuesta_general (id_general, edad, sexo, carrera, cuatrimestre, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, trabajo, id_alumno) FROM stdin;
 \.
 
 
@@ -269,7 +268,7 @@ COPY public.predicciones (id_prediccion, id_alumno) FROM stdin;
 -- Data for Name: registro_diario; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.registro_diario (id_registro, fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) FROM stdin;
+COPY public.registro_diario (id_registro, fecha, h_sueno, cal_sueno, n_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) FROM stdin;
 \.
 
 
@@ -456,8 +455,8 @@ CREATE OR REPLACE PROCEDURE pass_change(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    UPDATE alumnos SET alumnos.contrasena = v_contrasena
-    WHERE alumnos.id_alumno = v_id;
+    UPDATE alumnos SET contrasena = v_contrasena
+    WHERE id_alumno = v_id;
 END;
 $$;
 
@@ -485,7 +484,6 @@ RETURNS TABLE(
     h_sueno REAL,
     cal_sueno INTEGER,
     n_comidas INTEGER,
-    hor_comidas VARCHAR,
     cal_consumo INTEGER,
     h_osio REAL,
     cal_consumo_tec INTEGER,
@@ -497,7 +495,7 @@ RETURNS TABLE(
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT registro_diario.id_registro, registro_diario.fecha, registro_diario.h_sueno, registro_diario.cal_sueno, registro_diario.n_comidas, registro_diario.hor_comidas, registro_diario.cal_consumo, registro_diario.h_osio, registro_diario.cal_consumo_tec, registro_diario.uso_ia, registro_diario.aplicacion, registro_diario.pregunta_objetivo, registro_diario.id_alumno
+    SELECT registro_diario.id_registro, registro_diario.fecha, registro_diario.h_sueno, registro_diario.cal_sueno, registro_diario.n_comidas, registro_diario.cal_consumo, registro_diario.h_osio, registro_diario.cal_consumo_tec, registro_diario.uso_ia, registro_diario.aplicacion, registro_diario.pregunta_objetivo, registro_diario.id_alumno
     FROM registro_diario;
 END;
 $$ LANGUAGE plpgsql;
@@ -512,7 +510,6 @@ RETURNS TABLE(
     h_sueno REAL,
     cal_sueno INTEGER,
     n_comidas INTEGER,
-    hor_comidas VARCHAR,
     cal_consumo INTEGER,
     h_osio REAL,
     cal_consumo_tec INTEGER,
@@ -524,8 +521,34 @@ RETURNS TABLE(
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT registro_diario.id_registro, registro_diario.fecha, registro_diario.h_sueno, registro_diario.cal_sueno, registro_diario.n_comidas, registro_diario.hor_comidas, registro_diario.cal_consumo, registro_diario.h_osio, registro_diario.cal_consumo_tec, registro_diario.uso_ia, registro_diario.aplicacion, registro_diario.pregunta_objetivo, registro_diario.id_alumno
+    SELECT registro_diario.id_registro, registro_diario.fecha, registro_diario.h_sueno, registro_diario.cal_sueno, registro_diario.n_comidas, registro_diario.cal_consumo, registro_diario.h_osio, registro_diario.cal_consumo_tec, registro_diario.uso_ia, registro_diario.aplicacion, registro_diario.pregunta_objetivo, registro_diario.id_alumno
     FROM registro_diario WHERE registro_diario.id_alumno = v_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Visualizar si se realizó la encuesta diaria en 1 día en concreto
+
+CREATE OR REPLACE FUNCTION verified(v_id INTEGER)
+RETURNS TABLE(
+    id_registro INTEGER,
+    fecha DATE,
+    h_sueno REAL,
+    cal_sueno INTEGER,
+    n_comidas INTEGER,
+    cal_consumo INTEGER,
+    h_osio REAL,
+    cal_consumo_tec INTEGER,
+    uso_ia BOOLEAN,
+    aplicacion VARCHAR,
+    pregunta_objetivo REAL,
+    id_alumno INTEGER
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT registro_diario.id_registro, registro_diario.fecha, registro_diario.h_sueno, registro_diario.cal_sueno, registro_diario.n_comidas, registro_diario.cal_consumo, registro_diario.h_osio, registro_diario.cal_consumo_tec, registro_diario.uso_ia, registro_diario.aplicacion, registro_diario.pregunta_objetivo, registro_diario.id_alumno
+    FROM registro_diario WHERE registro_diario.id_alumno = v_id AND registro_diario.fecha = CURRENT_DATE;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -537,7 +560,6 @@ CREATE OR REPLACE PROCEDURE register_insert(
     v_h_sueno REAL,
     v_cal_sueno INTEGER,
     v_n_comidas INTEGER,
-    v_hor_comidas CHARACTER VARYING(9),
     v_cal_consumo INTEGER,
     v_h_osio REAL,
     v_cal_consumo_tec INTEGER,
@@ -549,8 +571,8 @@ CREATE OR REPLACE PROCEDURE register_insert(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    INSERT INTO registro_diario (fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno)
-    VALUES (v_fecha, v_h_sueno, v_cal_sueno, v_n_comidas, v_hor_comidas, v_cal_consumo, v_h_osio, v_cal_consumo_tec, v_uso_ia, v_aplicacion, v_pregunta_objetivo, v_id_alumno);
+    INSERT INTO registro_diario (fecha, h_sueno, cal_sueno, n_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno)
+    VALUES (v_fecha, v_h_sueno, v_cal_sueno, v_n_comidas, v_cal_consumo, v_h_osio, v_cal_consumo_tec, v_uso_ia, v_aplicacion, v_pregunta_objetivo, v_id_alumno);
 END;
 $$;
 
@@ -563,18 +585,18 @@ RETURNS TABLE(
     edad INTEGER,
     sexo VARCHAR,
     carrera VARCHAR,
-    institucion VARCHAR,
-    n_inscripcion INTEGER,
+    cuatrimestre INTEGER,
     burnout_previo BOOLEAN,
     actividad_f BOOLEAN,
     tratamiento_psiquia BOOLEAN,
     tratamiento_psico BOOLEAN,
+    trabajo BOOLEAN,
     id_alumno INTEGER
 )
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT encuesta_general.id_general, encuesta_general.edad, encuesta_general.sexo, encuesta_general.carrera, encuesta_general.institucion, encuesta_general.n_inscripcion, encuesta_general.burnout_previo, encuesta_general.actividad_f, encuesta_general.tratamiento_psiquia, encuesta_general.tratamiento_psico, encuesta_general.id_alumno
+    SELECT encuesta_general.id_general, encuesta_general.edad, encuesta_general.sexo, encuesta_general.carrera, encuesta_general.cuatrimestre, encuesta_general.burnout_previo, encuesta_general.actividad_f, encuesta_general.tratamiento_psiquia, encuesta_general.tratamiento_psico, encuesta_general.trabajo, encuesta_general.id_alumno
     FROM encuesta_general WHERE encuesta_general.id_alumno = v_id;
 END;
 $$ LANGUAGE plpgsql;
@@ -586,35 +608,36 @@ CREATE OR REPLACE FUNCTION general_insert(
     v_edad INTEGER,
     v_sexo CHARACTER VARYING(25),
     v_carrera CHARACTER VARYING(100),
-    v_institucion CHARACTER VARYING(100),
-    v_n_inscripcion INTEGER,
+    v_cuatrimestre INTEGER,
     v_burnout_previo BOOLEAN,
     v_actividad_f BOOLEAN,
     v_tratamiento_psiquia BOOLEAN,
     v_tratamiento_psico BOOLEAN,
+    v_trabajo BOOLEAN,
     v_id_alumno INTEGER
 )
 RETURNS TABLE (
     edad INTEGER,
     sexo VARCHAR,
     carrera VARCHAR,
-    institucion VARCHAR,
-    n_inscripcion INTEGER,
+    cuatrimestre INTEGER,
     burnout_previo BOOLEAN,
     actividad_f BOOLEAN,
     tratamiento_psiquia BOOLEAN,
     tratamiento_psico BOOLEAN,
+    trabajo BOOLEAN,
     id_alumno INTEGER
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
     RETURN QUERY
-    INSERT INTO encuesta_general (edad, sexo, carrera, institucion, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno)
-    VALUES (v_edad, v_sexo, v_carrera, v_institucion, v_n_inscripcion, v_burnout_previo, v_actividad_f, v_tratamiento_psiquia, v_tratamiento_psico, v_id_alumno);
-    RETURNING encuesta_general.edad, encuesta_general.sexo, encuesta_general.carrera, encuesta_general.institucion, encuesta_general.n_inscripcion, encuesta_general.burnout_previo, encuesta_general.actividad_f, encuesta_general.tratamiento_psiquia, encuesta_general.tratamiento_psico, encuesta_general.id_alumno;
+    INSERT INTO encuesta_general (edad, sexo, carrera, cuatrimestre, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, trabajo, id_alumno)
+    VALUES (v_edad, v_sexo, v_carrera, v_cuatrimestre, v_burnout_previo, v_actividad_f, v_tratamiento_psiquia, v_tratamiento_psico, v_trabajo, v_id_alumno )
+    RETURNING encuesta_general.edad, encuesta_general.sexo, encuesta_general.carrera, encuesta_general.cuatrimestre, encuesta_general.burnout_previo, encuesta_general.actividad_f, encuesta_general.tratamiento_psiquia, encuesta_general.tratamiento_psico, encuesta_general.trabajo, encuesta_general.id_alumno;
 END;
 $$;
+
 
 -- Completed on 2026-06-17 20:02:01
 

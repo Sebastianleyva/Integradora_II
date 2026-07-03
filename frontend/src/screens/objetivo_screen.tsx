@@ -10,9 +10,8 @@ interface data {
     horasSueno: string;
     calidadSueno: number;
     numeroComidas: string;
-    horasComida: string;
     calidadComida: number;
-    horasOcio: string;
+    horasOcio: number;
     calidadConsumo: number;
     usoIa: boolean;
     usoIaEn: string;
@@ -20,15 +19,6 @@ interface data {
 };
 
 const validationSchema = Yup.object().shape({
-    horasSueno: Yup.string(),
-    calidadSueno: Yup.number(),
-    numeroComidas: Yup.string(),
-    horasComida: Yup.string(),
-    calidadComida: Yup.number(),
-    horasOcio: Yup.string(),
-    calidadConsumo: Yup.number(),
-    usoIa: Yup.boolean(),
-    usoIaEn: Yup.string(),
     bienestar: Yup.number().min(1, "Debes evaluar tu bienestar seleccionando una opcion en la escala").required("Campo requerido: Selecciona tu nivel de bienestar en la escala de opciones").max(10, "Error interno: valor fuera de rango")
 });
 
@@ -71,7 +61,6 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
                 h_sueno: horas.horasSueno,
                 cal_sueno: horas.calidadSueno,
                 n_comidas: horas.numeroComidas,
-                hor_comidas: horas.horasComida,
                 cal_consumo: horas.calidadComida,
                 h_osio: horas.horasOcio,
                 cal_consumo_tec: horas.calidadConsumo,
