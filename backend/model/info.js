@@ -150,7 +150,7 @@ app.get("/account/logout", (req, res) => {
       console.error(err);
       return res
         .status(500)
-        .send(`No se pudo cerrar la sesión: ${err.message || err}`);
+        .json({error: `No se pudo cerrar la sesión: ${err.message || err}`});
     } else {
       console.log("Sesión cerrada");
       return res.status(200).send("Sesión cerrada");
@@ -164,29 +164,31 @@ app.put("/account/update-password/:id", async (req, res) => {
     const { id } = req.params;
     const { contra, newcontra } = req.body;
     if (contra.trim() && newcontra.trim()) {
-      const sql = "SELECT * FROM alumnos WHERE id_alumno = $1;";
+      const sql = "SELECT * FROM alumno($1);"
       const result = await pool.query(sql, [id]);
       if (result.rows.length == 0) {
         console.error("Usuario no encontrado");
-        return res.status(404).send("Alumno no existe");
+        return res.status(404).json({message: "No hay una sección activa disponible"});
       } else {
         const alumno = result.rows[0];
         const ver = await bcrypt.compare(contra, alumno.contrasena);
         if (!ver) {
           console.error("Contraseña incorrecta");
-          return res.status(400).send("La contraseña es incorrecta");
+          return res.status(401).json({message: "La contraseña es incorrecta"});
         } else {
           const contraHash = await bcrypt.hash(newcontra, 10);
-          const sql = "UPDATE alumnos SET contrasena = $1 WHERE id_alumno = $2";
-          const updateRes = await pool.query(sql, [contraHash, id]);
+          const sql2 = "CALL pass_change($1, $2)";
+          const updateRes = await pool.query(sql2, [id, contraHash]);
           console.info({ updateRes });
-          return res.status(201).send("Contraseña cambiada con éxito");
+          return res.status(200).json({message: "Contraseña cambiada con éxito"});
         }
       }
+    } else {
+      return res.status(400).json({message: "Introduce las contraseñas correspondientes"});
     }
   } catch (err) {
     console.error(err);
-    return res.status(500).send({ error: err.message || err });
+    return res.status(500).json({ error: err.message || err });
   }
 });
 
@@ -232,7 +234,6 @@ app.get("/registros", async (req, res) => {
 });
 
 //Inserción de los datos de una sola vez
-/*
 app.post("/general/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -240,75 +241,13 @@ app.post("/general/:id", async (req, res) => {
       edad,
       sexo,
       carrera,
-      instituto,
       n_insc,
       burnout,
       actividad,
       psiquia,
       psico,
+      work
     } = req.body;
-    const existe = await pool.query("SELECT * FROM registros_spec($1);", [id]);
-    if (existe.rows.length > 0) {
-      return res.status(409).json({
-        error: "La encuesta general ya fue respondida",
-      });
-    } else {
-      if (
-        !Number.isFinite(edad) ||
-        !sexo.trim() ||
-        !carrera.trim() ||
-        !instituto.trim() ||
-        !Number.isFinite(Number(n_insc)) ||
-        typeof burnout !== "boolean" ||
-        typeof actividad !== "boolean" ||
-        typeof psiquia !== "boolean" ||
-        typeof psico !== "boolean"
-      ) {
-        console.log(
-          Number(edad),
-          sexo,
-          carrera,
-          instituto,
-          Number(n_insc),
-          burnout,
-          actividad,
-          psiquia,
-          psico,
-        );
-        return res.status(400).send({
-          error:
-            "No se han insertado los datos correspondientes, inténtelo de nuevo",
-        });
-      } else {
-        // const result = await pool.query(sql, [ide, edad, sexo, carrera, instituto, fecha, n_insc, burnout, actividad, psiquia, psico, id]);
-        const sql =
-          "INSERT INTO encuesta_general (edad, sexo, carrera, institucion, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
-        const result = await pool.query(sql, [
-          edad,
-          sexo,
-          carrera,
-          instituto,
-          n_insc,
-          burnout,
-          actividad,
-          psiquia,
-          psico,
-          id,
-        ]);
-        return res.status(201).send({ result });
-      }
-    }
-  } catch (err) {
-    console.error(err.message || err);
-    return res.status(500).send({ error: err.message || err });
-  }
-});
-*/
-app.post("/general/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { edad, sexo, carrera, n_insc, burnout, actividad, psiquia, psico } =
-      req.body;
     if (
       !Number.isFinite(edad) ||
       !sexo.trim() ||
@@ -317,7 +256,8 @@ app.post("/general/:id", async (req, res) => {
       typeof burnout !== "boolean" ||
       typeof actividad !== "boolean" ||
       typeof psiquia !== "boolean" ||
-      typeof psico !== "boolean"
+      typeof psico !== "boolean" ||
+      typeof work !== "boolean"
     ) {
       console.log(
         Number(edad),
@@ -328,6 +268,7 @@ app.post("/general/:id", async (req, res) => {
         actividad,
         psiquia,
         psico,
+        work,
       );
       return res.status(400).send({
         error:
@@ -335,8 +276,7 @@ app.post("/general/:id", async (req, res) => {
       });
     } else {
       // const result = await pool.query(sql, [ide, edad, sexo, carrera, instituto, fecha, n_insc, burnout, actividad, psiquia, psico, id]);
-      const sql =
-        "INSERT INTO encuesta_general (edad, sexo, carrera, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
+      const sql = "SELECT * FROM general_insert($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
       const result = await pool.query(sql, [
         edad,
         sexo,
@@ -346,7 +286,8 @@ app.post("/general/:id", async (req, res) => {
         actividad,
         psiquia,
         psico,
-        id,
+        work,
+        id
       ]);
       return res.status(201).send({ result });
     }
@@ -397,16 +338,10 @@ app.post("/registros/:id", async (req, res) => {
       pregunta_objetivo,
     } = req.body;
     const fecha = new Date().toISOString().split("T")[0];
-    const existe = await pool.query(
-      `SELECT 1
-        FROM registro_diario
-        WHERE id_alumno = $1
-        AND fecha = CURRENT_DATE `,
-      [id],
-    );
+    const existe = await pool.query("SELECT * FROM verified($1)", [id],);
     if (existe.rows.length > 0) {
       return res.status(409).json({
-        error: "Ya existe un registro para hoy",
+        error: "Ya existe un registro para hoy, muchas gracias por responder",
       });
     } else {
       if (
@@ -417,27 +352,25 @@ app.post("/registros/:id", async (req, res) => {
         !Number.isFinite(Number(h_osio)) ||
         !Number.isFinite(Number(cal_consumo_tec)) ||
         typeof uso_ia !== "boolean" ||
-        !aplicacion?.trim() ||
         !Number.isFinite(Number(pregunta_objetivo))
       ) {
         console.log(
-          id,
-          h_sueno,
-          cal_sueno,
-          n_comidas,
-          cal_consumo,
-          h_osio,
-          cal_consumo_tec,
-          uso_ia,
-          aplicacion,
-          pregunta_objetivo,
+          "id: ", id,
+          "\nhoras de sueno: ", h_sueno,
+          "\nCalidad de consumo: ", cal_sueno,
+          "\nNúmeros de comidas: ", n_comidas,
+          "\nCalidad de consumo: ", cal_consumo,
+          "\nHoras de osio: ", h_osio,
+          "\nCalidad de consumo tec: ", cal_consumo_tec,
+          "\nUso de la IA: ", uso_ia,
+          "\nAplicación: ", aplicacion,
+          "\nPregunta objetivo: ", pregunta_objetivo,
         );
         return res
           .status(400)
           .send({ error: "No se han insertado los datos correspondientes" });
       } else {
-        const sql =
-          "INSERT INTO registro_diario (fecha, h_sueno, cal_sueno, n_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
+        const sql = "CALL register_insert($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
         const result = await pool.query(sql, [
           fecha,
           Number(h_sueno),

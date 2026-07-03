@@ -19,7 +19,7 @@ interface data {
     calidadSueno: number;
     numeroComidas: string;
     calidadComida: number;
-    horasOcio: string;
+    horasOcio: number;
     calidadConsumo: number;
     usoIa: boolean;
     usoIaEn: string;
@@ -27,20 +27,17 @@ interface data {
 }
 
 const validationSchema = Yup.object().shape({
-    horasOcio: Yup.string().required("Inserta las horas de ocio que tuviste"),
+    horasOcio: Yup.number().required("Inserta las horas de ocio que tuviste"),
     calidadConsumo: Yup.number()
         .min(1, "Selecciona la calidad de tiempo de ocio con al menos 1 estrella")
         .required("Inserta la calidad de consumo de tecnología")
         .max(10, "No se como le hiciste alch"),
     usoIa: Yup.boolean().required("¿De verdad medio-usaste la IA para indefinirlo?"),
-
     usoIaEn: Yup.string().when('usoIa', {
         is: true,
         then: (schema) => schema.required("Por favor, selecciona en qué usaste la IA (Escuela, Trabajo o Vida personal)"),
         otherwise: (schema) => schema.notRequired(),
     }),
-
-    bienestar: Yup.number()
 });
 
 const tecnoOptions = [
@@ -70,23 +67,17 @@ export default function TecnoRegistro({ datos, onNavigateToObjetivo, onNavigateT
     const [error, setError] = useState('');
 
     const handleChange = (name: keyof data, value: string | number | boolean) => {
-        let finalValue = value;
-
-        if (name === "horasOcio" && typeof value === "string") {
-            finalValue = value.replace(/[^0-9]/g, '');
-        }
-
         if (name === "calidadConsumo") {
-            setHoras({ ...horas, [name]: Number(finalValue) });
+            setHoras({ ...horas, [name]: Number(value) });
         } else if (name === "usoIa") {
             // Si dice que NO usó IA, limpiamos el campo 'usoIaEn' por si había seleccionado algo antes
-            if (finalValue === false) {
+            if (value === false) {
                 setHoras({ ...horas, usoIa: false, usoIaEn: '' });
             } else {
                 setHoras({ ...horas, usoIa: true });
             }
         } else {
-            setHoras({ ...horas, [name]: finalValue as string });
+            setHoras({ ...horas, [name]: value as string });
         }
     };
 

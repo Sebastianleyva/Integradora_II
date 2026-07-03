@@ -20,7 +20,7 @@ interface data {
     calidadSueno: number;
     numeroComidas: string;
     calidadComida: number;
-    horasOcio: string;
+    horasOcio: number;
     calidadConsumo: number;
     usoIa: boolean;
     usoIaEn: string;
@@ -32,7 +32,7 @@ const initialState: data = {
     calidadSueno: 0,
     numeroComidas: "",
     calidadComida: 0,
-    horasOcio: "",
+    horasOcio: 0,
     calidadConsumo: 0,
     usoIa: false,
     usoIaEn: "",
@@ -62,10 +62,6 @@ export default function RegistroSueno({ onNavigateToComida, onNavigateToHome }: 
     const [error, setError] = useState('');
 
     const handleChange = (name: keyof data, value: string | number) => {
-        if (name == "horasSueno" && typeof value == "string") {
-            const sanitized = value.replace(/[^0-9]/g, '');
-        }
-
         if (name == "calidadSueno") {
             setHoras({ ...horas!, [name]: Number(value) })
         } else {

@@ -17,7 +17,7 @@ interface data {
   calidadSueno: number;
   numeroComidas: string;
   calidadComida: number;
-  horasOcio: string;
+  horasOcio: number;
   calidadConsumo: number;
   usoIa: boolean;
   usoIaEn: string;
@@ -25,7 +25,7 @@ interface data {
 }
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('home');
+  const [currentScreen, setCurrentScreen] = useState<Screen>("login");
   const [encuesta, setEncuesta] = useState<data | null>(null)
 
   const renderScreen = () => {

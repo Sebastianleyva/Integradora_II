@@ -19,7 +19,7 @@ interface data {
     calidadSueno: number;
     numeroComidas: string;
     calidadComida: number;
-    horasOcio: string;
+    horasOcio: number;
     calidadConsumo: number;
     usoIa: boolean;
     usoIaEn: string;
@@ -54,9 +54,9 @@ export default function RegistroComida({ datos, onNavigateToTecno, onNavigateToH
 
     const handleChange = (name: keyof data, value: string | number) => {
         if (name === 'calidadComida') {
-            setRegistro({ ...registro!, [name]: Number(value) });
+            setRegistro({ ...registro, [name]: Number(value) });
         } else {
-            setRegistro({ ...registro!, [name]: value as string });
+            setRegistro({ ...registro, [name]: value as string });
         }
     };
 

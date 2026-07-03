@@ -11,7 +11,7 @@ interface data {
     calidadSueno: number;
     numeroComidas: string;
     calidadComida: number;
-    horasOcio: string;
+    horasOcio: number;
     calidadConsumo: number;
     usoIa: boolean;
     usoIaEn: string;
@@ -19,14 +19,6 @@ interface data {
 };
 
 const validationSchema = Yup.object().shape({
-    horasSueno: Yup.string(),
-    calidadSueno: Yup.number(),
-    numeroComidas: Yup.string(),
-    calidadComida: Yup.number(),
-    horasOcio: Yup.string(),
-    calidadConsumo: Yup.number(),
-    usoIa: Yup.boolean(),
-    usoIaEn: Yup.string(),
     bienestar: Yup.number().min(1, "Debes evaluar tu bienestar seleccionando una opcion en la escala").required("Campo requerido: Selecciona tu nivel de bienestar en la escala de opciones").max(10, "Error interno: valor fuera de rango")
 });
 

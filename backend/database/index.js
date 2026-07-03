@@ -3,9 +3,6 @@ import "dotenv/config.js";
 
 import { Pool } from "pg";
 
-import express from "express";
-const app = express();
-
 console.log(process.env.DB_NAME);
 // Pool de conexiones PostgreSQL
 const pool = new Pool({
@@ -38,9 +35,5 @@ pool.on("error", (err) => {
     console.error("✗ No se pudo conectar a PostgreSQL:", err.message);
   }
 })();
-
-app.listen(5432, () => {
-  console.log("Servidor corriendo en el puerto 5432");
-});
 
 export default pool;
