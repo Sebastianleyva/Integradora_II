@@ -38,7 +38,12 @@ app.post("/account/register", async (req, res) => {
     const ver = "SELECT * FROM login_cred($1);";
     const exist = await pool.query(ver, [correo]);
     if (exist.rows.length > 0) {
-      return res.status(409).json({message: "Este correo ya esta registrado. Intenta con otro correo o inicia sesion si es tu cuenta."});
+      return res
+        .status(409)
+        .json({
+          message:
+            "Este correo ya esta registrado. Intenta con otro correo o inicia sesion si es tu cuenta.",
+        });
     }
     const fecha = new Date().toISOString().split("T")[0];
     const contraHash = await bcrypt.hash(contra, 10);
@@ -61,7 +66,7 @@ app.post("/account/register", async (req, res) => {
     ]);
     console.log(usuario);
     if (!usuario || usuario.rows.length == 0) {
-      throw new Error;
+      throw new Error();
     }
 
     req.session.usuario = {
@@ -71,7 +76,13 @@ app.post("/account/register", async (req, res) => {
       correo: usuario.rows[0].correo,
     };
 
-    return res.status(201).json({ message: "Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.", result: usuario.rows || usuario });
+    return res
+      .status(201)
+      .json({
+        message:
+          "Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.",
+        result: usuario.rows || usuario,
+      });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: err.message || err });
@@ -88,7 +99,12 @@ app.post("/account/login", async (req, res) => {
     console.log(correo, contra);
     if (result.rows.length === 0) {
       console.error("Usuario no encontrado");
-      return res.status(404).json({message: "No existe una cuenta con este correo. ¿Quizas querías registrarte?"});
+      return res
+        .status(404)
+        .json({
+          message:
+            "No existe una cuenta con este correo. ¿Quizas querías registrarte?",
+        });
     }
 
     const usuario = result.rows[0];
@@ -96,7 +112,12 @@ app.post("/account/login", async (req, res) => {
 
     if (!ver) {
       console.error("La contraseña es incorrecta");
-      return res.status(401).json({message: "La contraseña es incorrecta, Verifica tus datos e intenta de nuevo."});
+      return res
+        .status(401)
+        .json({
+          message:
+            "La contraseña es incorrecta, Verifica tus datos e intenta de nuevo.",
+        });
     }
 
     // Guardar datos en la sesión
@@ -281,15 +302,23 @@ app.get("/general/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const sql = "SELECT * FROM registro_vista($1)";
-    const result = await pool.query(sql, [ id ]);
+    const result = await pool.query(sql, [id]);
     if (result.rows.length > 0) {
-      return res.status(200).json({encuesta: false, message: "Inicio de sesión exitoso"});
+      return res
+        .status(200)
+        .json({ encuesta: false, message: "Inicio de sesión exitoso" });
     } else {
-      return res.status(200).json({encuesta: true, message: "Inicio de sesión logrado, por favor realiza la encuesta general"});
+      return res
+        .status(200)
+        .json({
+          encuesta: true,
+          message:
+            "Inicio de sesión logrado, por favor realiza la encuesta general",
+        });
     }
   } catch (err) {
     console.error(err.message || err);
-    return res.status(500).send({ error: err.message || err});
+    return res.status(500).send({ error: err.message || err });
   }
 });
 

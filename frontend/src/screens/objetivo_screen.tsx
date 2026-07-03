@@ -86,7 +86,7 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
                 const status = err.response.status;
                 const backendError = err.response.data?.error || "Error desconocido";
 
-                if (status === 500)  {
+                if (status === 500) {
                     setError("Error interno del servidor, inténtelo más tarde");
                 } else if (status === 409) {
                     setError("Ya se había hecho un registro anterior, gracias por responder");
