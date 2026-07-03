@@ -38,7 +38,12 @@ app.post("/account/register", async (req, res) => {
     const ver = "SELECT * FROM login_cred($1);";
     const exist = await pool.query(ver, [correo]);
     if (exist.rows.length > 0) {
-      return res.status(409).json({message: "Este correo ya esta registrado. Intenta con otro correo o inicia sesion si es tu cuenta."});
+      return res
+        .status(409)
+        .json({
+          message:
+            "Este correo ya esta registrado. Intenta con otro correo o inicia sesion si es tu cuenta.",
+        });
     }
     const fecha = new Date().toISOString().split("T")[0];
     const contraHash = await bcrypt.hash(contra, 10);
@@ -61,7 +66,7 @@ app.post("/account/register", async (req, res) => {
     ]);
     console.log(usuario);
     if (!usuario || usuario.rows.length == 0) {
-      throw new Error;
+      throw new Error();
     }
 
     req.session.usuario = {
@@ -71,7 +76,13 @@ app.post("/account/register", async (req, res) => {
       correo: usuario.rows[0].correo,
     };
 
-    return res.status(201).json({ message: "Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.", result: usuario.rows || usuario });
+    return res
+      .status(201)
+      .json({
+        message:
+          "Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.",
+        result: usuario.rows || usuario,
+      });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: err.message || err });
@@ -88,7 +99,12 @@ app.post("/account/login", async (req, res) => {
     console.log(correo, contra);
     if (result.rows.length === 0) {
       console.error("Usuario no encontrado");
-      return res.status(404).json({message: "No existe una cuenta con este correo. ¿Quizas querías registrarte?"});
+      return res
+        .status(404)
+        .json({
+          message:
+            "No existe una cuenta con este correo. ¿Quizas querías registrarte?",
+        });
     }
 
     const usuario = result.rows[0];
@@ -96,7 +112,12 @@ app.post("/account/login", async (req, res) => {
 
     if (!ver) {
       console.error("La contraseña es incorrecta");
-      return res.status(401).json({message: "La contraseña es incorrecta, Verifica tus datos e intenta de nuevo."});
+      return res
+        .status(401)
+        .json({
+          message:
+            "La contraseña es incorrecta, Verifica tus datos e intenta de nuevo.",
+        });
     }
 
     // Guardar datos en la sesión
@@ -286,22 +307,12 @@ app.post("/general/:id", async (req, res) => {
 app.post("/general/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      edad,
-      sexo,
-      carrera,
-      instituto,
-      n_insc,
-      burnout,
-      actividad,
-      psiquia,
-      psico,
-    } = req.body;
+    const { edad, sexo, carrera, n_insc, burnout, actividad, psiquia, psico } =
+      req.body;
     if (
       !Number.isFinite(edad) ||
       !sexo.trim() ||
       !carrera.trim() ||
-      !instituto.trim() ||
       !Number.isFinite(Number(n_insc)) ||
       typeof burnout !== "boolean" ||
       typeof actividad !== "boolean" ||
@@ -312,7 +323,6 @@ app.post("/general/:id", async (req, res) => {
         Number(edad),
         sexo,
         carrera,
-        instituto,
         Number(n_insc),
         burnout,
         actividad,
@@ -326,12 +336,11 @@ app.post("/general/:id", async (req, res) => {
     } else {
       // const result = await pool.query(sql, [ide, edad, sexo, carrera, instituto, fecha, n_insc, burnout, actividad, psiquia, psico, id]);
       const sql =
-        "INSERT INTO encuesta_general (edad, sexo, carrera, institucion, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
+        "INSERT INTO encuesta_general (edad, sexo, carrera, n_inscripcion, burnout_previo, actividad_f, tratamiento_psiquia, tratamiento_psico, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
       const result = await pool.query(sql, [
         edad,
         sexo,
         carrera,
-        instituto,
         n_insc,
         burnout,
         actividad,
@@ -352,15 +361,23 @@ app.get("/general/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const sql = "SELECT * FROM registro_vista($1)";
-    const result = await pool.query(sql, [ id ]);
+    const result = await pool.query(sql, [id]);
     if (result.rows.length > 0) {
-      return res.status(200).json({encuesta: false, message: "Inicio de sesión exitoso"});
+      return res
+        .status(200)
+        .json({ encuesta: false, message: "Inicio de sesión exitoso" });
     } else {
-      return res.status(200).json({encuesta: true, message: "Inicio de sesión logrado, por favor realiza la encuesta general"});
+      return res
+        .status(200)
+        .json({
+          encuesta: true,
+          message:
+            "Inicio de sesión logrado, por favor realiza la encuesta general",
+        });
     }
   } catch (err) {
     console.error(err.message || err);
-    return res.status(500).send({ error: err.message || err});
+    return res.status(500).send({ error: err.message || err });
   }
 });
 
@@ -372,7 +389,6 @@ app.post("/registros/:id", async (req, res) => {
       h_sueno,
       cal_sueno,
       n_comidas,
-      hor_comidas,
       cal_consumo,
       h_osio,
       cal_consumo_tec,
@@ -397,7 +413,6 @@ app.post("/registros/:id", async (req, res) => {
         !Number.isFinite(Number(h_sueno)) ||
         !Number.isFinite(Number(cal_sueno)) ||
         !Number.isFinite(Number(n_comidas)) ||
-        !hor_comidas?.trim() ||
         !Number.isFinite(Number(cal_consumo)) ||
         !Number.isFinite(Number(h_osio)) ||
         !Number.isFinite(Number(cal_consumo_tec)) ||
@@ -410,7 +425,6 @@ app.post("/registros/:id", async (req, res) => {
           h_sueno,
           cal_sueno,
           n_comidas,
-          hor_comidas,
           cal_consumo,
           h_osio,
           cal_consumo_tec,
@@ -423,13 +437,12 @@ app.post("/registros/:id", async (req, res) => {
           .send({ error: "No se han insertado los datos correspondientes" });
       } else {
         const sql =
-          "INSERT INTO registro_diario (fecha, h_sueno, cal_sueno, n_comidas, hor_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
+          "INSERT INTO registro_diario (fecha, h_sueno, cal_sueno, n_comidas, cal_consumo, h_osio, cal_consumo_tec, uso_ia, aplicacion, pregunta_objetivo, id_alumno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
         const result = await pool.query(sql, [
           fecha,
           Number(h_sueno),
           Number(cal_sueno),
           Number(n_comidas),
-          hor_comidas,
           Number(cal_consumo),
           Number(h_osio),
           Number(cal_consumo_tec),

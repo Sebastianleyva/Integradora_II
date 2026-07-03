@@ -28,7 +28,6 @@ interface data {
 
 const validationSchema = Yup.object().shape({
     numeroComidas: Yup.string().required('Campo requerido: selecciona cuántas comidas tuviste hoy'),
-    horasComida: Yup.string(),
     calidadComida: Yup.number()
         .min(1, 'Debes calificar tu experiencia al comer seleccionando una opción en la escala')
         .max(10, 'Error interno: valor fuera de rango')

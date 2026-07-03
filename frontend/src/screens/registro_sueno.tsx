@@ -19,7 +19,6 @@ interface data {
     horasSueno: string;
     calidadSueno: number;
     numeroComidas: string;
-    horasComida: string;
     calidadComida: number;
     horasOcio: string;
     calidadConsumo: number;
@@ -32,7 +31,6 @@ const initialState: data = {
     horasSueno: "",
     calidadSueno: 0,
     numeroComidas: "",
-    horasComida: "",
     calidadComida: 0,
     horasOcio: "",
     calidadConsumo: 0,

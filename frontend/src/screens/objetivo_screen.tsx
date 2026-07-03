@@ -10,7 +10,6 @@ interface data {
     horasSueno: string;
     calidadSueno: number;
     numeroComidas: string;
-    horasComida: string;
     calidadComida: number;
     horasOcio: string;
     calidadConsumo: number;
@@ -23,7 +22,6 @@ const validationSchema = Yup.object().shape({
     horasSueno: Yup.string(),
     calidadSueno: Yup.number(),
     numeroComidas: Yup.string(),
-    horasComida: Yup.string(),
     calidadComida: Yup.number(),
     horasOcio: Yup.string(),
     calidadConsumo: Yup.number(),
@@ -71,7 +69,6 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
                 h_sueno: horas.horasSueno,
                 cal_sueno: horas.calidadSueno,
                 n_comidas: horas.numeroComidas,
-                hor_comidas: horas.horasComida,
                 cal_consumo: horas.calidadComida,
                 h_osio: horas.horasOcio,
                 cal_consumo_tec: horas.calidadConsumo,
@@ -97,7 +94,7 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
                 const status = err.response.status;
                 const backendError = err.response.data?.error || "Error desconocido";
 
-                if (status === 500)  {
+                if (status === 500) {
                     setError("Error interno del servidor, inténtelo más tarde");
                 } else if (status === 409) {
                     setError("Ya se había hecho un registro anterior, gracias por responder");
