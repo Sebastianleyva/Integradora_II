@@ -116,7 +116,7 @@ export default function LoginScreen({
             >
                 {/* Header */}
                 <View style={styles.header}>
-                    <Text style={styles.logo}>MyApp</Text>
+                    <Text style={styles.logo}>Bienestar U</Text>
                     <Text style={styles.subtitle}>Bienvenido de vuelta</Text>
                 </View>
 

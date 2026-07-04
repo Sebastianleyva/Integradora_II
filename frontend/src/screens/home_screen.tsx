@@ -17,7 +17,6 @@ export default function HomeScreen({ onLogout, onNavigateToRegistroSueno }: Home
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>Bienvenido</Text>
-                <Text style={styles.subtitle}>Home Screen</Text>
             </View>
 
             <View style={styles.content}>

@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8f9fa',
+        backgroundColor: '#f8f9fa'
     },
     header: {
         paddingVertical: 30,
@@ -126,6 +126,29 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: '#555',
     },
+    dropdown: {
+    height: 55,
+    borderColor: '#D9D9D9',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 20,
+    backgroundColor: '#FFF',
+},
+
+placeholderStyle: {
+    fontSize: 16,
+    color: '#999',
+},
+
+selectedTextStyle: {
+    fontSize: 16,
+    color: '#000',
+},
+
+itemTextStyle: {
+    fontSize: 16,
+},
 });
 
 export default styles;
