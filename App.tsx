@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoginScreen from './frontend/src/screens/login_screen';
 import SignupScreen from './frontend/src/screens/signup_screen';
@@ -9,8 +9,11 @@ import RegistroSueno from './frontend/src/screens/registro_sueno';
 import RegistroComida from './frontend/src/screens/registro_comida';
 import TecnoRegistro from './frontend/src/screens/tecno_registro';
 import ObjetivoScreen from './frontend/src/screens/objetivo_screen';
+import requestNotificationPermissions from './frontend/src/services/notificaciones';
 
 type Screen = 'login' | 'home' | 'signup' | 'survey' | 'registro_sueno' | 'registro_comida' | 'tecno_registro' | 'objetivo';
+
+
 
 interface data {
   horasSueno: string;
