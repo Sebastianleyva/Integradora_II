@@ -14,7 +14,10 @@ import styles from '../styles/signup_screen';
 import * as Yup from "yup";
 import axios from "axios";
 import { Dropdown } from 'react-native-element-dropdown';
-
+import {
+    requestNotificationPermissions,
+    scheduleDailyReminder
+} from "../services/notificaciones";
 axios.defaults.withCredentials = true;
 
 type GeneralSurveyStruct = {
@@ -137,8 +140,32 @@ export default function GeneralSurvey({
             const status = await axios.post(`http://10.0.2.2:5000/general/${usuario.id}`, payload);
 
             setError('');
-            Alert.alert('Encuesta completada', 'Tu encuesta ha sido registrada correctamente.');
-            onNavigateToHome();
+            Alert.alert(
+                "Encuesta completada",
+                "Tu encuesta ha sido registrada correctamente.\n\n¿Deseas recibir un recordatorio diario a las 7:00 PM para completar tu registro?",
+                [
+                    {
+                        text: "No, gracias",
+                        style: "cancel",
+                        onPress: () => {
+                            onNavigateToHome();
+                        }
+                    },
+                    {
+                        text: "Activar",
+                        onPress: async () => {
+
+                            const granted = await requestNotificationPermissions();
+
+                            if (granted) {
+                                await scheduleDailyReminder();
+                            }
+
+                            onNavigateToHome();
+                        }
+                    }
+                ]
+            );
         } catch (err: any) {
             if (err.name === "ValidationError") {
                 // Errores de validación de Yup

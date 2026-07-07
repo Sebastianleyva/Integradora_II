@@ -9,7 +9,6 @@ import RegistroSueno from './frontend/src/screens/registro_sueno';
 import RegistroComida from './frontend/src/screens/registro_comida';
 import TecnoRegistro from './frontend/src/screens/tecno_registro';
 import ObjetivoScreen from './frontend/src/screens/objetivo_screen';
-import requestNotificationPermissions from './frontend/src/services/notificaciones';
 
 type Screen = 'login' | 'home' | 'signup' | 'survey' | 'registro_sueno' | 'registro_comida' | 'tecno_registro' | 'objetivo';
 
