@@ -29,6 +29,8 @@ const initialState: ChangeStruct = {
     confirmPassword: "",
 };
 
+const API_URL = 'https://integrator-krxn.onrender.com';
+
 const validationSchema = Yup.object().shape({
     currentPassword: Yup.string().required("Campo requerido: Se requiere su contraseña principal para continuar"),
     newPassword: Yup.string().required("Campo requerido: Se requiere una contraseña").min(8, "Tu contrasena debe tener minimo 8 caracteres para mayor seguridad"),
@@ -47,7 +49,7 @@ export default function ProfileScreen({ onLogout }: ProfileScreenProps) {
     const [showConsentModal, setShowConsentModal] = useState(false);
 
     useEffect(() => {
-        axios.get("http://10.0.2.2:5000/account/me").then(res => {
+        axios.get(`${API_URL}/account/me`).then(res => {
             if (res.data.loggedIn) {
                 setUsuario(res.data.usuario);
             }
@@ -73,7 +75,7 @@ export default function ProfileScreen({ onLogout }: ProfileScreenProps) {
             }
 
             console.info(payload)
-            const estado = await axios.put(`http://10.0.2.2:5000/account/update-password/${usuario.id}`, payload);
+            const estado = await axios.put(`${API_URL}/account/update-password/${usuario.id}`, payload);
 
             if (estado.status == 200) {
                 Alert.alert('Éxito', 'Contraseña actualizada correctamente.');
@@ -115,7 +117,7 @@ export default function ProfileScreen({ onLogout }: ProfileScreenProps) {
             if (!usuario) {
                 return onLogout();
             }
-            const estado = await axios.get(`http://10.0.2.2:5000/account/logout`);
+            const estado = await axios.get(`${API_URL}/account/logout`);
 
             if (estado.status == 200) {
                 onLogout();

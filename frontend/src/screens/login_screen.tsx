@@ -21,6 +21,8 @@ type LoginStruct = {
     password: string
 };
 
+const API_URL = 'https://integrator-krxn.onrender.com';
+
 const initialState: LoginStruct = {
     email: "",
     password: "",
@@ -63,10 +65,10 @@ export default function LoginScreen({
             console.info("Datos entregados: ", payload);
 
             // RECUERDA: Cambiar por IP local si estás usando un celular real
-            const resp = await axios.post(`http://10.0.2.2:5000/account/login`, payload);
+            const resp = await axios.post(`${API_URL}/account/login`, payload);
 
             if (resp.status == 200) {
-                const resp2 = await axios.get(`http://10.0.2.2:5000/general/${resp.data.id}`);
+                const resp2 = await axios.get(`${API_URL}/general/${resp.data.id}`);
                 Alert.alert("Éxito", resp2.data.message);
                 setLoading(false);
                 if (resp2.data.encuesta) {

@@ -20,6 +20,8 @@ import {
 } from "../services/notificaciones";
 axios.defaults.withCredentials = true;
 
+const API_URL = 'https://integrator-krxn.onrender.com';
+
 type GeneralSurveyStruct = {
     age: string;
     sex: string;
@@ -97,7 +99,7 @@ export default function GeneralSurvey({
     const [usuario, setUsuario] = useState({ id: "", nombre: "", apellido: "", correo: "" })
 
     useEffect(() => {
-        axios.get("http://10.0.2.2:5000/account/me").then(res => {
+        axios.get(`${API_URL}/account/me`).then(res => {
             if (res.data.loggedIn) {
                 console.log(res.data.usuario);
                 setUsuario(res.data.usuario);
@@ -137,7 +139,7 @@ export default function GeneralSurvey({
 
             console.info("Datos entregados: ", payload);
 
-            const status = await axios.post(`http://10.0.2.2:5000/general/${usuario.id}`, payload);
+            const status = await axios.post(`${API_URL}/general/${usuario.id}`, payload);
 
             setError('');
             Alert.alert(

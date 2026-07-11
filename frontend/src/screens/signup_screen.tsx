@@ -27,6 +27,8 @@ type RegisterStruct = {
     confirmPassword: string;
 };
 
+const API_URL = 'https://integrator-krxn.onrender.com';
+
 const initialState: RegisterStruct = {
     firstName: "",
     lastName: "",
@@ -89,7 +91,7 @@ export default function SignupScreen({
             console.info("Datos entregados: ", payload);
 
             // Recomiendo verificar que en Android real o iOS esa IP '10.0.2.2' cambie por tu IP local si testeas en físico.
-            const response = await axios.post(`http://10.0.2.2:5000/account/register`, payload);
+            const response = await axios.post(`${API_URL}/account/register`, payload);
 
             Alert.alert("Éxito", response.data.message || "Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.");
             onNavigateToSurvey();

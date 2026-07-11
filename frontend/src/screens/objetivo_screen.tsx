@@ -18,6 +18,9 @@ interface data {
     bienestar: number;
 };
 
+const API_URL = 'https://integrator-krxn.onrender.com';
+
+
 const validationSchema = Yup.object().shape({
     bienestar: Yup.number().min(1, "Debes evaluar tu bienestar seleccionando una opcion en la escala").required("Campo requerido: Selecciona tu nivel de bienestar en la escala de opciones").max(10, "Error interno: valor fuera de rango")
 });
@@ -37,7 +40,7 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
     }
 
     useEffect(() => {
-        axios.get("http://10.0.2.2:5000/account/me").then(res => {
+        axios.get(`${API_URL}/account/me`).then(res => {
             if (res.data.loggedIn) {
                 setUsuario(res.data.usuario);
             }
@@ -70,7 +73,7 @@ export default function ObjetivoScreen({ datos, onNavigateToHome }: ObjetivoScre
             };
 
             // Enviar al backend
-            await axios.post(`http://10.0.2.2:5000/registros/${usuario.id}`, payload);
+            await axios.post(`${API_URL}/registros/${usuario.id}`, payload);
 
             Alert.alert('Registro exitoso', 'Gracias por registrar en esta encuesta');
             setError("");
