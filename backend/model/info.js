@@ -11,8 +11,8 @@ app.set("trust proxy", 1);
 
 //Aplicación y puerto
 const app = express();
+app.set("trust proxy", 1);
 const port = process.env.PORT || 5000;
-
 //Restricciones
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
