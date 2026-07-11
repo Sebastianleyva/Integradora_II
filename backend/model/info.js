@@ -15,8 +15,8 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(
   cors({
-    origin: true, // Permite que cualquier IP conecte
-    credentials: true, // Necesario para que combine con axios.defaults.withCredentials = true
+    origin: "https://integratorteam.netlify.app", // Tu URL de Netlify sin la diagonal al final
+    credentials: true, // Permite el intercambio de cookies/sesiones
   }),
 );
 

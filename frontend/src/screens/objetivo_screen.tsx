@@ -6,6 +6,8 @@ import * as Yup from "yup";
 import axios from "axios";
 import { LikertScale } from '../components/LikertScale';
 
+axios.defaults.withCredentials = true;
+
 interface data {
     horasSueno: string;
     calidadSueno: number;
