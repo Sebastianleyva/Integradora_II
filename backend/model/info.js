@@ -6,9 +6,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import pool from "../database/index.js";
 
-// OBLIGATORIO PARA RENDER! Coloca esto antes del app.use(session(...))
-app.set("trust proxy", 1);
-
 //Aplicación y puerto
 const app = express();
 app.set("trust proxy", 1);
