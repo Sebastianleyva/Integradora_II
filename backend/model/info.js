@@ -15,7 +15,7 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(
   cors({
-    origin: "https://integratorteam.netlify.app", // Tu URL de Netlify sin la diagonal al final
+    origin: "https://bienestaru.netlify.app", // Tu URL de Netlify sin la diagonal al final
     credentials: true, // Permite el intercambio de cookies/sesiones
   }),
 );

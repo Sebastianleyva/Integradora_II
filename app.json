@@ -19,9 +19,9 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png",
+      "favicon": "./assets/icon.png",
       "name": "Integradora",
-      "shortName": "Integradora",
+      "shortName": "Bienestar U",
       "lang": "es",
       "display": "standalone",
       "orientation": "portrait",
