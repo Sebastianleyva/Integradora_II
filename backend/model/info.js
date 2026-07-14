@@ -86,26 +86,16 @@ app.post("/account/register", async (req, res) => {
 });
 
 //Valida el registro diario antes de poder entrar en el
-router.get("/:id/existe-hoy", async (req, res) => {
+app.get("/registros/:id/existe-hoy", async (req, res) => {
   try {
     const { id } = req.params;
-
-    const sql = `
-            SELECT 1
-            FROM registro_diario
-            WHERE id_alumno = $1
-            AND DATE(fecha) = CURRENT_DATE
-            LIMIT 1
-        `;
-
-    const result = await pool.query(sql, [id]);
-
-    res.json({
-      existe: result.rows.length > 0,
+    const existe = await pool.query("SELECT * FROM verified($1)", [id]);
+    return res.json({
+      existe: existe.rows.length > 0,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    return res.status(500).json({
       error: "Error al comprobar el registro",
     });
   }

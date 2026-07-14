@@ -43,7 +43,7 @@ interface ProfileScreenProps {
 
 export default function ProfileScreen({ onLogout }: ProfileScreenProps) {
     const [showPasswordForm, setShowPasswordForm] = useState(false);
-    const [usuario, setUsuario] = useState({ id: "", nombre: "", apellido: "", correo: "" });
+    const [usuario, setUsuario] = useState({ id: "", nombre: "", apellido: "", correo: "", fecha: "" });
     const [passwords, setPasswords] = useState<ChangeStruct>(initialState);
     const [showPrivacyModal, setShowPrivacyModal] = useState(false);
     const [showConsentModal, setShowConsentModal] = useState(false);
@@ -178,7 +178,7 @@ export default function ProfileScreen({ onLogout }: ProfileScreenProps) {
 
                     <View style={styles.infoItem}>
                         <Text style={styles.infoLabel}>Fecha de Registro</Text>
-                        <Text style={styles.infoValue}>?? de ???? del ????</Text>
+                        <Text style={styles.infoValue}>{usuario.fecha ? usuario.fecha : "Fecha no disponible"}</Text>
                     </View>
                 </View>
 
