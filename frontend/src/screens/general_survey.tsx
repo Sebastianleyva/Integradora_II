@@ -13,8 +13,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/signup_screen';
 import * as Yup from "yup";
 import axios from "axios";
-
+import { Dropdown } from 'react-native-element-dropdown';
+import {
+    requestNotificationPermissions,
+    scheduleDailyReminder
+} from "../services/notificaciones";
 axios.defaults.withCredentials = true;
+
+const API_URL = 'https://integrator-krxn.onrender.com';
 
 type GeneralSurveyStruct = {
     age: string;
@@ -49,8 +55,35 @@ const validationSchema = Yup.object().shape({
     physicalActivity: Yup.boolean().required("Campo requerido: Especifica si realizas actividad fisica"),
     psychiatricTreatment: Yup.boolean().required("Campo requerido: Indica si sigues tratamiento psiquiatrico"),
     psychologicalTreatment: Yup.boolean().required("Campo requerido: Indica si sigues tratamiento psicologico"),
-    work: Yup.boolean().required("Campo requerido: Indica si trabajas"),
+    work: Yup.boolean().required("Campo requerido: Indica si cuentas con un empleo actualmente"),
 });
+
+const cuatriOptions = [
+    { label: '1 (Intro)', value: 1 },
+    { label: '2', value: 2 },
+    { label: '3', value: 3 },
+    { label: '4', value: 4 },
+    { label: '5', value: 5 },
+    { label: '6', value: 6 },
+    { label: '7', value: 7 },
+    { label: '8', value: 8 },
+    { label: '9', value: 9 },
+    { label: '10', value: 10 },
+    { label: '11', value: 11 }
+]
+
+const carreraOptions = [
+    { label: 'Ingeniería en Tecnologías de la Información', value: 'Ingeniería en Tecnologías de la Información' },
+    { label: 'Ingeniería en Mantenimiento Industrial', value: 'Ingeniería en Mantenimiento Industrial' },
+    { label: 'Ingeniería en Logística Internacional', value: 'Ingeniería en Logística Internacional' },
+    { label: 'Ingeniería en Energías y Desarrollo Sostenible', value: 'Ingeniería en Energías y Desarrollo Sostenible' },
+    { label: 'Ingeniería en Mecatrónica', value: 'Ingeniería en Mecatrónica' },
+    { label: 'Licenciatura en Negocios y Mercadotecnia', value: 'Licenciatura en Negocios y Mercadotecnia' },
+    { label: 'Licenciatura en Educación', value: 'Licenciatura en Educación' },
+    { label: 'Ingeniería Industrial', value: 'Ingeniería Industrial' },
+    { label: 'Licenciatura en Diseño Digital y Producción Audiovisual', value: 'Licenciatura en Diseño Digital y Producción Audiovisual' },
+    { label: 'Licenciatura en Comercio Internacional y Aduanas', value: 'Licenciatura en Comercio Internacional y Aduanas' },
+]
 
 interface GeneralSurveyProps {
     onNavigateToHome: () => void;
@@ -66,7 +99,7 @@ export default function GeneralSurvey({
     const [usuario, setUsuario] = useState({ id: "", nombre: "", apellido: "", correo: "" })
 
     useEffect(() => {
-        axios.get("http://10.0.2.2:5000/account/me").then(res => {
+        axios.get(`${API_URL}/account/me`).then(res => {
             if (res.data.loggedIn) {
                 console.log(res.data.usuario);
                 setUsuario(res.data.usuario);
@@ -106,11 +139,35 @@ export default function GeneralSurvey({
 
             console.info("Datos entregados: ", payload);
 
-            const status = await axios.post(`http://10.0.2.2:5000/general/${usuario.id}`, payload);
+            const status = await axios.post(`${API_URL}/general/${usuario.id}`, payload);
 
             setError('');
-            Alert.alert('Encuesta completada', 'Tu encuesta ha sido registrada correctamente.');
-            onNavigateToHome();
+            Alert.alert(
+                "Encuesta completada",
+                "Tu encuesta ha sido registrada correctamente.\n\n¿Deseas recibir un recordatorio diario a las 7:00 PM para completar tu registro?",
+                [
+                    {
+                        text: "No, gracias",
+                        style: "cancel",
+                        onPress: () => {
+                            onNavigateToHome();
+                        }
+                    },
+                    {
+                        text: "Activar",
+                        onPress: async () => {
+
+                            const granted = await requestNotificationPermissions();
+
+                            if (granted) {
+                                await scheduleDailyReminder();
+                            }
+
+                            onNavigateToHome();
+                        }
+                    }
+                ]
+            );
         } catch (err: any) {
             if (err.name === "ValidationError") {
                 // Errores de validación de Yup
@@ -149,7 +206,7 @@ export default function GeneralSurvey({
                         <TouchableOpacity onPress={onNavigateToLogin} style={styles.backButton}>
                             <Text style={styles.backButtonText}>← Atrás</Text>
                         </TouchableOpacity>
-                        <Text style={styles.title}>Encuesta General</Text>
+                        <Text style={styles.title}>Datos Generales</Text>
                     </View>
 
                     <View style={styles.form}>
@@ -194,22 +251,36 @@ export default function GeneralSurvey({
                         )}
 
                         <Text style={styles.label}>Carrera que cursa actualmente</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ej: Ingeniería en Sistemas"
-                            value={info.career.toString()}
-                            onChangeText={(val) => handleChange("career", val)}
-                            autoCapitalize="words"
+                        <Dropdown
+                            style={styles.dropdown}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            itemTextStyle={styles.itemTextStyle}
+                            data={carreraOptions}
+                            labelField="label"
+                            valueField="value"
+                            placeholder="Seleccione una carrera"
+                            value={info.career}
+                            onChange={(item) => {
+                                handleChange('career', item.value);
+                            }}
                         />
 
 
                         <Text style={styles.label}>Cuatrimestre actual</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ej: 5"
-                            value={info.grade.toString()}
-                            onChangeText={(val) => handleChange("grade", val)}
-                            keyboardType="numeric"
+                        <Dropdown
+                            style={styles.dropdown}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            itemTextStyle={styles.itemTextStyle}
+                            data={cuatriOptions}
+                            labelField="label"
+                            valueField="value"
+                            placeholder="Seleccione su cuatrimestre actual"
+                            value={info.grade}
+                            onChange={(item) => {
+                                handleChange('grade', item.value);
+                            }}
                         />
 
                         <Text style={styles.label}>¿Ha experimentado burnout previamente?</Text>

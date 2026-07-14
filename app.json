@@ -19,7 +19,17 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png",
+      "name": "Integradora",
+      "shortName": "Bienestar U",
+      "lang": "es",
+      "display": "standalone",
+      "orientation": "portrait",
+      "backgroundColor": "#ffffff",
+      "themeColor": "#4F46E5",
+      "scope": "/",
+      "startUrl": "/",
+      "preferRelatedApplications": false
     },
     "plugins": [
       "expo-status-bar"

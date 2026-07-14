@@ -5,7 +5,6 @@ import { View, Text, StyleSheet } from 'react-native';
 
 import HomeScreen from '../screens/home_screen';
 import HistoryScreen from '../screens/history_screen';
-import AnalysisScreen from '../screens/analysis_screen';
 import ProfileScreen from '../screens/profile_screen';
 
 const Tab = createBottomTabNavigator();
@@ -30,9 +29,6 @@ export function HomeTabNavigator({ onLogout, onNavigateToRegistroSueno }: HomeTa
                             label = '';
                         } else if (route.name === 'History') {
                             iconName = '📋';
-                            label = '';
-                        } else if (route.name === 'Analysis') {
-                            iconName = '📊';
                             label = '';
                         } else if (route.name === 'Profile') {
                             iconName = '👤';
@@ -84,14 +80,6 @@ export function HomeTabNavigator({ onLogout, onNavigateToRegistroSueno }: HomeTa
                     component={HistoryScreen}
                     options={{
                         title: 'Historial',
-                    }}
-                />
-
-                <Tab.Screen
-                    name="Analysis"
-                    component={AnalysisScreen}
-                    options={{
-                        title: 'Análisis',
                     }}
                 />
 
