@@ -16,8 +16,8 @@ import axios from "axios";
 import { Dropdown } from 'react-native-element-dropdown';
 import {
     requestNotificationPermissions,
-    scheduleDailyReminder
-} from "services/notificaciones";
+    scheduleDailyReminder,
+} from "../services/notificaciones";
 axios.defaults.withCredentials = true;
 
 const API_URL = 'https://integrator-krxn.onrender.com';
