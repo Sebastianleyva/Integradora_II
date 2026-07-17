@@ -18,6 +18,8 @@ import modalStyles from '../styles/modalstyles';
 import * as Yup from "yup";
 import axios from "axios";
 axios.defaults.withCredentials = true;
+import { API_URL } from "../utils/api";
+
 
 type RegisterStruct = {
     firstName: string;
@@ -26,8 +28,6 @@ type RegisterStruct = {
     password: string;
     confirmPassword: string;
 };
-
-const API_URL = 'https://integrator-krxn.onrender.com';
 
 const initialState: RegisterStruct = {
     firstName: "",

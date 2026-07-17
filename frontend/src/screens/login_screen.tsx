@@ -13,6 +13,8 @@ import {
 import styles from '../styles/login_screen';
 import * as Yup from "yup";
 import axios from "axios";
+import { API_URL } from "../utils/api";
+
 
 axios.defaults.withCredentials = true;
 
@@ -20,8 +22,6 @@ type LoginStruct = {
     email: string;
     password: string
 };
-
-const API_URL = 'https://integrator-krxn.onrender.com';
 
 const initialState: LoginStruct = {
     email: "",

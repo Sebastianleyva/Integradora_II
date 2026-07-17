@@ -19,8 +19,8 @@ import {
     scheduleDailyReminder,
 } from "../services/notificaciones";
 axios.defaults.withCredentials = true;
+import { API_URL } from "../utils/api";
 
-const API_URL = 'https://integrator-krxn.onrender.com';
 
 type GeneralSurveyStruct = {
     age: string;
