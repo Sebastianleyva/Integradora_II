@@ -35,7 +35,7 @@ export default function App() {
       case 'login':
         return (
           <LoginScreen
-            onNavigateToHome={() => setCurrentScreen('login')}
+            onNavigateToHome={() => setCurrentScreen('home')}
             onNavigateToSignup={() => setCurrentScreen('signup')}
             onNavigateToSurvey={() => setCurrentScreen('survey')}
           />

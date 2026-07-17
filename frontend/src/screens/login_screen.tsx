@@ -64,7 +64,6 @@ export default function LoginScreen({
 
             console.info("Datos entregados: ", payload);
 
-            // RECUERDA: Cambiar por IP local si estás usando un celular real
             const resp = await axios.post(`${API_URL}/account/login`, payload);
 
             if (resp.status == 200) {
@@ -78,6 +77,10 @@ export default function LoginScreen({
                 }
             }
         } catch (err: any) {
+            console.log("LOGIN ERROR:");
+            console.log(err.response?.status);
+            console.log(err.response?.data);
+            console.log(err);
             if (err.name == "ValidationError") {
                 const mensajes = err.inner.map((e: any) => `${e.message}`).join("\n");
                 Alert.alert("Validación: ", mensajes);
