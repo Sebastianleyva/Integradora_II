@@ -16,7 +16,7 @@ import axios from "axios";
 import { Dropdown } from 'react-native-element-dropdown';
 import {
     requestNotificationPermissions,
-    scheduleDailyReminder
+    scheduleDailyReminder,
 } from "../services/notificaciones";
 axios.defaults.withCredentials = true;
 

@@ -101,6 +101,46 @@ app.get("/registros/:id/existe-hoy", async (req, res) => {
   }
 });
 
+//tarjetas para el historial
+app.get("/registros/:id/recientes", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const sql = `
+      SELECT
+        id_registro,
+        fecha,
+        h_sueno,
+        n_comidas,
+        h_osio
+      FROM registro_diario
+      WHERE id_alumno = ?
+        AND fecha < CURDATE()
+      ORDER BY fecha DESC;
+    `;
+
+    const [rows] = await pool.query(sql, [id]);
+
+    const historial = rows.map((registro_diario) => ({
+      id: registro_diario.id_registro,
+      fecha: new Date(registro_diario.fecha).toLocaleDateString("es-MX", {
+        day: "numeric",
+        month: "long",
+      }),
+      horasSueno: `${registro_diario.h_sueno} h`,
+      comidas: registro_diario.n_comidas,
+      horasTecnologia: `${registro_diario.h_osio} h`,
+    }));
+
+    res.json(historial);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Error al obtener el historial.",
+    });
+  }
+});
+
 //Login
 app.post("/account/login", async (req, res) => {
   try {

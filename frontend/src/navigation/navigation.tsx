@@ -4,8 +4,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, StyleSheet } from 'react-native';
 
 import HomeScreen from '../screens/home_screen';
-import HistoryScreen from '../screens/history_screen';
+import Infoscreen from '../screens/info_screen';
 import ProfileScreen from '../screens/profile_screen';
+
+import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
@@ -20,39 +22,28 @@ export function HomeTabNavigator({ onLogout, onNavigateToRegistroSueno }: HomeTa
             <Tab.Navigator
                 screenOptions={({ route }) => ({
                     headerShown: false,
-                    tabBarIcon: ({ focused }) => {
-                        let iconName: string;
-                        let label: string;
+                    tabBarIcon: ({ color, size }) => {
+                        let iconName: keyof typeof Ionicons.glyphMap;
 
-                        if (route.name === 'Home') {
-                            iconName = '🏠';
-                            label = '';
-                        } else if (route.name === 'History') {
-                            iconName = '📋';
-                            label = '';
-                        } else if (route.name === 'Profile') {
-                            iconName = '👤';
-                            label = '';
-                        } else {
-                            iconName = '?';
-                            label = route.name;
+                        switch (route.name) {
+                            case "Home":
+                                iconName = "home-outline";
+                                break;
+                            case "Info":
+                                iconName = "school-outline";
+                                break;
+                            case "Profile":
+                                iconName = "person-outline";
+                                break;
+                            default:
+                                iconName = "ellipse-outline";
                         }
-
                         return (
-                            <View style={styles.tabIconContainer}>
-                                <Text style={[
-                                    styles.tabIcon,
-                                    { color: focused ? '#2196F3' : '#999' }
-                                ]}>
-                                    {iconName}
-                                </Text>
-                                <Text style={[
-                                    styles.tabLabel,
-                                    { color: focused ? '#2196F3' : '#999' }
-                                ]}>
-                                    {label}
-                                </Text>
-                            </View>
+                            <Ionicons
+                                name={iconName}
+                                size={size}
+                                color={color}
+                            />
                         );
                     },
                     tabBarLabelPosition: 'below-icon',
@@ -76,10 +67,10 @@ export function HomeTabNavigator({ onLogout, onNavigateToRegistroSueno }: HomeTa
                 </Tab.Screen>
 
                 <Tab.Screen
-                    name="History"
-                    component={HistoryScreen}
+                    name="Info"
+                    component={Infoscreen}
                     options={{
-                        title: 'Historial',
+                        title: 'Información',
                     }}
                 />
 
