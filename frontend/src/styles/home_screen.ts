@@ -88,7 +88,13 @@ const styles = StyleSheet.create({
     },
     historyContainer: {
         gap: 12, 
-    }
+    },
+    emptyHistory: {
+    textAlign: "center",
+    color: "#777",
+    fontSize: 15,
+    marginVertical: 25,
+},
 });
 
 export default styles;
