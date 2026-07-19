@@ -5,6 +5,7 @@ import styles from '../styles/objetivo_screen';
 import * as Yup from "yup";
 import axios from "axios";
 import { LikertScale } from '../components/LikertScale';
+import { API_URL } from "../utils/api";
 
 axios.defaults.withCredentials = true;
 
@@ -19,8 +20,6 @@ interface data {
     usoIaEn: string;
     bienestar: number;
 };
-
-const API_URL = 'https://integrator-krxn.onrender.com';
 
 
 const validationSchema = Yup.object().shape({

@@ -1,0 +1,1 @@
+export const API_URL = "https://integrator-krxn.onrender.com";

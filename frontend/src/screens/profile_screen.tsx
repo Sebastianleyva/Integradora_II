@@ -12,6 +12,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../styles/profile_screen';
 import * as Yup from "yup";
 import axios from "axios";
+import { API_URL } from "../utils/api";
+
 
 axios.defaults.withCredentials = true;
 
@@ -26,8 +28,6 @@ const initialState: ChangeStruct = {
     newPassword: "",
     confirmPassword: "",
 };
-
-const API_URL = 'https://integrator-krxn.onrender.com';
 
 const validationSchema = Yup.object().shape({
     currentPassword: Yup.string().required("Campo requerido: Se requiere su contraseña principal para continuar"),

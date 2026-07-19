@@ -19,8 +19,8 @@ import {
     scheduleDailyReminder,
 } from "../services/notificaciones";
 axios.defaults.withCredentials = true;
+import { API_URL } from "../utils/api";
 
-const API_URL = 'https://integrator-krxn.onrender.com';
 
 type GeneralSurveyStruct = {
     age: string;
@@ -140,34 +140,36 @@ export default function GeneralSurvey({
             console.info("Datos entregados: ", payload);
 
             const status = await axios.post(`${API_URL}/general/${usuario.id}`, payload);
+            console.log("POST realizado correctamente");
 
             setError('');
-            Alert.alert(
-                "Encuesta completada",
-                "Tu encuesta ha sido registrada correctamente.\n\n¿Deseas recibir un recordatorio diario a las 7:00 PM para completar tu registro?",
-                [
-                    {
-                        text: "No, gracias",
-                        style: "cancel",
-                        onPress: () => {
-                            onNavigateToHome();
-                        }
-                    },
-                    {
-                        text: "Activar",
-                        onPress: async () => {
+            // Alert.alert(
+            //     "Encuesta completada",
+            //     "Tu encuesta ha sido registrada correctamente.\n\n¿Deseas recibir un recordatorio diario a las 7:00 PM para completar tu registro?",
+            //     [
+            //         {
+            //             text: "No, gracias",
+            //             style: "cancel",
+            //             onPress: () => {
+            //                 onNavigateToHome();
+            //             }
+            //         },
+            //         {
+            //             text: "Activar",
+            //             onPress: async () => {
 
-                            const granted = await requestNotificationPermissions();
+            //                 const granted = await requestNotificationPermissions();
 
-                            if (granted) {
-                                await scheduleDailyReminder();
-                            }
+            //                 if (granted) {
+            //                     await scheduleDailyReminder();
+            //                 }
 
-                            onNavigateToHome();
-                        }
-                    }
-                ]
-            );
+            //                 onNavigateToHome();
+            //             }
+            //         }
+            //     ]
+            // );
+            onNavigateToHome();
         } catch (err: any) {
             if (err.name === "ValidationError") {
                 // Errores de validación de Yup

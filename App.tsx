@@ -27,7 +27,7 @@ interface data {
 }
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>("home");
+  const [currentScreen, setCurrentScreen] = useState<Screen>("login");
   const [encuesta, setEncuesta] = useState<data | null>(null)
 
   const renderScreen = () => {
@@ -35,7 +35,7 @@ export default function App() {
       case 'login':
         return (
           <LoginScreen
-            onNavigateToHome={() => setCurrentScreen('login')}
+            onNavigateToHome={() => setCurrentScreen('home')}
             onNavigateToSignup={() => setCurrentScreen('signup')}
             onNavigateToSurvey={() => setCurrentScreen('survey')}
           />

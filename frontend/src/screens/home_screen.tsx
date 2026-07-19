@@ -2,8 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
     View,
     Text,
-    TouchableOpacity,
-    ActivityIndicator,
     ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,6 +10,7 @@ import axios from 'axios';
 import HistoryCard from '../components/historial_cards';
 import styles from '../styles/home_screen';
 import TodayCard from '../components/todaycard';
+import { API_URL } from "../utils/api";
 
 interface HomeScreenProps {
     onLogout: () => void;
@@ -29,7 +28,6 @@ export default function HomeScreen({ onLogout, onNavigateToRegistroSueno }: Home
     const [registroHoy, setRegistroHoy] = useState(false);
     const [cargando, setCargando] = useState(true);
     const [historial, setHistorial] = useState<RegistroHistorial[]>([]);
-    const API_URL = 'https://integrator-krxn.onrender.com';
 
     interface RegistroResumen {
         id: number;
@@ -88,12 +86,6 @@ export default function HomeScreen({ onLogout, onNavigateToRegistroSueno }: Home
                     registroHoy={registroHoy}
                     onRegistrar={onNavigateToRegistroSueno}
                 />
-
-                <Text style={styles.sectionTitle}>Historial reciente</Text>
-
-                <View style={styles.historyContainer}>
-                    {/* aquí después irá el map() */}
-                </View>
 
                 {/* Historial */}
                 <Text style={styles.sectionTitle}>Historial Reciente</Text>
