@@ -1,0 +1,33 @@
+id_alumno,nombre,apellidos,correo,contrasena,fecha
+1,Emiliano,Cardiel,emi@gmail.com,$2b$10$aW0Q3IiJG5nlVYYurCGm7Op.ElS4jVhtF.Xx2hKpEbwNHffemAqRm,2026-07-11
+3,Carlos,Rodriguez,carlos@gmail.com,$2b$10$KjYwiTEiecn5bGNp6KSYMOlVW5ys5lSHvLhQfUHxAFDEfJtRx/54C,2026-07-11
+4,Fernando,Flores,fer@gmail.com,$2b$10$lIVZ9QLBPxKi5xnfS4aklulp0YhakvT6jHRYQ9imMhPARIlQ2Tiuy,2026-07-11
+5,"Jesús ",Barraza,jesus_3141240166@utd.edu.mx,$2b$10$I.VPNsoBcCN0Za2AB0viFO35iIHMmt1705PTd1TQYO1uS3zl/zmKS,2026-07-11
+7,Sebastian,Leyva,riveraleyvasebastian@gmail.com,$2b$10$lvPjkZaUujh3zCTJwJOidesBdT5HkVGAUXoH1iqfUh..DlauBns36,2026-07-12
+9,Fer,Flores,a@a.com,$2b$10$l5Gyfjf64v402H/mlRDOcOo0XD8RmrETF60ybfHtsGY0WDFtffIpi,2026-07-14
+10,sebastian,leyva,sebas@gmail.com,$2b$10$eDoBugTnIi5lvJdPCnpJ2uY/3T5aDG2RK96rBiT647jqx.Rm7v8Tu,2026-07-14
+11,nombre,apellido,correo@correo.com,$2b$10$ngJGe9PGYSSVeT2J59ytKOSO86noclW4Hvfs4eb3j9J/mG/SQ8bDG,2026-07-14
+12,Itzel,"Marquez ",itzel_3141240259@utd.edu.mx,$2b$10$/rjzWtViB6Z7K9VtOHtWCu3eP7Y.MgSt7ulvMkg8ActhBqJb1sEzu,2026-07-15
+13,"Blanca Marlene ","Heredia Nuñez ",marlenheredia28@gmail.com,$2b$10$ML8sblEXrbaO7NETxQIUxegdbFF9ooCfJcyns29JZ15zyLlaBvviq,2026-07-15
+14,"Dulce  Esperanza ","Domínguez Ávila ",dulce_3141240171@utd.edu.mx,$2b$10$TbRsgK5I8FejcF7hyXMF/OC2hKmAq4lJx5mPtAYZe5Dk/SfSU1vgq,2026-07-15
+15,Itzel,Marquez,ivivazquez535@gmail.com,$2b$10$2cbtJMJX2CTSOE.IF1PFfe4ePbc/nqTZPGvEPR2GWGUTCzOoqRRF.,2026-07-15
+16,Naomi,"Vazquez ",itzelmarquez491@gmail.com,$2b$10$mtxUiX6bAKsi1GDVwUq73e4uRWX5Z77/XQ/cO2ISY35fNXSusdBWm,2026-07-15
+17,"Diana ",Ramos Cruz,diana_3166240714@utd.edu.mx,$2b$10$J/GWzV5KrgQwexVggEOSM.PV1NsxT1dm9Lm1.rBXNPfCA6R4/R.za,2026-07-16
+18,"Andrea ",Calderon Varela,andres12caldera3@gmail.com,$2b$10$uuKnlfgHQGmtoy/8Q2x.S.4m0j7B0Gn9glSujXZFNhqK1Eln7M.L.,2026-07-16
+19,bruno,mares,bruno@gmail.com,$2b$10$3.a.qmCNYwkQXvAGOm/FhO/HoDCY7IEspY0Mnc96gCHCwh39CupMi,2026-07-16
+20,"Maria Isabel ",Gutierrez,depto98correo@gmail.com,$2b$10$zQa/iTNmaysgB7jJ4.6Vae/jXwOimBPBEU4swZG94nPtFLqaGSZrK,2026-07-16
+21,maria,alvarado,albamar4sol890@gmail.com,$2b$10$ipkqYlNFzJvhf.hWUtbI4OT3o07gfty4DlzOVt6QjMwsutArOmL8y,2026-07-16
+22,Diana,Ramos Cruz,dramoscruz30@gmail.com,$2b$10$CnMaACh0u7iOXj/vJWno5OFSVnTs7P15rDFWG8taJePXTwze81U8G,2026-07-16
+23,Andres,Armendaris,mend3ar@gmail.com,$2b$10$z1PFUPL2vvtUpGlOWE5BveP356id/5sWgy2Bhty6Rs/6T3/aIiVhm,2026-07-17
+24,Alexis,Macias Cabrera,thecabramacias@gmail.com,$2b$10$gNNvgV.a7W1r2Wt6FVnEmOi7GkMWjXCA5r0VB/yBl58RxAa6eUsg2,2026-07-17
+25,Diego,Gonzales,7mMaciasgonz@gmail.com,$2b$10$BEcKMNbp8CciZa0/TW65eOFjjxokvew85C84jSXBRX2xUudNHs.XW,2026-07-17
+26,Prueba,Ppp,prueba@gmail,$2b$10$8Ic9dclad18J7u6LPaREiOzl2BUB0zKthtjP7Vj9zIjhKcKyqgwhK,2026-07-17
+27,test,jhonny o algo así xd,test@gmail.com,$2b$10$7dhjfNr84dfRUGXywBgyceoADdCupM1PayLZYwplXLfyaGk0qHzRC,2026-07-17
+28,Marysol,"Aguilera Guzmán ",marysol@gmail.com,$2b$10$TnzTr7rR.UvJsPuxk5HlMe2HoJgqyiwUixuZnsVaccmBhBzuQBBWK,2026-07-17
+29,Jose,Sifuentes Escobar,holahola168216@gmail.com,$2b$10$vq8eP8PE.iq7FuHoz1/y5ObZCQ0ApaCUzuu3Gxece.nLFtB.LatIa,2026-07-17
+30,Sebastian,Gonzalez Garcia,sebastian_3127241037@utd.edu.mx,$2b$10$gA34Ceum6YQvwIx2Q98ygOImT7OgqNVcvHAq06anE2OmqTpWg6lIO,2026-07-17
+31,David,Rodríguez Avitia,david_3127240841@utd.edu.mx,$2b$10$9pq6rduCvCksamh32gR4zehFn08Zk5oGOsbrgWZssSfu69sZYxj3.,2026-07-17
+32,"Carlos Daniel ",González Saravia Santa Cruz,carlos_3027240125@utd.edu.mx,$2b$10$AujGFwHaeaXSG9mwhSJQSeQkcZwbDvdT2OU7sUjMYA/vPMEqwDwby,2026-07-17
+33,Laura,Mares,laura@gmail.com,$2b$10$9C4oaarj7Vx9A4UG97.i/uArkidoJiosVDaxRlPN2Qza32vLE/1.W,2026-07-17
+34,Luis,Jimenez,luis@gmail.com,$2b$10$QtUi7xfJOK4ZIIZs2fnoUOizUCeHLDy89vYBEMHnMMCIwJulAVfYm,2026-07-17
+35,"David ","Rodríguez ",rodriguezavitiadavid@gmail.com,$2b$10$hi5v1blwbd0iqGuin3cq1OKmfttB.nyEskI7tIPGCUHWrP02NR59m,2026-07-22

@@ -1,0 +1,21 @@
+id_general,edad,sexo,carrera,cuatrimestre,burnout_previo,actividad_f,tratamiento_psiquia,tratamiento_psico,id_alumno,trabajo
+1,20,Masculino,Ingeniería en Tecnologías de la Información,6,false,false,true,true,4,false
+2,20,Masculino,Ingeniería en Tecnologías de la Información,6,true,true,false,true,5,false
+17,20,Masculino,Ingeniería en Tecnologías de la Información,6,false,true,false,true,7,true
+19,20,Masculino,Ingeniería en Tecnologías de la Información,6,false,false,true,true,1,true
+20,20,Masculino,Ingeniería en Tecnologías de la Información,6,true,false,false,false,3,false
+28,20,Masculino,Ingeniería en Tecnologías de la Información,5,false,false,false,false,9,false
+33,20,Masculino,Ingeniería en Tecnologías de la Información,6,false,true,true,true,10,true
+35,20,Masculino,Ingeniería en Tecnologías de la Información,6,true,true,true,true,11,false
+36,19,Femenino,Ingeniería en Tecnologías de la Información,6,true,true,false,false,13,false
+38,19,Femenino,Ingeniería en Tecnologías de la Información,6,false,true,false,false,14,false
+39,26,Masculino,Licenciatura en Educación,7,true,true,false,true,19,true
+40,24,Femenino,Ingeniería en Mantenimiento Industrial,3,false,true,true,true,20,true
+42,21,Femenino,Ingeniería Industrial,6,false,true,false,false,21,true
+43,22,Masculino,Ingeniería en Tecnologías de la Información,3,false,true,false,true,23,true
+48,21,Masculino,Licenciatura en Negocios y Mercadotecnia,6,false,true,false,false,24,true
+51,20,Masculino,Ingeniería en Logística Internacional,3,false,true,true,true,25,false
+52,20,Masculino,Ingeniería en Tecnologías de la Información,6,true,true,true,true,27,false
+53,21,Masculino,Ingeniería en Mecatrónica,6,true,false,false,false,29,false
+54,20,Femenino,Ingeniería en Tecnologías de la Información,3,true,false,false,false,33,false
+55,20,Masculino,Ingeniería en Tecnologías de la Información,6,false,false,false,false,34,false
